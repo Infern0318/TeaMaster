@@ -822,6 +822,22 @@ html[data-planet="energy"] .card{box-shadow:0 0 0 1px color-mix(in srgb,var(--cc
 .bag[data-pl] .bag-peek{opacity:0;transition:transform .9s .25s cubic-bezier(.2,.8,.2,1),opacity .3s .35s}
 .bag.torn[data-pl] .bag-peek{opacity:1}
 
+/* combats : ultime, traits */
+.bt-moves{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+.bt-mv.m3{border-color:#d4a32a;background:linear-gradient(135deg,color-mix(in srgb,#d4a32a 18%,var(--surface2)),var(--surface2))}
+.bt-mv.m3:not(:disabled){animation:ultglow 1.2s ease-in-out infinite}
+@keyframes ultglow{0%,100%{box-shadow:0 0 8px rgba(212,163,42,.4)}50%{box-shadow:0 0 22px rgba(212,163,42,.95)}}
+@keyframes ultpulse{50%{transform:scale(1.03)}}
+.bt-ch{display:flex;align-items:center;gap:4px;margin-top:4px}
+.bt-ch u{width:18px;height:7px;border-radius:4px;background:var(--bg2);border:1px solid var(--line);text-decoration:none;transition:background .3s,box-shadow .3s}
+.bt-ch u.on{background:#d4a32a;box-shadow:0 0 8px rgba(212,163,42,.8)}
+.bt-ch small{font-size:.62rem;letter-spacing:.08em;color:var(--muted);margin-left:4px;text-transform:uppercase}
+.bt-ch.full small{color:#d4a32a;font-weight:700;animation:ultpulse 1s ease-in-out infinite}
+.trb{font-style:normal;font-size:.62rem;padding:1px 6px;border-radius:99px;border:1px solid var(--line);margin-left:4px;color:var(--muted);white-space:nowrap}
+.bt-arena.ult{animation:ultflash .9s}
+@keyframes ultflash{0%{filter:brightness(1)}25%{filter:brightness(1.9) contrast(1.1)}100%{filter:brightness(1)}}
+.ibtn.hl{color:var(--accent);animation:hl 1.1s ease-in-out infinite;outline:2px solid var(--accent);outline-offset:2px;border-radius:50%}
+
 </style>
 
 </head>
@@ -2268,23 +2284,25 @@ var ELS=[
  {id:'e',n:'Épicé',c:'#d4821f',ks:['chai','rooibos','mate'],mv:'Épice ardente'}
 ];
 var ELIDX={};ELS.forEach(function(e,i){e.ks.forEach(function(k){ELIDX[k]=i})});Object.keys(PL_EL).forEach(function(k){ELIDX[k]=PL_EL[k]});
-var BMAX=30,BTEAM=3,BCAP=8;
+var BMAX=30,BTEAM=3,BCAP=8,BCH=3;
 function bMult(a,d){return ((a+1)%4===d)?1.5:(((d+1)%4===a)?.75:1)}
-function bStats(c){return {id:c.id,el:ELIDX[c.k]||0,max:Math.round(40+12*c.r+c.s*.35),atk:Math.round((9+2.2*c.r+c.s/14)*1.6),spd:30+(c.hh%40)+c.r*2}}
+var BTR={tea:['Zen','Pause thé : +6 % de soin'],soda:['Pétillant','Coups critiques plus fréquents'],alcohol:['Ivresse','+12 % de dégâts, attaque forte moins précise'],water:['Source','Récupère 4 % de PV à chaque tour'],coffee:['Caféine','Plus rapide'],energy:['Boost','Charge l\'Ultime plus vite']};
+function bTr(c){return c.pl||'tea'}
+function bStats(c){var tr=bTr(c),a=Math.round((9+2.2*c.r+c.s/14)*1.6);if(tr==='alcohol')a=Math.round(a*1.12);return {id:c.id,el:ELIDX[c.k]||0,max:Math.round(40+12*c.r+c.s*.35),atk:a,spd:30+(c.hh%40)+c.r*2+(tr==='coffee'?15:0),tr:tr}}
 function bNew(ta,tb){
   function mk(ids){return ids.map(function(id){var s=bStats(BYID[id]);s.hp=s.max;return s})}
-  return {s:[{t:mk(ta),i:0,gcd:0,g:0},{t:mk(tb),i:0,gcd:0,g:0}],r:0,over:false,win:-1,last:[]};
+  return {s:[{t:mk(ta),i:0,gcd:0,g:0,ch:0},{t:mk(tb),i:0,gcd:0,g:0,ch:0}],r:0,over:false,win:-1,last:[]};
 }
 function bAct(st,k){var sd=st.s[k];return sd.t[Math.min(sd.i,sd.t.length-1)]}
 function bAlive(sd){return sd.t.some(function(f){return f.hp>0})}
-function bNorm(st,k,m){m=+m;if(m===2&&st.s[k].gcd>0)m=0;return (m===1||m===2)?m:0}
+function bNorm(st,k,m){m=+m;if(m===2&&st.s[k].gcd>0)m=0;if(m===3&&st.s[k].ch<BCH)m=1;return (m>=1&&m<=3)?m:0}
 function bRound(st,seed,ca,cb){
   var rng=mulberry(h32(seed+':'+st.r)),ev=[],m=[bNorm(st,0,ca),bNorm(st,1,cb)];
   st.s[0].g=0;st.s[1].g=0;
   var act=[bAct(st,0),bAct(st,1)];
   [0,1].forEach(function(k){
     if(m[k]!==2)return;
-    var f=act[k],h=Math.round(f.max*.12),real=Math.max(0,Math.min(h,f.max-f.hp));f.hp+=real;st.s[k].g=1;
+    var f=act[k],h=Math.round(f.max*(f.tr==='tea'?.18:.12)),real=Math.max(0,Math.min(h,f.max-f.hp));f.hp+=real;st.s[k].g=1;
     ev.push({k:'guard',side:k,card:f.id,heal:real});
   });
   var order=(act[1].spd>act[0].spd)?[1,0]:[0,1];
@@ -2292,20 +2310,24 @@ function bRound(st,seed,ca,cb){
     if(m[k]===2)return;
     var A=act[k],dk=1-k,D=bAct(st,dk);
     if(A.hp<=0)return;
-    var pow=1,acc=1,mult=1;
-    if(m[k]===1){pow=1.6;acc=.8;mult=bMult(A.el,D.el)}
-    var r1=rng(),r2=rng(),r3=rng(),hit=r1<acc,crit=r3<.1;
-    if(!hit){ev.push({k:'miss',side:k,card:A.id,mv:m[k]});return}
+    var pow=1,acc=1,mult=1,ult=m[k]===3;
+    if(m[k]===1){pow=1.6;acc=A.tr==='alcohol'?.7:.8;mult=bMult(A.el,D.el)}
+    if(ult){pow=2.4;acc=1;mult=bMult(A.el,D.el);st.s[k].ch=0}
+    var r1=rng(),r2=rng(),r3=rng(),hit=r1<acc,crit=r3<(A.tr==='soda'?.2:.1);
+    if(!hit){ev.push({k:'miss',side:k,card:A.id,mv:m[k]});if(!ult)st.s[k].ch=Math.min(BCH,st.s[k].ch+(A.tr==='energy'?2:1));return}
     var dmg=Math.max(1,Math.round(A.atk*pow*mult*(.9+r2*.2)*(crit?1.5:1)));
-    if(st.s[dk].g)dmg=Math.max(1,Math.round(dmg*.5));
+    if(st.s[dk].g&&!ult)dmg=Math.max(1,Math.round(dmg*.5));
     D.hp=Math.max(0,D.hp-dmg);
-    ev.push({k:'hit',side:k,card:A.id,tgt:D.id,mv:m[k],dmg:dmg,mult:mult,crit:crit,left:D.hp,guard:!!st.s[dk].g});
+    ev.push({k:'hit',side:k,card:A.id,tgt:D.id,mv:m[k],dmg:dmg,mult:mult,crit:crit,left:D.hp,guard:!!st.s[dk].g&&!ult});
+    if(!ult)st.s[k].ch=Math.min(BCH,st.s[k].ch+(A.tr==='energy'?2:1));
+    st.s[dk].ch=Math.min(BCH,st.s[dk].ch+1);
     if(D.hp<=0){
       ev.push({k:'ko',side:dk,card:D.id});
       var sd=st.s[dk];while(sd.i<sd.t.length&&sd.t[sd.i].hp<=0)sd.i++;if(sd.i>=sd.t.length)sd.i=sd.t.length-1;
     }
   });
   [0,1].forEach(function(k){var sd=st.s[k];if(m[k]===2)sd.gcd=1;else if(sd.gcd>0)sd.gcd--});
+  [0,1].forEach(function(k){var f=bAct(st,k);if(f.tr==='water'&&f.hp>0&&f.hp<f.max){var h=Math.min(f.max-f.hp,Math.max(1,Math.round(f.max*.04)));f.hp+=h;ev.push({k:'regen',side:k,card:f.id,heal:h})}});
   st.r++;st.last=ev;
   var a0=bAlive(st.s[0]),a1=bAlive(st.s[1]);
   if(!a0||!a1){st.over=true;st.win=a0?0:1}
@@ -2321,7 +2343,7 @@ function bSim(seed,ta,tb,ma,mb){
   for(var r=0;r<n&&!st.over;r++)bRound(st,seed,ma.charAt(r),mb.charAt(r));
   return st;
 }
-function bMoveName(el,m){return m===0?'Infusion':m===1?ELS[el].mv:'Pause thé'}
+function bMoveName(el,m){return m===0?'Infusion':m===1?ELS[el].mv:m===3?'Ultime':'Pause thé'}
 
 /* ---------- état ---------- */
 function bList(){return Object.keys(S.bm||{}).map(function(tid){return {tid:tid,e:S.bm[tid]}}).sort(function(a,b){return (b.e.ts||0)-(a.e.ts||0)})}
@@ -2342,9 +2364,9 @@ function bAutoTeam(){
 }
 function bAiTeam(tid,mine,lv){
   var rng=mulberry(h32(tid+':team')),team=[],pool=[[],[],[],[],[]];
-  CARDS.forEach(function(c){if(!c.pl)pool[c.r].push(c)});
+  var pools={};CARDS.forEach(function(c){if(c.hw)return;var k=c.pl||'tea';(pools[k]=pools[k]||[[],[],[],[],[]])[c.r].push(c)});
   mine.forEach(function(id){
-    var r=BYID[id].r+(lv-1);if(rng()<.3)r+=1;else if(rng()<.2)r-=1;
+    pool=pools[BYID[id].pl||'tea']||pools.tea;var r=BYID[id].r+(lv-1);if(rng()<.3)r+=1;else if(rng()<.2)r-=1;
     r=Math.max(0,Math.min(4,r));var L=pool[r];if(!L.length)L=pool[0];
     var c=L[Math.floor(rng()*L.length)];if(team.indexOf(c.id)>=0)c=L[(L.indexOf(c)+1)%L.length];team.push(c.id)
   });
@@ -2352,6 +2374,7 @@ function bAiTeam(tid,mine,lv){
 }
 function bAiPick(seed,st,r,lv){
   var rng=mulberry(h32(seed+':ai:'+r)),A=bAct(st,1),D=bAct(st,0),p=rng(),q=rng();
+  if(st.s[1].ch>=BCH&&p<(.55+lv*.15))return '3';
   if(st.s[1].gcd===0&&A.hp/A.max<(.25+lv*.05)&&p<(.35+lv*.15))return '2';
   var sp=(bMult(A.el,D.el)>1?.7:.4)+lv*.1;
   return q<sp?'1':'0';
@@ -2413,7 +2436,8 @@ function bView(tid){
 function battleMove(tid,m){
   var e=S.bm[tid],v=bView(tid);
   if(!e||!v||v.phase!=='choose')return false;
-  e.m+=String(+m===1||+m===2?+m:0);
+  m=+m;if(m===3&&bView(tid).st.s[v.mine].ch<BCH)m=1;
+  e.m+=String(m>=1&&m<=3?m:0);
   if(e.ai){
     var st=bSim(tid,e.t,e.ot,e.m.slice(0,-1),e.am||'');
     e.am=(e.am||'')+bAiPick(tid,st,st.r,e.lv||1);
@@ -2868,7 +2892,7 @@ var PKH={soda:'Tire l\'anneau pour ouvrir la canette',alcohol:'Tire sur le bouch
 function bagHTML(type,o){
   o=o||{};var P=PACKS[type],c1=P.c,c2=shade(P.c,.55);
   var tagTag=o.stat?'span':'button';
-  return '<div class="bag'+(o.stat?' static':'')+'" '+(P.pl?'data-pl="'+P.pl+'" ':'')+(o.id===false?'':'id="bag" ')+'style="--pk:'+c1+';--pk2:'+c2+'">'+
+  return '<div class="bag'+(o.stat?' static':'')+'" '+(o.tag?'data-act="tear" ':'')+(P.pl?'data-pl="'+P.pl+'" ':'')+(o.id===false?'':'id="bag" ')+'style="--pk:'+c1+';--pk2:'+c2+'">'+
    '<div class="bag-peek"><i></i><i></i><i></i></div>'+
    '<div class="bag-body"><div class="bag-label"><small>'+(P.pl?t(PKN[P.pl]||'Pack'):t('Sachet'))+'</small><b>'+esc(t(P.n))+'</b><i>'+t('6 cartes')+'</i></div></div>'+
    '<div class="bag-flap"></div>'+
@@ -3148,7 +3172,7 @@ function cardEl(c){return ELIDX[c.k]||0}
 function statLine(c){var s=bStats(c);return t('PV {hp} · ATQ {atk} · VIT {spd}',{hp:s.max,atk:s.atk,spd:s.spd})}
 function bThumb(c,px){return '<span class="bthumb" style="width:'+px+'px;height:'+px+'px;--cc:'+CATS[c.k].c+'">'+pkgSVG(c)+'</span>'}
 function btRules(){
-  return '<details class="bt-rules"><summary>'+t('Comment ça marche ?')+'</summary><p>'+t('Chaque équipe compte 3 cartes. Les PV, l\'attaque et la vitesse dépendent de la rareté et de la note de la carte. À chaque tour, les deux joueurs choisissent en secret : Infusion (dégâts sûrs), l\'attaque signature de la famille (plus forte, 80 % de précision) ou Pause thé (soigne un peu et divise les dégâts reçus par deux, pas deux tours de suite). Le plus rapide frappe en premier. Une carte K.O. laisse la place à la suivante.')+'</p><p>'+ELS.map(function(e,i){return elBadge(i)}).join(' › ')+' › '+elBadge(0)+'</p><p class="note">'+t('Une famille bat la suivante (×1,5 sur l\'attaque signature) et résiste mal à la précédente (×0,75).')+' '+t('Récompenses limitées à {n} combats par jour.',{n:BCAP})+'</p></details>';
+  return '<details class="bt-rules"><summary>'+t('Comment ça marche ?')+'</summary><p>'+t('Chaque équipe compte 3 cartes. Les PV, l\'attaque et la vitesse dépendent de la rareté et de la note de la carte. À chaque tour, les deux joueurs choisissent en secret : Infusion (dégâts sûrs), l\'attaque signature de la famille (plus forte, 80 % de précision) ou Pause thé (soigne un peu et divise les dégâts reçus par deux, pas deux tours de suite). Chaque coup donné ou reçu charge la jauge d\'Ultime : à 3, l\'Ultime (×2,4) ne rate jamais et ignore la Pause thé. Chaque planète a son trait : Pétillant (plus de critiques), Ivresse (+12 % de dégâts), Source (récupère 4 % de PV par tour), Caféine (plus rapide), Boost (jauge plus vite), Zen (Pause thé renforcée). Le plus rapide frappe en premier. Une carte K.O. laisse la place à la suivante.')+'</p><p>'+ELS.map(function(e,i){return elBadge(i)}).join(' › ')+' › '+elBadge(0)+'</p><p class="note">'+t('Une famille bat la suivante (×1,5 sur l\'attaque signature) et résiste mal à la précédente (×0,75).')+' '+t('Récompenses limitées à {n} combats par jour.',{n:BCAP})+'</p></details>';
 }
 function vBattle(){
   var head='<section class="lead"><div><h1>'+t('Combat')+'</h1><p>'+t('Forme une équipe de 3 cartes et affronte Teapee ou tes amis.')+'</p></div></section>';
@@ -3223,15 +3247,17 @@ function bvText(ev,v){
   var mine=v.mine,who=function(side){return '<b class="'+(side===mine?'me':'op')+'">'+esc(bCardName(ev.card))+'</b>'};
   if(ev.k==='guard')return {s:ev.side,h:t('{name} prend une Pause thé (+{n} PV).',{name:who(ev.side),n:ev.heal})};
   if(ev.k==='miss'){var c=BYID[ev.card];return {s:ev.side,h:t('{name} rate {mv} !',{name:who(ev.side),mv:esc(t(bMoveName(cardEl(c),ev.mv)))})}}
+  if(ev.k==='regen')return {s:ev.side,h:t('{name} récupère {n} PV (Source).',{name:who(ev.side),n:ev.heal})};
   if(ev.k==='ko')return {s:ev.side,h:t('{name} est K.O. !',{name:who(ev.side)}),ko:1};
   var c2=BYID[ev.card],tx=t('{name} utilise {mv} : −{n} PV.',{name:who(ev.side),mv:esc(t(bMoveName(cardEl(c2),ev.mv))),n:ev.dmg});
+  if(ev.mv===3)tx='✦ '+tx;
   if(ev.crit)tx+=' '+t('Coup critique !');
   if(ev.mult>1)tx+=' '+t('C\'est très efficace !');else if(ev.mult<1)tx+=' '+t('Peu efficace…');
   return {s:ev.side,h:tx,hit:ev};
 }
 function fighterHTML(st,side,v){
   var sd=st.s[side],f=bAct(st,side),c=BYID[f.id],pc=Math.max(0,Math.round(100*f.hp/f.max));
-  return '<div class="bt-f'+(side===v.mine?' me':' op')+(f.hp<=0?' ko':'')+'" id="btf'+side+'" style="--ec:'+ELS[f.el].c+'"><div class="bt-hero">'+heroFor(side,v)+'</div><div class="bt-art" id="bta'+side+'" style="--cc:'+CATS[c.k].c+'">'+pkgSVG(c)+'</div><div class="bt-info"><div class="bt-nm"><b>'+esc(c.n)+'</b>'+elBadge(f.el)+'</div><div class="bt-hp" id="bthp'+side+'" data-c="'+f.id+'" data-max="'+f.max+'" data-hp="'+f.hp+'" role="progressbar" aria-valuemin="0" aria-valuemax="'+f.max+'" aria-valuenow="'+f.hp+'"><i style="width:'+pc+'%" class="'+(pc<30?'low':pc<60?'mid':'')+'"></i></div><div class="bt-hpt" id="bthpt'+side+'">'+t('{a} / {b} PV',{a:f.hp,b:f.max})+(sd.g?' · '+t('Protégé'):'')+'</div>'+
+  return '<div class="bt-f'+(side===v.mine?' me':' op')+(f.hp<=0?' ko':'')+'" id="btf'+side+'" style="--ec:'+ELS[f.el].c+'"><div class="bt-hero">'+heroFor(side,v)+'</div><div class="bt-art" id="bta'+side+'" style="--cc:'+CATS[c.k].c+'">'+pkgSVG(c)+'</div><div class="bt-info"><div class="bt-nm"><b>'+esc(c.n)+'</b>'+elBadge(f.el)+'<i class="trb" title="'+esc(t(BTR[f.tr][1]))+'">'+esc(t(BTR[f.tr][0]))+'</i></div><div class="bt-hp" id="bthp'+side+'" data-c="'+f.id+'" data-max="'+f.max+'" data-hp="'+f.hp+'" role="progressbar" aria-valuemin="0" aria-valuemax="'+f.max+'" aria-valuenow="'+f.hp+'"><i style="width:'+pc+'%" class="'+(pc<30?'low':pc<60?'mid':'')+'"></i></div><div class="bt-hpt" id="bthpt'+side+'">'+t('{a} / {b} PV',{a:f.hp,b:f.max})+(sd.g?' · '+t('Protégé'):'')+'</div><div class="bt-ch'+(sd.ch>=BCH?' full':'')+'" id="btch'+side+'" title="'+esc(t('Jauge d\'Ultime'))+'">'+[0,1,2].map(function(i){return '<u class="'+(i<sd.ch?'on':'')+'"></u>'}).join('')+'<small>'+(sd.ch>=BCH?t('ULTIME PRÊT'):t('Ultime'))+'</small></div>'+
    '<div class="bt-team">'+sd.t.map(function(x,i){var cc=BYID[x.id];return '<span class="tok'+(x.hp<=0?' ko':'')+(sd.t[Math.min(sd.i,2)]===x?' on':'')+'" title="'+esc(cc.n)+'">'+bThumb(cc,30)+'</span>'}).join('')+'</div></div><span class="bt-float" id="btfl'+side+'"></span></div>';
 }
 function bvRender(){
@@ -3267,9 +3293,9 @@ function bvRender(){
     h+='<div class="bt-end '+(won?'won':'lost')+'"><h2>'+(won?t('Victoire !'):t('Défaite'))+'</h2><p>'+(v.ff==='op'?t('{name} a abandonné.',{name:esc(nm)}):v.ff==='me'?t('Tu as abandonné.'):(won?t('Bien joué !'):t('Ce sera pour la prochaine fois.')))+(r&&r.rw?' '+t('+{n} feuilles',{n:r.rw}):(r&&!r.rw?' '+t('Limite de récompenses atteinte aujourd\'hui.'):''))+'</p><div class="sh-actions" style="justify-content:center"><button class="btn btn-primary" data-act="bdis" data-tid="'+esc(BV.tid)+'">'+t('Terminer')+'</button>'+(v.e.ai?'<button class="btn" data-act="brem" data-tid="'+esc(BV.tid)+'">'+t('Revanche')+'</button>':'')+'</div></div>';
   }else{
     var A=bAct(st,my),D=bAct(st,opp),can=ph==='choose',mu=BMULTTXT(A,D);
-    var mv=[0,1,2].map(function(m){
-      var dis=!can||(m===2&&st.s[my].gcd>0),nmv=t(bMoveName(A.el,m)),ds=m===0?t('Dégâts sûrs'):m===1?t('Fort · 80 % de précision'):(st.s[my].gcd>0?t('Indisponible ce tour'):t('Soigne 12 % · dégâts ÷2'));
-      var extra=m===1&&mu?'<em class="'+(mu.up?'up':'down')+'">'+mu.t+'</em>':'';
+    var mv=[0,1,2,3].map(function(m){
+      var dis=!can||(m===2&&st.s[my].gcd>0)||(m===3&&st.s[my].ch<BCH),nmv=t(bMoveName(A.el,m)),ds=m===0?t('Dégâts sûrs'):m===1?t('Fort · 80 % de précision'):m===3?(st.s[my].ch>=BCH?t('×2,4 · ne rate jamais · ignore la Pause'):t('Jauge {n} / 3',{n:st.s[my].ch})):(st.s[my].gcd>0?t('Indisponible ce tour'):t('Soigne 12 % · dégâts ÷2'));
+      var extra=(m===1||m===3&&st.s[my].ch>=BCH)&&mu?'<em class="'+(mu.up?'up':'down')+'">'+mu.t+'</em>':'';
       return '<button class="bt-mv m'+m+'" data-act="bmove" data-m="'+m+'"'+(dis?' disabled':'')+'><b>'+esc(nmv)+'</b><small>'+ds+'</small>'+extra+'</button>';
     }).join('');
     h+='<div class="bt-moves">'+mv+'</div>'+(ph==='wait'?'<p class="bt-wait">'+t('Choix envoyé. En attente de {name}…',{name:esc(nm)})+'</p>':'')+'<div class="sh-actions"><button class="btn" data-act="bff" data-tid="'+esc(BV.tid)+'">'+t('Abandonner')+'</button></div>';
@@ -3305,7 +3331,7 @@ function bvAnimate(st,v,evs){
   [0,1].forEach(function(sd){
     var hpb=$('#bthp'+sd);if(!hpb)return;
     var cid=hpb.getAttribute('data-c'),max=+hpb.getAttribute('data-max'),hp=+hpb.getAttribute('data-hp');
-    raw.forEach(function(x){if(x.k==='hit'&&x.tgt===cid&&x.side!==sd)hp+=x.dmg;if(x.k==='guard'&&x.card===cid&&x.side===sd)hp-=x.heal});
+    raw.forEach(function(x){if(x.k==='hit'&&x.tgt===cid&&x.side!==sd)hp+=x.dmg;if((x.k==='guard'||x.k==='regen')&&x.card===cid&&x.side===sd)hp-=x.heal});
     var i=hpb.firstChild;if(i){i.style.transition='none';}
     bvBar(sd,Math.min(max,Math.max(0,hp)),max);
     if(i){void i.offsetWidth;i.style.transition=''}
@@ -3323,7 +3349,7 @@ function bvAnimate(st,v,evs){
         if(!rm&&asr&&dsr){
           var p0=bvPos(asr,ar),p1=bvPos(dsr,ar);
           var pr=bvFx(ar,'proj','',p0.x,p0.y,'--pc:'+col+';');
-          if(x.mv===1)pr.classList.add('big');
+          if(x.mv===1||x.mv===3)pr.classList.add('big');if(x.mv===3&&!rm){ar.classList.remove('ult');void ar.offsetWidth;ar.classList.add('ult')}
           var an=bvAn(pr,[{transform:'translate(-50%,-50%) scale(.4)',opacity:0},{transform:'translate(-50%,-50%) scale(1)',opacity:1,offset:.15},{left:p1.x+'px',top:p1.y+'px',transform:'translate(-50%,-50%) scale(1.1)',opacity:1,offset:.95},{left:p1.x+'px',top:p1.y+'px',opacity:0}],{duration:x.k==='miss'?460:380,delay:140,easing:'ease-in',fill:'forwards'});
           setTimeout(function(){pr.remove()},700);
         }
@@ -3335,7 +3361,7 @@ function bvAnimate(st,v,evs){
           if(!rm){
             if(df){df.classList.remove('shake');void df.offsetWidth;df.classList.add('shake')}
             bvAn(dsr,[{filter:'brightness(1)'},{filter:'brightness(2.4) saturate(.6)',offset:.2},{filter:'brightness(1)'}],{duration:420});
-            bvBurst(ar,pd.x,pd.y,col,x.crit?18:10,x.crit);
+            bvBurst(ar,pd.x,pd.y,col,x.mv===3?30:x.crit?18:10,x.crit||x.mv===3);
             if(x.crit){ar.classList.remove('crit');void ar.offsetWidth;ar.classList.add('crit')}
           }
           if(fl){fl.textContent='−'+x.dmg;fl.className='bt-float '+(x.crit?'crit':'')+' on';setTimeout(function(){fl.classList.remove('on')},1000)}
@@ -3351,7 +3377,7 @@ function bvAnimate(st,v,evs){
           bvAn(dsr,[{transform:'translateX(0)'},{transform:'translateX(-22px) rotate(-6deg)',offset:.4},{transform:'translateX(0)'}],{duration:420});
           bvFx(ar,'tag down',t('Raté !'),pd.x,pd.y-40);
         },rm?0:420);
-      }else if(x.k==='guard'){
+      }else if(x.k==='guard'||x.k==='regen'){
         var pa=asr?bvPos(asr,ar):{x:60,y:60};
         for(var k=0;k<7;k++){(function(k){var e=bvFx(ar,'heal','+',pa.x-30+k*10,pa.y+20);bvAn(e,[{transform:'translateY(0)',opacity:0},{opacity:1,offset:.3},{transform:'translateY(-54px)',opacity:0}],{duration:900,delay:k*70,fill:'forwards'});setTimeout(function(){e.remove()},1500)})(k)}
         bvAn(asr,[{filter:'brightness(1)'},{filter:'brightness(1.5) hue-rotate(-30deg)',offset:.4},{filter:'brightness(1)'}],{duration:700});
@@ -3415,6 +3441,8 @@ function rankHTML(){
   });
   return h+'</div></section>';
 }
+
+Object.assign(EN,{'Chaque équipe compte 3 cartes. Les PV, l\'attaque et la vitesse dépendent de la rareté et de la note de la carte. À chaque tour, les deux joueurs choisissent en secret : Infusion (dégâts sûrs), l\'attaque signature de la famille (plus forte, 80 % de précision) ou Pause thé (soigne un peu et divise les dégâts reçus par deux, pas deux tours de suite). Chaque coup donné ou reçu charge la jauge d\'Ultime : à 3, l\'Ultime (×2,4) ne rate jamais et ignore la Pause thé. Chaque planète a son trait : Pétillant (plus de critiques), Ivresse (+12 % de dégâts), Source (récupère 4 % de PV par tour), Caféine (plus rapide), Boost (jauge plus vite), Zen (Pause thé renforcée). Le plus rapide frappe en premier. Une carte K.O. laisse la place à la suivante.':"Each team has 3 cards. HP, attack and speed depend on the card's rarity and score. Each turn, both players secretly choose: Steeping (reliable damage), the family's signature attack (stronger, 80% accuracy) or Tea Break (heals a little and halves damage taken, not two turns in a row). Every hit dealt or taken charges the Ultimate gauge: at 3, the Ultimate (×2.4) never misses and ignores Tea Break. Each planet has its own trait: Sparkling (more crits), Tipsy (+12% damage), Spring (recovers 4% HP per turn), Caffeine (faster), Boost (gauge charges faster), Zen (stronger Tea Break). The fastest strikes first. A knocked-out card makes way for the next.",'Zen':'Zen','Pétillant':'Sparkling','Ivresse':'Tipsy','Source':'Spring','Caféine':'Caffeine','Boost':'Boost','Pause thé : +6 % de soin':'Tea Break: +6% healing','Coups critiques plus fréquents':'More frequent critical hits','+12 % de dégâts, attaque forte moins précise':'+12% damage, strong attack less accurate','Récupère 4 % de PV à chaque tour':'Recovers 4% HP every turn','Plus rapide':'Faster','Charge l\'Ultime plus vite':'Charges the Ultimate faster','Jauge d\'Ultime':'Ultimate gauge','ULTIME PRÊT':'ULTIMATE READY','Ultime':'Ultimate','×2,4 · ne rate jamais · ignore la Pause':'×2.4 · never misses · ignores Tea Break','Jauge {n} / 3':'Gauge {n} / 3','{name} récupère {n} PV (Source).':'{name} recovers {n} HP (Spring).'});
 
 /* ================= PERSONNAGES DE COMBAT ================= */
 var HEROES=[
@@ -4185,17 +4213,19 @@ function wlFinish(guest){
 
 /* ================= TUTORIEL ================= */
 var TUT=null;
-var TSTEPS=[
- {tab:'',emo:'happy',h:'Miaou ! Moi, c\'est Teapee',p:'Je m\'appelle Teapee, le gardien de ce salon de thé, et je reste en bas à droite. Je te donne des conseils et je me cache parfois : si tu me retrouves, tu gagnes des feuilles.'},
- {tab:'home',emo:'excited',h:'Les sachets',p:'Chaque sachet contient 6 cartes de thés ou de tisanes. Un sachet classique gratuit revient toutes les 15 minutes, et tu peux en garder 6 en réserve.'},
- {tab:'home',emo:'surprised',h:'Raretés et doublons',p:'Les cartes vont de Commune à Légendaire. Un doublon n\'est jamais perdu : il se change en feuilles, la monnaie du salon, pour ouvrir d\'autres sachets ou des boîtes de 10.'},
- {tab:'col',emo:'surprised',h:'Chaque thé a son emballage',p:'Chaque carte montre l\'emballage illustré du thé. Ouvre une carte et touche l\'image : tu vois la couleur de l\'infusion dans une tasse.'},
- {tab:'col',emo:'think',h:'Collection et classement',p:'Retrouve tes cartes dans la Collection. Le Classement note les thés, les tisanes et les maisons sur 100. Les notes sont inventées pour le jeu.'},
- {tab:'ch',emo:'happy',h:'Défis et quiz',p:'Chaque jour, de nouvelles quêtes. Et dans l\'onglet Quiz, Fabien te pose des questions sur le thé, en quatre difficultés.'},
- {tab:'bt',emo:'excited',h:'Combats',p:'Forme une équipe de 3 cartes et bats-toi : entraîne-toi contre moi, ou défie tes amis. Chaque thé a ses attaques et ses points de vie.'},
- {tab:'soc',emo:'excited',h:'Amis et échanges',p:'Ajoute des amis avec leur code, vois qui est en ligne, compare vos collections dans le classement et échange des cartes. Tu peux aussi changer les couleurs dans Personnaliser, en haut de l\'écran.'},
- {tab:'',emo:'excited',h:'À toi de jouer !',p:'Ton premier sachet est offert. Ouvre-le !',last:true}
-];
+var TSTEPS=[{tab:"",emo:"happy",h:"Miaou ! Bienvenue dans DrinkMaster",p:"Je m'appelle Teapee, ta mascotte, et je reste en bas à droite. Je te donne des conseils et je me cache parfois : si tu me retrouves, tu gagnes de la monnaie."},
+ {tab:"home",emo:"excited",h:"Un système solaire de boissons",p:"Le jeu compte six planètes : Thé, Sodas, Alcools (réservée aux adultes), Eaux, Cafés et Boissons énergisantes. Touche la planète en haut de l'écran, glisse ton doigt pour naviguer dans le système solaire 3D, touche une planète puis Voyager.",el:"#hPlanet"},
+ {tab:"home",emo:"surprised",h:"Chaque planète a sa monnaie",p:"Sur chaque planète, tu as ta propre monnaie : feuilles, bulles, bouchons, gouttes, grains ou volts. Elle se gagne et se dépense uniquement là-bas. Les cartes, le classement, les quiz et les succès sont aussi propres à chaque planète."},
+ {tab:"home",emo:"excited",h:"Les packs",p:"Chaque pack contient 6 cartes. Un pack gratuit revient toutes les 15 minutes (6 en réserve). Tu trouves aussi des packs par catégorie, des packs prestige et, pendant Halloween, des éditions spéciales. Chaque planète a son contenant : canette, bouteille, gourde, paquet de café…"},
+ {tab:"home",emo:"happy",h:"Une ouverture par planète",p:"Dans « Mode d'ouverture », choisis comment ouvrir tes packs. Chaque planète a son mode unique : secouer la canette, servir le verre, laisser tomber les gouttes, lancer le percolateur ou charger l'éclair."},
+ {tab:"home",emo:"surprised",h:"Raretés et doublons",p:"Les cartes vont de Commune à Légendaire. Un doublon n'est jamais perdu : il se change en monnaie de la planète, pour ouvrir d'autres packs ou des boîtes de 10."},
+ {tab:"col",emo:"think",h:"Collection et classement",p:"Retrouve tes cartes dans la Collection, classées par rareté, catégorie ou marque. Le Classement note chaque boisson sur 100. Les notes sont inventées pour le jeu."},
+ {tab:"ch",emo:"happy",h:"Défis, quiz et succès",p:"Chaque jour, de nouvelles quêtes. Fabien te pose des questions propres à chaque planète, en quatre difficultés. Tu peux aussi débloquer des succès et jouer à « Plus ou moins » pour gagner de la monnaie."},
+ {tab:"bt",emo:"excited",h:"Combats",p:"Forme une équipe de 3 cartes de n'importe quelle planète. Chaque coup charge la jauge d'Ultime : à 3, l'Ultime ne rate jamais ! Chaque planète a aussi son trait (Pétillant, Ivresse, Source, Caféine, Boost, Zen). Entraîne-toi contre moi ou défie tes amis."},
+ {tab:"soc",emo:"excited",h:"Amis et échanges",p:"Ajoute des amis avec leur code, vois qui est en ligne, compare vos collections dans le classement et échange des cartes. Tu peux changer les couleurs dans Personnaliser, en haut de l'écran."},
+ {tab:"home",emo:"happy",h:"De la musique !",p:"Touche la note de musique en haut pour lancer la musique : 50 pistes, une ambiance par planète. Elle change toute seule quand tu voyages d'une planète à l'autre.",el:"#hMusic"},
+ {tab:"",emo:"excited",h:"À toi de jouer !",p:"Ton premier pack est offert. Ouvre-le !",last:true}];
+Object.assign(EN,{"Miaou ! Bienvenue dans DrinkMaster":"Meow! Welcome to DrinkMaster","Je m'appelle Teapee, ta mascotte, et je reste en bas à droite. Je te donne des conseils et je me cache parfois : si tu me retrouves, tu gagnes de la monnaie.":"I'm Teapee, your mascot, and I stay at the bottom right. I give you tips and sometimes I hide: if you find me, you earn currency.","Un système solaire de boissons":"A solar system of drinks","Le jeu compte six planètes : Thé, Sodas, Alcools (réservée aux adultes), Eaux, Cafés et Boissons énergisantes. Touche la planète en haut de l'écran, glisse ton doigt pour naviguer dans le système solaire 3D, touche une planète puis Voyager.":"The game has six planets: Tea, Sodas, Spirits (adults only), Waters, Coffees and Energy drinks. Tap the planet button at the top, swipe to move around the 3D solar system, tap a planet, then Travel.","Chaque planète a sa monnaie":"Each planet has its own currency","Sur chaque planète, tu as ta propre monnaie : feuilles, bulles, bouchons, gouttes, grains ou volts. Elle se gagne et se dépense uniquement là-bas. Les cartes, le classement, les quiz et les succès sont aussi propres à chaque planète.":"Every planet has its own currency: leaves, bubbles, corks, drops, beans or volts. You earn and spend it only there. Cards, rankings, quizzes and achievements are also separate on each planet.","Les packs":"Packs","Chaque pack contient 6 cartes. Un pack gratuit revient toutes les 15 minutes (6 en réserve). Tu trouves aussi des packs par catégorie, des packs prestige et, pendant Halloween, des éditions spéciales. Chaque planète a son contenant : canette, bouteille, gourde, paquet de café…":"Each pack holds 6 cards. A free pack comes back every 15 minutes (up to 6 stored). You also find packs by category, prestige packs and, during Halloween, special editions. Each planet has its own container: can, bottle, flask, coffee bag…","Une ouverture par planète":"One opening style per planet","Dans « Mode d'ouverture », choisis comment ouvrir tes packs. Chaque planète a son mode unique : secouer la canette, servir le verre, laisser tomber les gouttes, lancer le percolateur ou charger l'éclair.":"Under “Opening mode”, choose how to open your packs. Every planet has its own unique mode: shake the can, pour the glass, let the drops fall, start the coffee brew or charge the bolt.","Raretés et doublons":"Rarities and duplicates","Les cartes vont de Commune à Légendaire. Un doublon n'est jamais perdu : il se change en monnaie de la planète, pour ouvrir d'autres packs ou des boîtes de 10.":"Cards range from Common to Legendary. A duplicate is never lost: it turns into that planet's currency, to open more packs or boxes of 10.","Collection et classement":"Collection and ranking","Retrouve tes cartes dans la Collection, classées par rareté, catégorie ou marque. Le Classement note chaque boisson sur 100. Les notes sont inventées pour le jeu.":"Find your cards in the Collection, sorted by rarity, category or brand. The Ranking scores each drink out of 100. The scores are invented for the game.","Défis, quiz et succès":"Challenges, quizzes and achievements","Chaque jour, de nouvelles quêtes. Fabien te pose des questions propres à chaque planète, en quatre difficultés. Tu peux aussi débloquer des succès et jouer à « Plus ou moins » pour gagner de la monnaie.":"New quests every day. Fabien asks questions specific to each planet, in four difficulty levels. You can also unlock achievements and play “Higher or lower” to earn currency.","Combats":"Battles","Forme une équipe de 3 cartes de n'importe quelle planète. Chaque coup charge la jauge d'Ultime : à 3, l'Ultime ne rate jamais ! Chaque planète a aussi son trait (Pétillant, Ivresse, Source, Caféine, Boost, Zen). Entraîne-toi contre moi ou défie tes amis.":"Build a team of 3 cards from any planet. Every hit charges the Ultimate gauge: at 3, the Ultimate never misses! Each planet also has its own trait (Sparkling, Tipsy, Spring, Caffeine, Boost, Zen). Train against me or challenge your friends.","Amis et échanges":"Friends and trades","Ajoute des amis avec leur code, vois qui est en ligne, compare vos collections dans le classement et échange des cartes. Tu peux changer les couleurs dans Personnaliser, en haut de l'écran.":"Add friends with their code, see who is online, compare your collections in the ranking and trade cards. You can change colours in Customise, at the top of the screen.","De la musique !":"Music!","Touche la note de musique en haut pour lancer la musique : 50 pistes, une ambiance par planète. Elle change toute seule quand tu voyages d'une planète à l'autre.":"Tap the music note at the top to start the music: 50 tracks, one mood per planet. It changes by itself when you travel from one planet to another.","À toi de jouer !":"Your turn!","Ton premier pack est offert. Ouvre-le !":"Your first pack is on the house. Open it!",'Ouvrir mon pack offert':'Open my free pack'});
 function startTutorial(){
   if(S.ob>=2)return;
   TUT={i:0};tutRender();
@@ -4203,13 +4233,13 @@ function startTutorial(){
 function tutRender(){
   var s=TSTEPS[TUT.i],e=$('#tut');
   if(!e){e=document.createElement('div');e.id='tut';document.body.appendChild(e)}
-  $$('.tab').forEach(function(b){b.classList.remove('hl')});
+  $$('.tab,.ibtn').forEach(function(b){b.classList.remove('hl')});if(s.el){var he=$(s.el);if(he)he.classList.add('hl')}
   if(s.tab){var tb=$('.tab[data-v="'+s.tab+'"]');if(tb)tb.classList.add('hl');if(V.view!==s.tab&&s.tab!=='home'||(s.tab==='home'&&V.view!=='home')){V.view=s.tab;render()}}
   e.innerHTML='<div class="tut"><div class="tut-box" role="dialog" aria-label="'+esc(t('Tutoriel'))+'"><div class="tut-cat">'+catSVG({emo:s.emo,lab:!!s.lab,cls:s.lab?'dress':''})+'</div><div><div class="tut-dots">'+TSTEPS.map(function(_,j){return '<i class="'+(j===TUT.i?'on':'')+'"></i>'}).join('')+'</div><h3>'+t(s.h)+'</h3><p>'+t(s.p)+'</p><div class="row2">'+
-   (s.last?'<button class="btn btn-primary" data-act="tut-gift">'+t('Ouvrir mon sachet offert')+'</button>':'<button class="btn btn-primary" data-act="tut-next">'+t('Suivant')+'</button>')+(TUT.i>0&&!s.last?'<button class="btn" data-act="tut-prev">'+t('Précédent')+'</button>':'')+(s.last?'':'<button class="btn" data-act="tut-skip">'+t('Passer le tutoriel')+'</button>')+'</div></div></div></div>';
+   (s.last?'<button class="btn btn-primary" data-act="tut-gift">'+t('Ouvrir mon pack offert')+'</button>':'<button class="btn btn-primary" data-act="tut-next">'+t('Suivant')+'</button>')+(TUT.i>0&&!s.last?'<button class="btn" data-act="tut-prev">'+t('Précédent')+'</button>':'')+(s.last?'':'<button class="btn" data-act="tut-skip">'+t('Passer le tutoriel')+'</button>')+'</div></div></div></div>';
 }
 function endTutorial(){
-  TUT=null;var e=$('#tut');if(e)e.remove();$$('.tab').forEach(function(b){b.classList.remove('hl')});
+  TUT=null;var e=$('#tut');if(e)e.remove();$$('.tab,.ibtn').forEach(function(b){b.classList.remove('hl')});
   if(S.ob<2){S.ob=2;addBond(2);touch()}
   render();
 }
