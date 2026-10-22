@@ -1,4 +1,4 @@
-# TeaMaster 🍵
+# DrinkMaster 🍵
 
 Jeu de cartes de thés et de tisanes : ouvre des sachets, complète ta collection, réponds au quiz de Fabien et retrouve Teapee le chat.
 

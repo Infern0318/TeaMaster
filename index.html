@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>TeaMaster</title>
-<meta name="description" content="TeaMaster : collectionne des milliers de cartes de thés et de tisanes, ouvre des sachets, réponds au quiz de Fabien et retrouve Teapee le chat.">
-<meta property="og:title" content="TeaMaster"><meta property="og:description" content="Le jeu de cartes de thés et de tisanes.">
+<title>DrinkMaster</title>
+<meta name="description" content="DrinkMaster : collectionne des milliers de cartes de thés, sodas, alcools, eaux, cafés et boissons énergisantes, ouvre des packs, réponds au quiz de Fabien et retrouve Teapee le chat.">
+<meta property="og:title" content="DrinkMaster"><meta property="og:description" content="Le jeu de cartes des boissons du monde.">
 <link rel="icon" type="image/svg+xml" href="icon.svg">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#1c4a38"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="TeaMaster"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="DrinkMaster"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 <script src="config.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -771,7 +771,7 @@ html[data-planet="energy"] .card{box-shadow:0 0 0 1px color-mix(in srgb,var(--cc
   <header class="top">
     <div class="logo">
       <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="15" fill="none" stroke="var(--accent)" stroke-width="1.5"/><path d="M8 22c0-8 6-13 15-13 0 8-5 14-15 13z" fill="var(--jade)"/><path d="M8 22l9-9" stroke="var(--bg)" stroke-width="1.5" stroke-linecap="round"/></svg>
-      <span>TeaMaster</span>
+      <span>DrinkMaster</span>
     </div>
     <div class="chips">
       <span class="chip"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 20C4 10 10 4 21 4c0 10-6 16-17 16z"/></svg><b id="hLeaves">0</b></span>
@@ -1671,7 +1671,7 @@ EN["Pas encore dans ta collection"]="Not in your collection yet";
 EN["Carte mystère"]="Mystery card";
 EN["Cette carte n'est pas encore dans ta collection. Elle est classée N° {rank} parmi les {g}, de rareté {r}, dans la famille « {f} »."]="This card is not in your collection yet. It is ranked no. {rank} among the {g}, of {r} rarity, in the \"{f}\" family.";
 EN["Fiche de la carte"]="Card sheet";
-EN["Collectionne les thés et les tisanes du monde entier."]="Collect teas and herbal teas from around the world.";
+EN["Collectionne les boissons du monde entier."]="Collect drinks from around the world.";
 EN["Se connecter"]="Sign in";
 EN["Retrouve ta progression sur ton compte."]="Pick up your progress on your account.";
 EN["Créer un compte"]="Create an account";
@@ -1684,7 +1684,7 @@ EN["Bon retour, {name} !"]="Welcome back, {name}!";
 EN["Ta progression a été retrouvée : {n} cartes."]="Your progress was found: {n} cards.";
 EN["Continuer"]="Continue";
 EN["Connexion impossible"]="Sign-in impossible";
-EN["Le compte de TeaMaster est ton compte Claude : il n'y a pas de mot de passe dans le jeu. Pour te connecter, ouvre cette page depuis ton compte Claude connecté."]="TeaMaster's account is your Claude account: there is no password in the game. To sign in, open this page from your signed-in Claude account.";
+EN["Le compte de DrinkMaster est ton compte Claude : il n'y a pas de mot de passe dans le jeu. Pour te connecter, ouvre cette page depuis ton compte Claude connecté."]="DrinkMaster's account is your Claude account: there is no password in the game. To sign in, open this page from your signed-in Claude account.";
 EN["Continuer en invité"]="Continue as guest";
 EN["Tu pourras te reconnecter plus tard : ta progression locale sera alors sauvegardée."]="You can sign in later: your local progress will then be saved.";
 EN["Retour"]="Back";
@@ -2801,7 +2801,7 @@ function cardHTML(c,o){
 var BACKS=[{id:'classic',n:'Thé vert'},{id:'sakura',n:'Sakura'},{id:'night',n:'Nuit étoilée'},{id:'porcelain',n:'Porcelaine'},{id:'amber',n:'Ambre'}];
 function backHTML(id){
   id=id||S.set.back;
-  return '<div class="cw"><div class="cback cb-'+id+'"><div><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 24c0-10 7-16 19-16 0 10-6 17-19 16z" fill="currentColor"/><path d="M6 24l11-11" stroke="var(--cbi,#0f2a20)" stroke-width="1.6" stroke-linecap="round"/></svg><span>TeaMaster</span></div></div></div>';
+  return '<div class="cw"><div class="cback cb-'+id+'"><div><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 24c0-10 7-16 19-16 0 10-6 17-19 16z" fill="currentColor"/><path d="M6 24l11-11" stroke="var(--cbi,#0f2a20)" stroke-width="1.6" stroke-linecap="round"/></svg><span>DrinkMaster</span></div></div></div>';
 }
 var PKN={soda:'Soda',alcohol:'Cave',water:'Source',coffee:'Torréfaction',energy:'Boost'};
 var PKH={soda:'Tire l\'anneau pour ouvrir la canette',alcohol:'Tire sur le bouchon pour ouvrir la bouteille',water:'Dévisse le bouchon pour ouvrir la gourde',coffee:'Déchire le paquet pour l\'ouvrir',energy:'Tire la languette pour ouvrir la canette'};
@@ -3926,7 +3926,7 @@ function ovRender(){
   var e=ovEl(),P=PACKS[OV.type],h='<button class="ov-x" data-act="ov-x">'+(OV.phase==='summary'?t('Fermer'):t('Passer'))+'</button><div class="ov-col">';
   if(OV.phase==='sealed'){
     if(OV.mode==='coffret'){
-      h+='<p class="ov-hint">'+t('Ouvre le coffret')+'</p><div class="bx" style="--pk:'+P.c+';--pk2:'+shade(P.c,.55)+'"><div class="bx-body"><div class="bx-title"><span>TeaMaster · '+esc(t(P.n))+'</span><small>'+t('6 cartes')+'</small></div><div class="bx-grid" style="grid-template-columns:repeat(3,1fr)">'+[0,1,2,3,4,5].map(function(i){return '<div class="bx-slot">'+bagHTML(OV.type,{stat:true,id:false})+'</div>'}).join('')+'</div><button class="bx-lid" data-act="clid"><b>'+esc(t(P.n))+'</b><small>'+t('6 cartes')+'</small><small>'+t('Touche pour ouvrir')+'</small></button></div></div>';
+      h+='<p class="ov-hint">'+t('Ouvre le coffret')+'</p><div class="bx" style="--pk:'+P.c+';--pk2:'+shade(P.c,.55)+'"><div class="bx-body"><div class="bx-title"><span>DrinkMaster · '+esc(t(P.n))+'</span><small>'+t('6 cartes')+'</small></div><div class="bx-grid" style="grid-template-columns:repeat(3,1fr)">'+[0,1,2,3,4,5].map(function(i){return '<div class="bx-slot">'+bagHTML(OV.type,{stat:true,id:false})+'</div>'}).join('')+'</div><button class="bx-lid" data-act="clid"><b>'+esc(t(P.n))+'</b><small>'+t('6 cartes')+'</small><small>'+t('Touche pour ouvrir')+'</small></button></div></div>';
     }else if(OV.mode==='infuse'){
       h+='<p class="ov-hint">'+t('Plonge le sachet dans la tasse')+'</p><div class="cupscene" id="cupsc" style="--cupcol:'+dominantColor(OV.res)+'"><div class="sbag"><u></u><i style="background:linear-gradient(160deg,'+P.c+','+shade(P.c,.55)+')"></i></div><div class="steam"><i></i><i></i><i></i><i></i><i></i></div><div class="cup"><div class="water"></div></div><div class="handle"></div></div><div class="steepbar"><i></i></div><div class="ov-actions"><button class="btn btn-primary" data-act="steep" id="steepBtn">'+t('Plonger le sachet')+'</button></div><p class="ov-sub">'+t('Sachet {name} · 6 cartes',{name:esc(t(P.n))})+'</p>';
     }else h+='<p class="ov-hint">'+t(PACKS[OV.type].pl&&PKH[PACKS[OV.type].pl]||'Tire sur l\'étiquette pour ouvrir le sachet')+'</p>'+bagHTML(OV.type,{tag:true})+'<p class="ov-sub">'+t('Sachet {name} · 6 cartes',{name:esc(t(P.n))})+'</p>';
@@ -3949,7 +3949,7 @@ function ovRender(){
     if(OV.quick){var tk=OV;setTimeout(function(){if(OV!==tk)return;$$('#ov .sumgrid .flipper').forEach(function(f,i){setTimeout(function(){if(OV===tk)f.classList.add('flipped')},i*300)})},350)}
   }
   e.innerHTML=h+'</div>';
-  if(OV.phase==='fan'&&OV.mode==='coffret'){var fn=e.querySelector('.fan'),w=document.createElement('div');w.className='bx open tray';w.style.cssText='--pk:'+P.c+';--pk2:'+shade(P.c,.55);w.innerHTML='<div class="bx-body"><div class="bx-title"><span>TeaMaster · '+esc(t(P.n))+'</span><small>'+t('6 cartes')+'</small></div></div>';fn.parentNode.insertBefore(w,fn);w.firstChild.appendChild(fn)}
+  if(OV.phase==='fan'&&OV.mode==='coffret'){var fn=e.querySelector('.fan'),w=document.createElement('div');w.className='bx open tray';w.style.cssText='--pk:'+P.c+';--pk2:'+shade(P.c,.55);w.innerHTML='<div class="bx-body"><div class="bx-title"><span>DrinkMaster · '+esc(t(P.n))+'</span><small>'+t('6 cartes')+'</small></div></div>';fn.parentNode.insertBefore(w,fn);w.firstChild.appendChild(fn)}
   var f=e.querySelector('button:not([hidden]):not(.ov-x)')||e.querySelector('button:not([hidden])');if(f)f.focus({preventScroll:true});
 }
 function ovFlip(){
@@ -4016,7 +4016,7 @@ function bxRender(){
   var P=PACKS[S.box.t],left=boxLeft();
   var slots=S.box.s.map(function(on,i){return '<button class="bx-slot" data-act="bxslot" data-i="'+i+'"'+(on&&BX.open?'':' disabled')+' aria-label="'+esc(t('Sachet {n}',{n:i+1}))+'"><span class="num">'+(i+1)+'</span>'+(on?bagHTML(S.box.t,{stat:true,id:false}):'')+'</button>'}).join('');
   e.innerHTML='<button class="ov-x" data-act="bxclose">'+t('Fermer')+'</button><div class="ov-col"><p class="ov-hint">'+(BX.open?t('Choisis un sachet dans la boîte'):t('Ouvre la boîte'))+'</p>'+
-   '<div class="bx'+(BX.open?' open':'')+'" style="--pk:'+P.c+';--pk2:'+shade(P.c,.55)+'"><div class="bx-body"><div class="bx-title"><span>TeaMaster · '+esc(t(P.n))+'</span><small>'+tp('{n} sachet','{n} sachets',left)+'</small></div><div class="bx-grid">'+slots+'</div>'+
+   '<div class="bx'+(BX.open?' open':'')+'" style="--pk:'+P.c+';--pk2:'+shade(P.c,.55)+'"><div class="bx-body"><div class="bx-title"><span>DrinkMaster · '+esc(t(P.n))+'</span><small>'+tp('{n} sachet','{n} sachets',left)+'</small></div><div class="bx-grid">'+slots+'</div>'+
    (BX.open?'':'<button class="bx-lid" data-act="bxlid"><b>'+esc(t(P.n))+'</b><small>'+t('10 sachets')+'</small><small>'+t('Touche pour ouvrir')+'</small></button>')+'</div></div>'+
    '<p class="ov-sub">'+t('Les sachets non ouverts restent dans ta boîte.')+'</p><div class="ov-actions"><button class="btn btn-primary" data-act="bxall"'+(BX.open?'':' disabled')+'>'+t('Tout ouvrir d\'un coup')+'</button><button class="btn" data-act="bxclose">'+t('Fermer')+'</button></div></div>';
 }
@@ -4064,7 +4064,7 @@ function closeDetail(){var m=$('#md');if(m)m.remove()}
 
 /* ================= ACCUEIL, COMPTE ================= */
 var WL=null;
-function wlEl(){var e=$('#wl');if(!e){e=document.createElement('div');e.id='wl';e.className='sh solid';e.setAttribute('role','dialog');e.setAttribute('aria-modal','true');e.setAttribute('aria-label','TeaMaster');document.body.appendChild(e)}return e}
+function wlEl(){var e=$('#wl');if(!e){e=document.createElement('div');e.id='wl';e.className='sh solid';e.setAttribute('role','dialog');e.setAttribute('aria-modal','true');e.setAttribute('aria-label','DrinkMaster');document.body.appendChild(e)}return e}
 function langSeg(){return '<div class="seg" role="group" aria-label="Langue / Language">'+Object.keys(LANGS).map(function(l){return '<button data-act="setlang" data-l="'+l+'" aria-pressed="'+(LANG===l)+'">'+LANGS[l]+'</button>'}).join('')+'</div>'}
 function logoSVG(){return logoImg(84,20)}
 function showWelcome(screen){
@@ -4075,7 +4075,7 @@ function showWelcome(screen){
 function wlRender(){
   var e=wlEl(),sc=WL.screen,h='<div class="sh-box" style="max-width:520px"><div class="row2" style="justify-content:flex-end;margin-bottom:6px">'+langSeg()+'</div>';
   if(sc==='home'){
-    h+='<div class="welcome-logo">'+logoSVG()+'<h1>TeaMaster</h1><p class="muted" style="margin:0">'+t('Collectionne les thés et les tisanes du monde entier.')+'</p><div style="width:120px">'+catSVG({emo:'happy',cls:'walk-no'})+'</div></div>'+
+    h+='<div class="welcome-logo">'+logoSVG()+'<h1>DrinkMaster</h1><p class="muted" style="margin:0">'+t('Collectionne les boissons du monde entier.')+'</p><div style="width:120px">'+catSVG({emo:'happy',cls:'walk-no'})+'</div></div>'+
      '<div class="choice">'+((STANDALONE&&!WEB.on)?'':'<button class="btn btn-primary" data-act="wl-login"><span><b>'+t('Se connecter')+'</b><small>'+(WEB.on?t('Retrouve ta progression avec ton pseudo et ton mot de passe.'):t('Retrouve ta progression sur ton compte.'))+'</small></span></button>'+
      '<button class="btn" data-act="wl-create"><span><b>'+t('Créer un compte')+'</b><small>'+(WEB.on?t('Pseudo et mot de passe, ta progression est sauvegardée en ligne.'):t('Nouveau profil, sauvegardé sur ton compte Claude.'))+'</small></span></button>')+
      (WEB.on?'<button class="btn" data-act="wl-perm"><span><b>'+t('Code permanent')+'</b><small>'+t('Un seul code à retenir, sans pseudo ni mot de passe.')+'</small></span></button>':'')+
@@ -4085,7 +4085,7 @@ function wlRender(){
   }else if(sc==='found'){
     h+='<div class="welcome-logo"><div style="width:120px">'+catSVG({emo:'excited'})+'</div><h2>'+t('Bon retour, {name} !',{name:esc(dispName())})+'</h2><p class="muted">'+t('Ta progression a été retrouvée : {n} cartes.',{n:fmt(Object.keys(S.owned).length)})+'</p></div><div class="choice"><button class="btn btn-primary" data-act="wl-go"><span><b>'+t('Continuer')+'</b></span></button></div>';
   }else if(sc==='nocloud'){
-    h+='<div class="welcome-logo"><div style="width:100px">'+catSVG({emo:'sad'})+'</div><h2>'+t('Connexion impossible')+'</h2></div><p>'+t('Le compte de TeaMaster est ton compte Claude : il n\'y a pas de mot de passe dans le jeu. Pour te connecter, ouvre cette page depuis ton compte Claude connecté.')+'</p><div class="choice"><button class="btn btn-primary" data-act="wl-guest"><span><b>'+t('Continuer en invité')+'</b><small>'+t('Tu pourras te reconnecter plus tard : ta progression locale sera alors sauvegardée.')+'</small></span></button><button class="btn" data-act="wl-back"><span><b>'+t('Retour')+'</b></span></button></div>';
+    h+='<div class="welcome-logo"><div style="width:100px">'+catSVG({emo:'sad'})+'</div><h2>'+t('Connexion impossible')+'</h2></div><p>'+t('Le compte de DrinkMaster est ton compte Claude : il n\'y a pas de mot de passe dans le jeu. Pour te connecter, ouvre cette page depuis ton compte Claude connecté.')+'</p><div class="choice"><button class="btn btn-primary" data-act="wl-guest"><span><b>'+t('Continuer en invité')+'</b><small>'+t('Tu pourras te reconnecter plus tard : ta progression locale sera alors sauvegardée.')+'</small></span></button><button class="btn" data-act="wl-back"><span><b>'+t('Retour')+'</b></span></button></div>';
   }else if(sc==='code'){
     h+='<h2>'+t('Restaurer avec un code')+'</h2>'+(WL.msg?'<div class="msg err" style="margin:8px 0">'+esc(WL.msg)+'</div>':'')+'<div class="field"><label for="wlcode">'+t('Code de sauvegarde')+'</label><textarea id="wlcode" class="svta" rows="4" placeholder="TM2-…" spellcheck="false" autocomplete="off">'+esc(WL.code||'')+'</textarea></div><div class="sh-actions" style="margin:0"><button class="btn btn-primary" data-act="wl-code-go">'+t('Restaurer')+'</button><button class="btn" data-act="wl-back">'+t('Retour')+'</button></div>';
   }else if(sc==='wperm'){

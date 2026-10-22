@@ -1,4 +1,4 @@
-# Mettre TeaMaster en ligne (gratuit) avec pseudo + mot de passe
+# Mettre DrinkMaster en ligne (gratuit) avec pseudo + mot de passe
 
 Le dossier `teamaster-site` contient :
 - `index.html` : tout le jeu (un seul fichier) ;
@@ -52,9 +52,9 @@ Pour mettre à jour le jeu plus tard : remplace `index.html` et re-dépose le do
 - Supabase : gratuit au départ, avec des limites. Un projet gratuit peut être **mis en pause après environ une semaine sans activité** (il se relance depuis le tableau de bord, et les sauvegardes sont conservées). Les conditions changent : vérifie la page des tarifs.
 - Nom de domaine perso (ex. `teamaster.fr`) : **payant**, de l'ordre de quelques euros à une quinzaine d'euros par an chez un registrar (OVH, Gandi, Cloudflare…). Facultatif.
 
-## « Qu'ils tapent TeaMaster dans la barre de recherche »
+## « Qu'ils tapent DrinkMaster dans la barre de recherche »
 
-- Google ne référence pas un site instantanément et rien ne garantit une bonne place : le nom « TeaMaster » existe déjà ailleurs.
+- Google ne référence pas un site instantanément et rien ne garantit une bonne place : le nom « DrinkMaster » existe déjà ailleurs.
 - Pour t'aider : va sur https://search.google.com/search-console, ajoute ton adresse et demande l'indexation. Compte quelques jours à quelques semaines.
 - Le plus fiable reste de partager le lien directement.
 
