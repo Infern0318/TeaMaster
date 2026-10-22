@@ -1084,7 +1084,7 @@ var PACKS={
 var PACKORDER=['classic','tisane','noir','vert','oolong','blanc','aroma','fruit','japon','grand','maison','domaine','dore','citrouille'];
 PACKORDER.forEach(function(id){
   var P=PACKS[id];P.id=id;
-  (function(){var w=P.w.slice(),cut=w[4]*.65,j=0;for(var q=1;q<4;q++)if(w[q]>w[j])j=q;w[4]-=cut;w[j]+=cut;P.w=w})();P.boxCost=P.box||Math.round(P.cost*9);
+  (function(){var w=P.w.slice(),cut=w[4]*.9,j=0;for(var q=1;q<4;q++)if(w[q]>w[j])j=q;w[4]-=cut;w[j]+=cut;P.w=w})();P.boxCost=P.box||Math.round(P.cost*9);
   var base=P.f?CARDS.filter(P.f):CARDS;P.pool=[[],[],[],[],[]];base.forEach(function(c){P.pool[c.r].push(c)});
   P.size=base.length;
 });
