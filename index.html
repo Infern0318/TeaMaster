@@ -65,7 +65,7 @@ h1,h2,h3{font-family:var(--f-display);font-weight:400;margin:0}
 .chip b{font-family:var(--f-mono);font-weight:500}
 .dot-ok{width:8px;height:8px;border-radius:50%;background:var(--jade)}
 .dot-guest{width:8px;height:8px;border-radius:50%;background:var(--muted)}
-.tabs{position:fixed;left:0;right:0;bottom:0;z-index:35;display:grid;grid-template-columns:repeat(6,1fr);background:var(--surface);border-top:1px solid var(--line);
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:35;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);background:var(--surface);border-top:1px solid var(--line);
   padding:6px max(8px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px))}
 .tab{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 2px;border:0;background:none;color:var(--muted);font-size:.72rem;border-radius:10px;position:relative}
 .tab svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
@@ -295,7 +295,7 @@ dl.stats dd{margin:0;font-family:var(--f-mono);text-align:right}
 }
 
 /* ===== v2 : boutons d'en-tête, feuilles modales, thèmes ===== */
-:root{--navh:64px}
+:root{--navh:68px}
 .logo{cursor:default}
 .ibtn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:38px;height:36px;padding:0 10px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--fg);font-size:.82rem}
 .ibtn:hover{border-color:var(--muted)}
@@ -491,6 +491,7 @@ dl.stats dd{margin:0;font-family:var(--f-mono);text-align:right}
 #cat{position:fixed;left:0;bottom:calc(var(--navh) + env(safe-area-inset-bottom,0px) + 2px);z-index:33;width:88px;pointer-events:none;transition:opacity .35s}
 @media (min-width:760px){#cat{bottom:6px}}
 #cat.gone{opacity:0}
+#cat.gone .cat-body{pointer-events:none}
 #cat .cat-move{position:relative;transition-property:transform;transition-timing-function:linear;will-change:transform}
 #cat .cat-body{pointer-events:auto;cursor:pointer;display:block;border:0;background:none;padding:0;width:88px;transform-origin:50% 100%;transition:transform .2s}
 #cat .cat-body.flip{transform:scaleX(-1)}
@@ -543,11 +544,12 @@ dl.stats dd{margin:0;font-family:var(--f-mono);text-align:right}
 @media (max-width:560px){.md-card{margin-top:30px}}
 .svta{width:100%;font:500 .72rem/1.4 var(--f-mono);padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--surface2);color:var(--fg);resize:vertical;word-break:break-all}
 .qz-cat svg.fab{width:100%;max-width:112px;height:auto;display:block;margin:0 auto}
-.qz-diffs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px}
+.qz-diffs{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-top:14px}
 .qz-diff{display:flex;flex-direction:column;gap:3px;align-items:center;text-align:center;padding:12px 6px;border-radius:14px;border:2px solid var(--line);background:var(--surface2);color:var(--fg);cursor:pointer}
 .qz-diff b{font-family:var(--f-display);font-size:1.05rem;font-weight:400}
 .qz-diff span{font-size:.78rem;color:var(--muted)}.qz-diff small{font-size:.7rem;color:var(--accent)}
 .qz-diff.d1{border-color:color-mix(in srgb,var(--jade) 60%,var(--line))}.qz-diff.d2{border-color:color-mix(in srgb,#d49a2a 60%,var(--line))}.qz-diff.d3{border-color:color-mix(in srgb,#c0453a 60%,var(--line))}
+.qz-diff.d4{border-color:color-mix(in srgb,#7a3fa0 65%,var(--line))}
 .qz-diff:hover{transform:translateY(-2px)}
 .tray .fan{max-width:none}
 .tray .bx-body{padding-bottom:18px}
@@ -568,6 +570,63 @@ dl.stats dd{margin:0;font-family:var(--f-mono);text-align:right}
 .hwbanner .btn-primary{background:#ff9a2e;color:#2a1240;border-color:#ff9a2e}
 .hwbanner .btn:disabled{opacity:.6}
 .cat-svg .hat{transform-box:fill-box}
+
+/* ---------- Combat ---------- */
+.bt-rec{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
+.bt-rules{margin:0 0 20px;padding:12px 16px;background:var(--surface);border:1px solid var(--line);border-radius:14px}
+.bt-rules summary{cursor:pointer;font-weight:500}
+.bt-rules p{margin:10px 0 0;line-height:1.55}
+.elb{display:inline-block;padding:1px 9px;border-radius:99px;font-style:normal;font-size:.72rem;line-height:1.5;border:1px solid var(--ec);color:var(--fg);background:color-mix(in srgb,var(--ec) 22%,var(--surface));white-space:nowrap}
+.bthumb{display:inline-block;flex:none;border-radius:10px;overflow:hidden;background:color-mix(in srgb,var(--cc,#888) 14%,var(--surface2));border:1px solid var(--line)}
+.bthumb svg{width:100%;height:100%;display:block}
+.bt-row.go{border-color:var(--accent)}.bt-row.won{border-color:color-mix(in srgb,var(--jade) 70%,var(--line))}.bt-row.lost{border-color:color-mix(in srgb,var(--danger) 60%,var(--line))}
+.bt-teapee{background:var(--surface2)!important}.bt-teapee svg{width:100%;height:100%}
+.bp-sel{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:12px}
+.bp-slot{display:flex;align-items:center;gap:8px;min-height:58px;padding:8px;border:1px dashed var(--line);border-radius:12px;background:var(--surface2);color:var(--fg);text-align:left;min-width:0}
+.bp-slot.on{border-style:solid;border-color:var(--accent);cursor:pointer}
+.bp-slot span{display:flex;flex-direction:column;min-width:0}.bp-slot b{font-weight:500;font-size:.85rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.bp-slot small{color:var(--muted);font-size:.72rem}
+.bp-filters{display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+.bp-filters input{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface2);color:var(--fg);font:inherit}
+.bp-filters .seg{flex-wrap:wrap}
+.bp-list{display:flex;flex-direction:column;gap:6px;max-height:44vh;overflow:auto;padding-right:2px}
+.bp-card{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 10px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--fg);text-align:left;cursor:pointer}
+.bp-card[aria-pressed="true"]{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,var(--surface))}
+.bp-i{display:flex;flex-direction:column;min-width:0}.bp-i b{font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.bp-i small{color:var(--muted);font-size:.74rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bt-box{max-width:560px;display:flex;flex-direction:column;gap:12px;padding-top:34px}
+.bt-top{padding-right:84px;display:flex;justify-content:space-between;gap:10px;font-size:.85rem;color:var(--muted)}
+.bt-f{position:relative;display:grid;grid-template-columns:92px minmax(0,1fr);gap:12px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:16px;background:var(--surface2)}
+.bt-f.op{border-color:color-mix(in srgb,var(--danger) 45%,var(--line))}.bt-f.me{border-color:color-mix(in srgb,var(--jade) 55%,var(--line))}
+.bt-f.ko{opacity:.55;filter:grayscale(.6)}
+.bt-art{width:92px;height:92px;border-radius:14px;overflow:hidden;background:color-mix(in srgb,var(--cc,#888) 16%,var(--surface));border:1px solid var(--line)}.bt-art svg{width:100%;height:100%;display:block}
+.bt-nm{display:flex;flex-wrap:wrap;align-items:center;gap:6px}.bt-nm b{font-weight:500;min-width:0;overflow-wrap:anywhere}
+.bt-hp{height:12px;margin:8px 0 4px;border-radius:99px;background:var(--bg2);border:1px solid var(--line);overflow:hidden}
+.bt-hp i{display:block;height:100%;background:var(--jade);transition:width .5s}.bt-hp i.mid{background:#d4a32a}.bt-hp i.low{background:var(--danger)}
+.bt-hpt{font-size:.78rem;color:var(--muted)}
+.bt-team{display:flex;gap:6px;margin-top:8px}.bt-team .tok{opacity:.9}.bt-team .tok.on .bthumb{outline:2px solid var(--accent)}.bt-team .tok.ko{opacity:.3;filter:grayscale(1)}
+.bt-float{position:absolute;right:14px;top:6px;font-family:var(--f-display);font-size:1.6rem;color:var(--danger);opacity:0;pointer-events:none}
+.bt-float.on{animation:btfl .9s ease-out}.bt-float.crit{font-size:2rem;color:var(--accent)}
+@keyframes btfl{0%{opacity:0;transform:translateY(8px)}20%{opacity:1}100%{opacity:0;transform:translateY(-22px)}}
+.bt-f.shake{animation:btsh .4s}
+@keyframes btsh{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+.bt-log{min-height:78px;padding:10px 12px;border-radius:14px;background:var(--surface);border:1px dashed var(--line)}
+.bt-log p{margin:2px 0;font-size:.9rem}.bt-log .ln{opacity:0;transform:translateY(4px);transition:opacity .3s,transform .3s}.bt-log .ln.show{opacity:1;transform:none}
+.bt-log b.me{color:var(--jade)}.bt-log b.op{color:var(--danger)}.bt-log .ko{font-weight:600}
+.bt-moves{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.bt-mv{display:flex;flex-direction:column;gap:3px;align-items:center;text-align:center;padding:10px 6px;border-radius:14px;border:2px solid var(--line);background:var(--surface2);color:var(--fg);cursor:pointer;min-width:0}
+.bt-mv b{font-family:var(--f-display);font-weight:400;font-size:1rem}.bt-mv small{font-size:.7rem;color:var(--muted)}.bt-mv em{font-style:normal;font-size:.68rem}.bt-mv em.up{color:var(--jade)}.bt-mv em.down{color:var(--danger)}
+.bt-mv.m1{border-color:color-mix(in srgb,var(--accent) 65%,var(--line))}.bt-mv.m2{border-color:color-mix(in srgb,var(--jade) 60%,var(--line))}
+.bt-mv:disabled{opacity:.5;cursor:default}.bt-mv:not(:disabled):hover{transform:translateY(-2px)}
+.bt-wait{text-align:center;color:var(--muted);margin:0}
+.bt-end{text-align:center;padding:14px;border-radius:16px;border:2px solid var(--line);background:var(--surface)}.bt-end.won{border-color:var(--jade)}.bt-end.lost{border-color:var(--danger)}.bt-end h2{margin:0 0 4px}
+.bt-msg{padding:20px 10px;text-align:center;color:var(--muted)}
+@media (max-width:480px){.bt-f{grid-template-columns:72px minmax(0,1fr)}.bt-art{width:72px;height:72px}.bt-moves{gap:6px}}
+.rk-rows .rk-row{grid-template-columns:34px minmax(0,1fr) auto;padding:10px 12px}
+.rk-n{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;border:1px solid var(--line);font-family:var(--f-display);background:var(--surface2)}
+.rk-row.p1 .rk-n{background:#d9a22f;color:#2a1c02;border-color:#d9a22f}.rk-row.p2 .rk-n{background:#b9c0c6;color:#1c2227;border-color:#b9c0c6}.rk-row.p3 .rk-n{background:#c98a55;color:#2a1706;border-color:#c98a55}
+.rk-row.me{border-color:var(--accent)}
+.rk-who{display:flex;align-items:center;gap:10px;min-width:0}.rk-who .fi{min-width:0}
+.rk-v{text-align:right;min-width:0;max-width:44vw}.rk-v b{display:block;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rk-v small{color:var(--muted);font-size:.74rem}
+@media (max-width:480px){.rk-rows .rk-row{grid-template-columns:30px minmax(0,1fr)}.rk-v{grid-column:2;text-align:left;max-width:none}}
 
 </style>
 
@@ -827,6 +886,9 @@ var TIPS=[
  ['Change de thème dans Personnaliser : chaque couleur vient d\'une infusion.','Switch theme in Customise: every colour comes from an infusion.']
 ];
 
+/* Banque de questions supplémentaires (générée) */
+QBANK=QBANK.concat([{"d": 1, "q": {"fr": "Quel type de thé est entièrement oxydé ?", "en": "Which type of tea is fully oxidized?"}, "x": {"fr": "Le thé noir est oxydé à fond, ce qui brunit les feuilles et donne son corps.", "en": "Black tea is fully oxidized, which darkens the leaves and gives it body."}, "a": [{"fr": "Le thé noir", "en": "Black tea"}, {"fr": "Le thé vert", "en": "Green tea"}, {"fr": "Le thé blanc", "en": "White tea"}, {"fr": "Le matcha", "en": "Matcha"}]}, {"d": 1, "q": {"fr": "Le matcha est fabriqué à partir de…", "en": "Matcha is made from…"}, "x": {"fr": "On moud finement des feuilles de thé vert cultivées à l'ombre.", "en": "Shade-grown green tea leaves are ground into a fine powder."}, "a": [{"fr": "Feuilles de thé vert moulues", "en": "Ground green tea leaves"}, {"fr": "Fleurs de jasmin séchées", "en": "Dried jasmine flowers"}, {"fr": "Écorce de cannelle", "en": "Cinnamon bark"}, {"fr": "Graines de café vertes", "en": "Green coffee beans"}]}, {"d": 1, "q": {"fr": "Que signifie « chai » en hindi et en ourdou ?", "en": "What does \"chai\" mean in Hindi and Urdu?"}, "x": {"fr": "« Chai » veut simplement dire thé ; le masala chai est un thé épicé.", "en": "\"Chai\" simply means tea; masala chai is spiced tea."}, "a": [{"fr": "Thé", "en": "Tea"}, {"fr": "Lait", "en": "Milk"}, {"fr": "Épice", "en": "Spice"}, {"fr": "Sucre", "en": "Sugar"}]}, {"d": 1, "q": {"fr": "Quel pays est célèbre pour son « afternoon tea » ?", "en": "Which country is famous for its \"afternoon tea\"?"}, "x": {"fr": "Le Royaume-Uni a fait du thé de l'après-midi une tradition.", "en": "The United Kingdom turned afternoon tea into a tradition."}, "a": [{"fr": "Le Royaume-Uni", "en": "The United Kingdom"}, {"fr": "L'Argentine", "en": "Argentina"}, {"fr": "Le Brésil", "en": "Brazil"}, {"fr": "La Finlande", "en": "Finland"}]}, {"d": 1, "q": {"fr": "Quelle herbe parfume le thé à la menthe marocain ?", "en": "Which herb flavours Moroccan mint tea?"}, "x": {"fr": "Le thé vert est servi avec de la menthe fraîche, très sucré.", "en": "Green tea is served with fresh mint, generously sweetened."}, "a": [{"fr": "La menthe", "en": "Mint"}, {"fr": "Le basilic", "en": "Basil"}, {"fr": "Le thym", "en": "Thyme"}, {"fr": "La coriandre", "en": "Coriander"}]}, {"d": 1, "q": {"fr": "Que veut dire « rooibos » en afrikaans ?", "en": "What does \"rooibos\" mean in Afrikaans?"}, "x": {"fr": "Rooibos signifie « buisson rouge », à cause de la couleur de ses tiges oxydées.", "en": "Rooibos means \"red bush\", after the colour of its oxidized stems."}, "a": [{"fr": "Buisson rouge", "en": "Red bush"}, {"fr": "Thé du Cap", "en": "Cape tea"}, {"fr": "Feuille d'or", "en": "Golden leaf"}, {"fr": "Herbe sucrée", "en": "Sweet grass"}]}, {"d": 1, "q": {"fr": "Laquelle de ces boissons contient de la caféine ?", "en": "Which of these drinks contains caffeine?"}, "x": {"fr": "Le sencha vient du théier, qui contient de la caféine ; la camomille n'en contient pas.", "en": "Sencha comes from the tea plant and contains caffeine; chamomile has none."}, "a": [{"fr": "Le sencha", "en": "Sencha"}, {"fr": "La camomille", "en": "Chamomile"}, {"fr": "La verveine", "en": "Lemon verbena"}, {"fr": "Le rooibos", "en": "Rooibos"}]}, {"d": 1, "q": {"fr": "De quelle couleur est une infusion d'hibiscus ?", "en": "What colour is a hibiscus infusion?"}, "x": {"fr": "Les calices d'hibiscus donnent une infusion rouge rubis et acidulée.", "en": "Hibiscus calyces give a ruby-red, tangy infusion."}, "a": [{"fr": "Rouge", "en": "Red"}, {"fr": "Verte", "en": "Green"}, {"fr": "Bleue", "en": "Blue"}, {"fr": "Jaune", "en": "Yellow"}]}, {"d": 1, "q": {"fr": "Comment s'appelle la cérémonie japonaise du thé ?", "en": "What is the Japanese tea ceremony called?"}, "x": {"fr": "Le chanoyu, ou sadō, est un art codifié de préparer et de servir le matcha.", "en": "Chanoyu, or sadō, is a codified art of preparing and serving matcha."}, "a": [{"fr": "Chanoyu", "en": "Chanoyu"}, {"fr": "Kabuki", "en": "Kabuki"}, {"fr": "Ikebana", "en": "Ikebana"}, {"fr": "Origami", "en": "Origami"}]}, {"d": 1, "q": {"fr": "Dans quel pays se trouve la région de Darjeeling ?", "en": "In which country is the Darjeeling region?"}, "x": {"fr": "Darjeeling est dans le Bengale-Occidental, au pied de l'Himalaya.", "en": "Darjeeling is in West Bengal, at the foot of the Himalayas."}, "a": [{"fr": "L'Inde", "en": "India"}, {"fr": "Le Sri Lanka", "en": "Sri Lanka"}, {"fr": "La Chine", "en": "China"}, {"fr": "Le Népal", "en": "Nepal"}]}, {"d": 1, "q": {"fr": "Quel pays s'appelait autrefois Ceylan ?", "en": "Which country used to be called Ceylon?"}, "x": {"fr": "Le Sri Lanka a pris son nom actuel en 1972.", "en": "Sri Lanka took its current name in 1972."}, "a": [{"fr": "Le Sri Lanka", "en": "Sri Lanka"}, {"fr": "Le Bangladesh", "en": "Bangladesh"}, {"fr": "Le Myanmar", "en": "Myanmar"}, {"fr": "Le Laos", "en": "Laos"}]}, {"d": 1, "q": {"fr": "Avec quoi parfume-t-on le thé au jasmin ?", "en": "What is jasmine tea scented with?"}, "x": {"fr": "Les feuilles de thé absorbent le parfum de fleurs de jasmin fraîches.", "en": "The tea leaves absorb the scent of fresh jasmine blossoms."}, "a": [{"fr": "Des fleurs de jasmin", "en": "Jasmine blossoms"}, {"fr": "De l'huile de rose", "en": "Rose oil"}, {"fr": "De la vanille", "en": "Vanilla"}, {"fr": "De la lavande", "en": "Lavender"}]}, {"d": 1, "q": {"fr": "La camomille est surtout connue pour être…", "en": "Chamomile is best known for being…"}, "x": {"fr": "C'est une infusion douce, sans caféine, souvent bue le soir.", "en": "It is a gentle, caffeine-free infusion often drunk in the evening."}, "a": [{"fr": "Apaisante et sans caféine", "en": "Calming and caffeine-free"}, {"fr": "Très riche en caféine", "en": "High in caffeine"}, {"fr": "Fumée", "en": "Smoky"}, {"fr": "Très amère et salée", "en": "Very bitter and salty"}]}, {"d": 1, "q": {"fr": "Dans quelle province chinoise est produit le pu-erh ?", "en": "In which Chinese province is pu-erh produced?"}, "x": {"fr": "Le pu-erh vient du Yunnan, dans le sud-ouest de la Chine.", "en": "Pu-erh comes from Yunnan, in south-west China."}, "a": [{"fr": "Le Yunnan", "en": "Yunnan"}, {"fr": "Le Shandong", "en": "Shandong"}, {"fr": "Le Liaoning", "en": "Liaoning"}, {"fr": "Le Jilin", "en": "Jilin"}]}, {"d": 1, "q": {"fr": "L'oolong est un thé…", "en": "Oolong is a tea that is…"}, "x": {"fr": "L'oolong est semi-oxydé, entre le thé vert et le thé noir.", "en": "Oolong is partially oxidized, between green and black tea."}, "a": [{"fr": "Partiellement oxydé", "en": "Partially oxidized"}, {"fr": "Jamais oxydé", "en": "Never oxidized"}, {"fr": "Toujours fumé", "en": "Always smoked"}, {"fr": "Sans théier", "en": "Made without the tea plant"}]}, {"d": 1, "q": {"fr": "Quelle boisson fermentée à base de thé est devenue très populaire ?", "en": "Which fermented tea drink has become very popular?"}, "x": {"fr": "Le kombucha est du thé sucré fermenté grâce à une culture de bactéries et de levures.", "en": "Kombucha is sweetened tea fermented with a culture of bacteria and yeast."}, "a": [{"fr": "Le kombucha", "en": "Kombucha"}, {"fr": "Le cidre", "en": "Cider"}, {"fr": "Le kéfir de lait", "en": "Milk kefir"}, {"fr": "Le saké", "en": "Sake"}]}, {"d": 1, "q": {"fr": "Où est né le bubble tea ?", "en": "Where was bubble tea born?"}, "x": {"fr": "Le thé aux perles de tapioca est apparu à Taïwan dans les années 1980.", "en": "Tea with tapioca pearls appeared in Taiwan in the 1980s."}, "a": [{"fr": "À Taïwan", "en": "In Taiwan"}, {"fr": "Au Chili", "en": "In Chile"}, {"fr": "En Égypte", "en": "In Egypt"}, {"fr": "En Norvège", "en": "In Norway"}]}, {"d": 1, "q": {"fr": "Quelle épice est un classique du masala chai ?", "en": "Which spice is a classic of masala chai?"}, "x": {"fr": "La cardamome, avec la cannelle, le gingembre et le clou de girofle, parfume le masala chai.", "en": "Cardamom, with cinnamon, ginger and cloves, flavours masala chai."}, "a": [{"fr": "La cardamome", "en": "Cardamom"}, {"fr": "Le safran", "en": "Saffron"}, {"fr": "Le paprika", "en": "Paprika"}, {"fr": "La vanille", "en": "Vanilla"}]}, {"d": 1, "q": {"fr": "Qu'est-ce qui donne au Lapsang Souchong son goût fumé ?", "en": "What gives Lapsang Souchong its smoky taste?"}, "x": {"fr": "Les feuilles sont séchées au-dessus d'un feu de bois de pin.", "en": "The leaves are dried over a pinewood fire."}, "a": [{"fr": "La fumée de bois de pin", "en": "Pinewood smoke"}, {"fr": "Un ajout de tabac", "en": "Added tobacco"}, {"fr": "Du charbon actif", "en": "Activated charcoal"}, {"fr": "Du sel marin", "en": "Sea salt"}]}, {"d": 1, "q": {"fr": "Quel thé est le plus consommé au Japon ?", "en": "Which tea is most drunk in Japan?"}, "x": {"fr": "Le sencha est le thé vert du quotidien au Japon.", "en": "Sencha is Japan's everyday green tea."}, "a": [{"fr": "Le sencha", "en": "Sencha"}, {"fr": "Le pu-erh", "en": "Pu-erh"}, {"fr": "Le Darjeeling", "en": "Darjeeling"}, {"fr": "Le Earl Grey", "en": "Earl Grey"}]}, {"d": 1, "q": {"fr": "Avec quoi le genmaicha est-il mélangé ?", "en": "What is genmaicha mixed with?"}, "x": {"fr": "Le genmaicha associe du thé vert et du riz grillé.", "en": "Genmaicha combines green tea with roasted rice."}, "a": [{"fr": "Du riz grillé", "en": "Roasted rice"}, {"fr": "Des noix", "en": "Walnuts"}, {"fr": "Du maïs soufflé", "en": "Popcorn"}, {"fr": "Des pétales de rose", "en": "Rose petals"}]}, {"d": 1, "q": {"fr": "Quelle partie du théier cueille-t-on pour les meilleurs thés ?", "en": "Which part of the tea plant is picked for the finest teas?"}, "x": {"fr": "On cueille traditionnellement un bourgeon et ses deux premières feuilles.", "en": "Traditionally one bud and its first two leaves are picked."}, "a": [{"fr": "Un bourgeon et deux feuilles", "en": "A bud and two leaves"}, {"fr": "Les racines", "en": "The roots"}, {"fr": "Les graines", "en": "The seeds"}, {"fr": "L'écorce", "en": "The bark"}]}, {"d": 1, "q": {"fr": "Qui a donné son nom au thé Earl Grey ?", "en": "Who gave Earl Grey tea its name?"}, "x": {"fr": "Il porte le nom du comte Grey, Premier ministre britannique dans les années 1830.", "en": "It is named after Earl Grey, British Prime Minister in the 1830s."}, "a": [{"fr": "Un comte britannique", "en": "A British earl"}, {"fr": "Un empereur chinois", "en": "A Chinese emperor"}, {"fr": "Un marchand néerlandais", "en": "A Dutch merchant"}, {"fr": "Un moine japonais", "en": "A Japanese monk"}]}, {"d": 1, "q": {"fr": "L'English Breakfast est…", "en": "English Breakfast is…"}, "x": {"fr": "C'est un assemblage de thés noirs corsés.", "en": "It is a blend of robust black teas."}, "a": [{"fr": "Un assemblage de thés noirs", "en": "A blend of black teas"}, {"fr": "Une tisane de fruits", "en": "A fruit tisane"}, {"fr": "Un thé vert japonais", "en": "A Japanese green tea"}, {"fr": "Un thé blanc", "en": "A white tea"}]}, {"d": 1, "q": {"fr": "Le « gunpowder » est un thé vert…", "en": "Gunpowder is a green tea that is…"}, "x": {"fr": "Les feuilles sont roulées en petites billes qui rappellent la poudre à canon.", "en": "The leaves are rolled into little pellets that recall gunpowder."}, "a": [{"fr": "Roulé en petites billes", "en": "Rolled into little pellets"}, {"fr": "Réduit en poudre", "en": "Reduced to a powder"}, {"fr": "Fumé au bois", "en": "Wood-smoked"}, {"fr": "Fait de tiges", "en": "Made of stems"}]}, {"d": 1, "q": {"fr": "Que contient la tisane de tilleul ?", "en": "What does linden tisane contain?"}, "x": {"fr": "Le tilleul est infusé pour ses fleurs et ses bractées, traditionnellement avant de dormir.", "en": "Linden is infused for its flowers and bracts, traditionally before bed."}, "a": [{"fr": "Des fleurs de tilleul", "en": "Linden flowers"}, {"fr": "Des feuilles de théier", "en": "Tea leaves"}, {"fr": "Des grains de café", "en": "Coffee beans"}, {"fr": "Des pétales de rose", "en": "Rose petals"}]}, {"d": 1, "q": {"fr": "Quelle matière est typique des théières de Yixing ?", "en": "What material is typical of Yixing teapots?"}, "x": {"fr": "Les théières de Yixing sont en argile pourpre non émaillée.", "en": "Yixing teapots are made of unglazed purple clay."}, "a": [{"fr": "L'argile", "en": "Clay"}, {"fr": "Le verre", "en": "Glass"}, {"fr": "L'acier", "en": "Steel"}, {"fr": "Le plastique", "en": "Plastic"}]}, {"d": 1, "q": {"fr": "Quel est le goût marquant d'une infusion de gingembre ?", "en": "What is the striking taste of a ginger infusion?"}, "x": {"fr": "Le gingembre donne une infusion chaude et piquante.", "en": "Ginger gives a warming, spicy infusion."}, "a": [{"fr": "Piquant", "en": "Spicy"}, {"fr": "Fumé", "en": "Smoky"}, {"fr": "Salé", "en": "Salty"}, {"fr": "Floral", "en": "Floral"}]}, {"d": 1, "q": {"fr": "Quel continent produit le plus de thé ?", "en": "Which continent produces the most tea?"}, "x": {"fr": "L'Asie concentre la grande majorité de la production mondiale.", "en": "Asia accounts for the vast majority of world production."}, "a": [{"fr": "L'Asie", "en": "Asia"}, {"fr": "L'Europe", "en": "Europe"}, {"fr": "L'Océanie", "en": "Oceania"}, {"fr": "L'Amérique du Nord", "en": "North America"}]}, {"d": 1, "q": {"fr": "Quel thé est le moins transformé ?", "en": "Which tea is the least processed?"}, "x": {"fr": "Le thé blanc est seulement flétri puis séché.", "en": "White tea is merely withered and dried."}, "a": [{"fr": "Le thé blanc", "en": "White tea"}, {"fr": "Le thé noir", "en": "Black tea"}, {"fr": "Le pu-erh", "en": "Pu-erh"}, {"fr": "L'oolong roulé", "en": "Rolled oolong"}]}, {"d": 1, "q": {"fr": "À quelle température infuse-t-on en général un thé noir ?", "en": "At what temperature is black tea usually brewed?"}, "x": {"fr": "Le thé noir supporte l'eau bouillante, autour de 95 à 100 °C.", "en": "Black tea can take boiling water, around 95 to 100 °C."}, "a": [{"fr": "Environ 95 °C", "en": "Around 95 °C"}, {"fr": "Environ 40 °C", "en": "Around 40 °C"}, {"fr": "Environ 20 °C", "en": "Around 20 °C"}, {"fr": "Environ 60 °C", "en": "Around 60 °C"}]}, {"d": 1, "q": {"fr": "Quelle boisson les Argentins boivent-ils avec une bombilla ?", "en": "Which drink do Argentinians sip with a bombilla?"}, "x": {"fr": "Le maté se boit dans une calebasse avec une paille filtrante, la bombilla.", "en": "Mate is drunk from a gourd through a filtering straw, the bombilla."}, "a": [{"fr": "Le maté", "en": "Mate"}, {"fr": "Le sencha", "en": "Sencha"}, {"fr": "Le rooibos", "en": "Rooibos"}, {"fr": "Le chai", "en": "Chai"}]}, {"d": 1, "q": {"fr": "Que sert-on avec le thé à l'anglaise ?", "en": "What is served alongside English-style tea?"}, "x": {"fr": "Le thé de l'après-midi s'accompagne de scones, de crème et de confiture.", "en": "Afternoon tea comes with scones, cream and jam."}, "a": [{"fr": "Des scones", "en": "Scones"}, {"fr": "Des sushis", "en": "Sushi"}, {"fr": "Des tacos", "en": "Tacos"}, {"fr": "Des raviolis", "en": "Ravioli"}]}, {"d": 1, "q": {"fr": "Le Kenya est surtout réputé pour…", "en": "Kenya is best known for…"}, "x": {"fr": "Le Kenya est l'un des plus grands exportateurs de thé noir au monde.", "en": "Kenya is one of the world's largest exporters of black tea."}, "a": [{"fr": "Son thé noir", "en": "Its black tea"}, {"fr": "Son thé blanc", "en": "Its white tea"}, {"fr": "Son maté", "en": "Its mate"}, {"fr": "Son matcha", "en": "Its matcha"}]}, {"d": 1, "q": {"fr": "Quel thé est connu sous le nom de « Silver Needle » ?", "en": "Which tea is known as \"Silver Needle\"?"}, "x": {"fr": "Le Bai Hao Yin Zhen est un thé blanc fait de bourgeons duveteux.", "en": "Bai Hao Yin Zhen is a white tea made of downy buds."}, "a": [{"fr": "Un thé blanc", "en": "A white tea"}, {"fr": "Un thé noir", "en": "A black tea"}, {"fr": "Un thé fumé", "en": "A smoked tea"}, {"fr": "Une tisane", "en": "A tisane"}]}, {"d": 1, "q": {"fr": "Que boit-on dans le Maghreb pour accueillir un invité ?", "en": "What is drunk in the Maghreb to welcome a guest?"}, "x": {"fr": "Servir le thé à la menthe est un geste d'hospitalité.", "en": "Serving mint tea is a gesture of hospitality."}, "a": [{"fr": "Du thé à la menthe", "en": "Mint tea"}, {"fr": "De la bière", "en": "Beer"}, {"fr": "Du lait froid", "en": "Cold milk"}, {"fr": "Du jus de raisin", "en": "Grape juice"}]}, {"d": 1, "q": {"fr": "Quelle est la couleur du thé matcha ?", "en": "What colour is matcha?"}, "x": {"fr": "Le matcha est d'un vert vif, grâce à la chlorophylle des feuilles ombrées.", "en": "Matcha is bright green, thanks to the chlorophyll of shaded leaves."}, "a": [{"fr": "Vert vif", "en": "Bright green"}, {"fr": "Rouge", "en": "Red"}, {"fr": "Violet", "en": "Purple"}, {"fr": "Orange", "en": "Orange"}]}, {"d": 1, "q": {"fr": "Une tisane à la menthe poivrée est souvent bue…", "en": "A peppermint tisane is often drunk…"}, "x": {"fr": "Elle est traditionnellement appréciée après les repas.", "en": "It is traditionally enjoyed after meals."}, "a": [{"fr": "Après le repas", "en": "After a meal"}, {"fr": "Avant une course", "en": "Before a race"}, {"fr": "À la place du petit-déjeuner", "en": "Instead of breakfast"}, {"fr": "En conduisant", "en": "While driving"}]}, {"d": 2, "q": {"fr": "Quelle variété de théier pousse surtout en Assam ?", "en": "Which tea plant variety mostly grows in Assam?"}, "x": {"fr": "La variété assamica a de grandes feuilles et donne des thés noirs corsés.", "en": "The assamica variety has large leaves and makes robust black teas."}, "a": [{"fr": "Camellia sinensis var. assamica", "en": "Camellia sinensis var. assamica"}, {"fr": "Camellia japonica", "en": "Camellia japonica"}, {"fr": "Ilex paraguariensis", "en": "Ilex paraguariensis"}, {"fr": "Aspalathus linearis", "en": "Aspalathus linearis"}]}, {"d": 2, "q": {"fr": "Selon la légende, qui a découvert le thé ?", "en": "According to legend, who discovered tea?"}, "x": {"fr": "Des feuilles seraient tombées dans l'eau chaude de l'empereur Shennong.", "en": "Leaves are said to have fallen into Emperor Shennong's hot water."}, "a": [{"fr": "L'empereur Shennong", "en": "Emperor Shennong"}, {"fr": "L'empereur Qin", "en": "Emperor Qin"}, {"fr": "Marco Polo", "en": "Marco Polo"}, {"fr": "Confucius", "en": "Confucius"}]}, {"d": 2, "q": {"fr": "Dans quelle région est né l'oolong Tieguanyin ?", "en": "Where did the Tieguanyin oolong originate?"}, "x": {"fr": "Le Tieguanyin vient d'Anxi, dans le Fujian.", "en": "Tieguanyin comes from Anxi, in Fujian."}, "a": [{"fr": "Anxi, Fujian", "en": "Anxi, Fujian"}, {"fr": "Uji, Kyoto", "en": "Uji, Kyoto"}, {"fr": "Kandy, Sri Lanka", "en": "Kandy, Sri Lanka"}, {"fr": "Darjeeling", "en": "Darjeeling"}]}, {"d": 2, "q": {"fr": "Où pousse le Da Hong Pao ?", "en": "Where does Da Hong Pao grow?"}, "x": {"fr": "Cet oolong de roche pousse dans les monts Wuyi.", "en": "This rock oolong grows in the Wuyi Mountains."}, "a": [{"fr": "Dans les monts Wuyi", "en": "In the Wuyi Mountains"}, {"fr": "Sur l'île de Ceylan", "en": "On the island of Ceylon"}, {"fr": "Dans les Andes", "en": "In the Andes"}, {"fr": "En Géorgie", "en": "In Georgia"}]}, {"d": 2, "q": {"fr": "Le Longjing est un thé vert de quelle ville chinoise ?", "en": "Longjing is a green tea from which Chinese city?"}, "x": {"fr": "Le « Puits du Dragon » vient des environs de Hangzhou, près du lac de l'Ouest.", "en": "\"Dragon Well\" comes from around Hangzhou, near West Lake."}, "a": [{"fr": "Hangzhou", "en": "Hangzhou"}, {"fr": "Canton", "en": "Guangzhou"}, {"fr": "Pékin", "en": "Beijing"}, {"fr": "Lhassa", "en": "Lhasa"}]}, {"d": 2, "q": {"fr": "Que fait-on au gyokuro avant la récolte ?", "en": "What is done to gyokuro before harvest?"}, "x": {"fr": "On ombrage les théiers pendant environ trois semaines pour développer l'umami.", "en": "The bushes are shaded for about three weeks to build umami."}, "a": [{"fr": "On les ombrage", "en": "They are shaded"}, {"fr": "On les trempe dans l'eau", "en": "They are soaked in water"}, {"fr": "On les brûle", "en": "They are burned"}, {"fr": "On les congèle", "en": "They are frozen"}]}, {"d": 2, "q": {"fr": "Qu'appelle-t-on le « first flush » à Darjeeling ?", "en": "What is the \"first flush\" in Darjeeling?"}, "x": {"fr": "C'est la première récolte du printemps, aux notes légères et florales.", "en": "It is the first spring harvest, with light, floral notes."}, "a": [{"fr": "La première récolte de printemps", "en": "The first spring harvest"}, {"fr": "Un thé aux fleurs", "en": "A tea with flowers"}, {"fr": "Un thé glacé", "en": "An iced tea"}, {"fr": "Un thé de nuit", "en": "A night tea"}]}, {"d": 2, "q": {"fr": "Les Nilgiri se trouvent dans quelle partie de l'Inde ?", "en": "Which part of India are the Nilgiri hills in?"}, "x": {"fr": "Les Nilgiri, « montagnes bleues », sont dans le sud, au Tamil Nadu.", "en": "The Nilgiri, \"blue mountains\", are in the south, in Tamil Nadu."}, "a": [{"fr": "Le sud", "en": "The south"}, {"fr": "Le nord-est", "en": "The north-east"}, {"fr": "Le Cachemire", "en": "Kashmir"}, {"fr": "Le désert du Thar", "en": "The Thar desert"}]}, {"d": 2, "q": {"fr": "Le Keemun est un thé noir de quelle province chinoise ?", "en": "Keemun is a black tea from which Chinese province?"}, "x": {"fr": "Le Keemun, ou Qimen, vient de l'Anhui.", "en": "Keemun, or Qimen, comes from Anhui."}, "a": [{"fr": "L'Anhui", "en": "Anhui"}, {"fr": "Le Xinjiang", "en": "Xinjiang"}, {"fr": "Le Hebei", "en": "Hebei"}, {"fr": "Le Gansu", "en": "Gansu"}]}, {"d": 2, "q": {"fr": "Que veut dire CTC pour un thé noir ?", "en": "What does CTC mean for a black tea?"}, "x": {"fr": "Crush, Tear, Curl : on broie les feuilles en petits grains qui infusent vite.", "en": "Crush, Tear, Curl: leaves are broken into small grains that brew fast."}, "a": [{"fr": "Crush, Tear, Curl", "en": "Crush, Tear, Curl"}, {"fr": "Cut, Taste, Cook", "en": "Cut, Taste, Cook"}, {"fr": "Cold Tea Concentrate", "en": "Cold Tea Concentrate"}, {"fr": "Classic Tea Cup", "en": "Classic Tea Cup"}]}, {"d": 2, "q": {"fr": "Le flétrissage consiste à…", "en": "Withering consists of…"}, "x": {"fr": "Les feuilles perdent de l'eau et s'assouplissent avant d'être roulées.", "en": "Leaves lose water and soften before being rolled."}, "a": [{"fr": "Laisser les feuilles perdre de l'eau", "en": "Letting leaves lose water"}, {"fr": "Moudre les feuilles", "en": "Grinding the leaves"}, {"fr": "Fumer les feuilles", "en": "Smoking the leaves"}, {"fr": "Congeler les feuilles", "en": "Freezing the leaves"}]}, {"d": 2, "q": {"fr": "Quelle molécule du thé favorise le calme et l'attention ?", "en": "Which tea molecule promotes calm alertness?"}, "x": {"fr": "La L-théanine est un acide aminé propre au thé, lié à son effet apaisant.", "en": "L-theanine is an amino acid typical of tea, linked to its calming effect."}, "a": [{"fr": "La L-théanine", "en": "L-theanine"}, {"fr": "La nicotine", "en": "Nicotine"}, {"fr": "Le sucre blanc", "en": "Table sugar"}, {"fr": "Le sodium", "en": "Sodium"}]}, {"d": 2, "q": {"fr": "Quel célèbre clipper transportait du thé au XIXᵉ siècle ?", "en": "Which famous clipper carried tea in the 19th century?"}, "x": {"fr": "Le Cutty Sark, lancé en 1869, est le plus célèbre des clippers à thé.", "en": "Cutty Sark, launched in 1869, is the most famous tea clipper."}, "a": [{"fr": "Le Cutty Sark", "en": "Cutty Sark"}, {"fr": "Le Titanic", "en": "Titanic"}, {"fr": "Le Mayflower", "en": "Mayflower"}, {"fr": "Le Nautilus", "en": "Nautilus"}]}, {"d": 2, "q": {"fr": "Qui a rapporté des plants de thé de Chine pour la Compagnie des Indes ?", "en": "Who brought tea plants out of China for the East India Company?"}, "x": {"fr": "Le botaniste Robert Fortune l'a fait entre 1848 et 1851.", "en": "The botanist Robert Fortune did it between 1848 and 1851."}, "a": [{"fr": "Robert Fortune", "en": "Robert Fortune"}, {"fr": "Charles Darwin", "en": "Charles Darwin"}, {"fr": "James Cook", "en": "James Cook"}, {"fr": "David Livingstone", "en": "David Livingstone"}]}, {"d": 2, "q": {"fr": "Quel récipient sert à préparer le thé en Russie ?", "en": "Which vessel is used to prepare tea in Russia?"}, "x": {"fr": "Le samovar chauffe l'eau et garde le thé concentré au chaud.", "en": "The samovar heats the water and keeps the tea concentrate warm."}, "a": [{"fr": "Le samovar", "en": "The samovar"}, {"fr": "Le wok", "en": "The wok"}, {"fr": "Le tajine", "en": "The tagine"}, {"fr": "La cocotte", "en": "The casserole"}]}, {"d": 2, "q": {"fr": "Dans quels verres sert-on le thé turc ?", "en": "What glasses is Turkish tea served in?"}, "x": {"fr": "Le çay est servi dans de petits verres en forme de tulipe.", "en": "Çay is served in small tulip-shaped glasses."}, "a": [{"fr": "En forme de tulipe", "en": "Tulip-shaped"}, {"fr": "En forme de cône", "en": "Cone-shaped"}, {"fr": "En bois", "en": "Wooden"}, {"fr": "En métal martelé", "en": "Hammered metal"}]}, {"d": 2, "q": {"fr": "Quel ingrédient caractérise le thé tibétain « po cha » ?", "en": "Which ingredient defines Tibetan \"po cha\" tea?"}, "x": {"fr": "Il est battu avec du beurre de yak et du sel.", "en": "It is churned with yak butter and salt."}, "a": [{"fr": "Le beurre de yak", "en": "Yak butter"}, {"fr": "Le miel d'acacia", "en": "Acacia honey"}, {"fr": "Le jus de citron", "en": "Lemon juice"}, {"fr": "Le vinaigre", "en": "Vinegar"}]}, {"d": 2, "q": {"fr": "De quelle plante vient la tisane de verveine ?", "en": "Which plant does verbena tisane come from?"}, "x": {"fr": "La verveine odorante, Aloysia citrodora, a un parfum citronné.", "en": "Lemon verbena, Aloysia citrodora, has a lemony scent."}, "a": [{"fr": "Aloysia citrodora", "en": "Aloysia citrodora"}, {"fr": "Salvia officinalis", "en": "Salvia officinalis"}, {"fr": "Rosa canina", "en": "Rosa canina"}, {"fr": "Mentha spicata", "en": "Mentha spicata"}]}, {"d": 2, "q": {"fr": "Dans quel pays se trouve Uji, région réputée pour le matcha ?", "en": "In which country is Uji, a region famed for matcha?"}, "x": {"fr": "Uji, près de Kyoto, est une région de thé mythique au Japon.", "en": "Uji, near Kyoto, is a legendary tea region in Japan."}, "a": [{"fr": "Le Japon", "en": "Japan"}, {"fr": "La Corée", "en": "Korea"}, {"fr": "Le Vietnam", "en": "Vietnam"}, {"fr": "La Thaïlande", "en": "Thailand"}]}, {"d": 2, "q": {"fr": "Le hojicha est un thé vert…", "en": "Hojicha is a green tea that is…"}, "x": {"fr": "Il est torréfié, ce qui lui donne une couleur brune et un goût de noisette.", "en": "It is roasted, giving it a brown colour and a nutty taste."}, "a": [{"fr": "Torréfié", "en": "Roasted"}, {"fr": "Fermenté", "en": "Fermented"}, {"fr": "Ombragé", "en": "Shaded"}, {"fr": "Fumé", "en": "Smoked"}]}, {"d": 2, "q": {"fr": "Quel ustensile fouette le matcha ?", "en": "Which tool whisks matcha?"}, "x": {"fr": "Le chasen est un fouet en bambou finement fendu.", "en": "The chasen is a finely split bamboo whisk."}, "a": [{"fr": "Le chasen", "en": "The chasen"}, {"fr": "Le gaiwan", "en": "The gaiwan"}, {"fr": "Le samovar", "en": "The samovar"}, {"fr": "La bombilla", "en": "The bombilla"}]}, {"d": 2, "q": {"fr": "Comment appelle-t-on le bol à matcha ?", "en": "What is the matcha bowl called?"}, "x": {"fr": "Le chawan est le bol dans lequel on prépare et boit le matcha.", "en": "The chawan is the bowl in which matcha is prepared and drunk."}, "a": [{"fr": "Le chawan", "en": "The chawan"}, {"fr": "Le tetsubin", "en": "The tetsubin"}, {"fr": "Le kyusu", "en": "The kyusu"}, {"fr": "Le chaire", "en": "The chaire"}]}, {"d": 2, "q": {"fr": "Quelle plante donne l'infusion rouge « bissap » ?", "en": "Which plant gives the red infusion \"bissap\"?"}, "x": {"fr": "Le bissap est fait de calices d'hibiscus, Hibiscus sabdariffa.", "en": "Bissap is made of hibiscus calyces, Hibiscus sabdariffa."}, "a": [{"fr": "L'hibiscus", "en": "Hibiscus"}, {"fr": "Le rooibos", "en": "Rooibos"}, {"fr": "Le tilleul", "en": "Linden"}, {"fr": "La mauve", "en": "Mallow"}]}, {"d": 2, "q": {"fr": "Que signifie « gong fu cha » ?", "en": "What does \"gong fu cha\" mean?"}, "x": {"fr": "C'est une préparation du thé qui demande habileté et patience, en petites théières.", "en": "It is a way of brewing tea requiring skill and patience, in small pots."}, "a": [{"fr": "Thé préparé avec art", "en": "Tea made with skill"}, {"fr": "Thé de combat", "en": "Fighting tea"}, {"fr": "Thé du dimanche", "en": "Sunday tea"}, {"fr": "Thé au gingembre", "en": "Ginger tea"}]}, {"d": 2, "q": {"fr": "Quel est l'ennemi d'un thé bien conservé ?", "en": "What is the enemy of well-stored tea?"}, "x": {"fr": "L'humidité, la lumière et les odeurs altèrent le thé.", "en": "Moisture, light and odours spoil tea."}, "a": [{"fr": "L'humidité", "en": "Moisture"}, {"fr": "Le noir complet", "en": "Complete darkness"}, {"fr": "Un pot fermé", "en": "A closed jar"}, {"fr": "Le froid sec", "en": "Dry cold"}]}, {"d": 2, "q": {"fr": "Quel pays consomme le plus de thé par habitant, selon les classements ?", "en": "Which country drinks the most tea per person, according to rankings?"}, "x": {"fr": "La Turquie arrive en tête des classements de consommation par habitant.", "en": "Turkey tops per-capita consumption rankings."}, "a": [{"fr": "La Turquie", "en": "Turkey"}, {"fr": "La Norvège", "en": "Norway"}, {"fr": "Le Brésil", "en": "Brazil"}, {"fr": "Le Mexique", "en": "Mexico"}]}, {"d": 2, "q": {"fr": "Dans quel pays boit-on le « thé au lait de Hong Kong » ?", "en": "Where is \"Hong Kong milk tea\" drunk?"}, "x": {"fr": "C'est un thé noir fort au lait évaporé, emblème de Hong Kong.", "en": "It is strong black tea with evaporated milk, a Hong Kong icon."}, "a": [{"fr": "À Hong Kong", "en": "In Hong Kong"}, {"fr": "En Islande", "en": "In Iceland"}, {"fr": "Au Pérou", "en": "In Peru"}, {"fr": "Au Canada", "en": "In Canada"}]}, {"d": 2, "q": {"fr": "Quelle plante est la source de la tisane de lemongrass ?", "en": "Which plant is the source of lemongrass tisane?"}, "x": {"fr": "La citronnelle de Cymbopogon, une herbe tropicale, a un parfum de citron.", "en": "Cymbopogon lemongrass, a tropical grass, smells of lemon."}, "a": [{"fr": "Cymbopogon", "en": "Cymbopogon"}, {"fr": "Camellia", "en": "Camellia"}, {"fr": "Ilex", "en": "Ilex"}, {"fr": "Tilia", "en": "Tilia"}]}, {"d": 2, "q": {"fr": "Où se trouve la ville de Rize, capitale du thé ?", "en": "Where is Rize, a tea capital?"}, "x": {"fr": "Rize borde la mer Noire et produit presque tout le thé turc.", "en": "Rize lies on the Black Sea and produces most Turkish tea."}, "a": [{"fr": "En Turquie", "en": "In Turkey"}, {"fr": "En Écosse", "en": "In Scotland"}, {"fr": "Au Chili", "en": "In Chile"}, {"fr": "Au Maroc", "en": "In Morocco"}]}, {"d": 2, "q": {"fr": "Qu'est-ce qu'un thé « single estate » ?", "en": "What is a \"single estate\" tea?"}, "x": {"fr": "Il vient d'un seul domaine ou jardin de thé, et non d'un assemblage.", "en": "It comes from one estate or garden, not from a blend."}, "a": [{"fr": "Un thé d'un seul jardin", "en": "Tea from one garden"}, {"fr": "Un thé sans sucre", "en": "Tea without sugar"}, {"fr": "Un thé en sachet unique", "en": "Tea in a single bag"}, {"fr": "Un thé sans théine", "en": "Tea without caffeine"}]}, {"d": 2, "q": {"fr": "Pourquoi dit-on « thé vert » ?", "en": "Why is it called \"green tea\"?"}, "x": {"fr": "Les feuilles sont chauffées vite pour stopper l'oxydation et garder leur teinte.", "en": "Leaves are heated fast to stop oxidation and keep their colour."}, "a": [{"fr": "L'oxydation est stoppée tôt", "en": "Oxidation is stopped early"}, {"fr": "Il est teint en vert", "en": "It is dyed green"}, {"fr": "Il pousse sous l'eau", "en": "It grows under water"}, {"fr": "Il contient du menthol", "en": "It contains menthol"}]}, {"d": 2, "q": {"fr": "Quel type de thé est le Dian Hong ?", "en": "What type of tea is Dian Hong?"}, "x": {"fr": "Le Dian Hong est un thé noir du Yunnan, riche en bourgeons dorés.", "en": "Dian Hong is a black tea from Yunnan, rich in golden buds."}, "a": [{"fr": "Un thé noir", "en": "A black tea"}, {"fr": "Un thé blanc", "en": "A white tea"}, {"fr": "Un thé vert", "en": "A green tea"}, {"fr": "Une tisane", "en": "A tisane"}]}, {"d": 2, "q": {"fr": "Qu'est-ce que l'EGCG ?", "en": "What is EGCG?"}, "x": {"fr": "L'EGCG est la principale catéchine du thé vert, un antioxydant.", "en": "EGCG is the main catechin of green tea, an antioxidant."}, "a": [{"fr": "Une catéchine du thé", "en": "A tea catechin"}, {"fr": "Un sucre", "en": "A sugar"}, {"fr": "Un arôme de vanille", "en": "A vanilla flavour"}, {"fr": "Une marque de thé", "en": "A tea brand"}]}, {"d": 2, "q": {"fr": "Quel thé est parfois appelé « thé rouge » en Chine ?", "en": "Which tea is sometimes called \"red tea\" in China?"}, "x": {"fr": "En chinois, « hongcha » désigne le thé noir, à cause de la couleur de l'infusion.", "en": "In Chinese, \"hongcha\" means black tea, after the colour of the liquor."}, "a": [{"fr": "Le thé noir", "en": "Black tea"}, {"fr": "Le thé blanc", "en": "White tea"}, {"fr": "Le matcha", "en": "Matcha"}, {"fr": "Le kombucha", "en": "Kombucha"}]}, {"d": 2, "q": {"fr": "De quelle famille vient la tisane de camomille ?", "en": "Which family does chamomile belong to?"}, "x": {"fr": "La camomille est une astéracée, comme la marguerite.", "en": "Chamomile is an aster-family plant, like the daisy."}, "a": [{"fr": "Les astéracées", "en": "Asteraceae"}, {"fr": "Les rosacées", "en": "Rosaceae"}, {"fr": "Les théacées", "en": "Theaceae"}, {"fr": "Les poacées", "en": "Poaceae"}]}, {"d": 2, "q": {"fr": "Qu'est-ce qu'un « Orange Pekoe » ?", "en": "What is \"Orange Pekoe\"?"}, "x": {"fr": "C'est un grade de feuilles entières, pas un parfum d'orange.", "en": "It is a grade of whole leaves, not an orange flavour."}, "a": [{"fr": "Un grade de feuille", "en": "A leaf grade"}, {"fr": "Un thé à l'orange", "en": "An orange-flavoured tea"}, {"fr": "Un thé chinois vert", "en": "A Chinese green tea"}, {"fr": "Un sirop", "en": "A syrup"}]}, {"d": 2, "q": {"fr": "Quelle est la fonction de la bombilla ?", "en": "What is the function of the bombilla?"}, "x": {"fr": "Sa paille filtre les feuilles de maté pendant qu'on boit.", "en": "Its straw filters the mate leaves while you drink."}, "a": [{"fr": "Filtrer en buvant", "en": "To filter as you drink"}, {"fr": "Fouetter la mousse", "en": "To whisk the foam"}, {"fr": "Chauffer l'eau", "en": "To heat the water"}, {"fr": "Sucrer le maté", "en": "To sweeten the mate"}]}, {"d": 3, "q": {"fr": "Dans quelle province chinoise pousse le thé blanc Silver Needle ?", "en": "In which Chinese province does Silver Needle white tea grow?"}, "x": {"fr": "Le Fujian, notamment Fuding et Zhenghe, est le berceau des thés blancs.", "en": "Fujian, notably Fuding and Zhenghe, is the cradle of white teas."}, "a": [{"fr": "Le Fujian", "en": "Fujian"}, {"fr": "Le Qinghai", "en": "Qinghai"}, {"fr": "Le Hainan", "en": "Hainan"}, {"fr": "Le Heilongjiang", "en": "Heilongjiang"}]}, {"d": 3, "q": {"fr": "Comment appelle-t-on l'étape qui fait vieillir artificiellement le shou pu-erh ?", "en": "What is the step that artificially ages shou pu-erh called?"}, "x": {"fr": "Le « wo dui », ou compostage humide, a été mis au point vers 1973.", "en": "\"Wo dui\", or wet piling, was developed around 1973."}, "a": [{"fr": "Le wo dui (compostage humide)", "en": "Wo dui (wet piling)"}, {"fr": "Le fumage", "en": "Smoking"}, {"fr": "Le roulage", "en": "Rolling"}, {"fr": "Le flétrissage", "en": "Withering"}]}, {"d": 3, "q": {"fr": "Quelle est la différence entre sheng et shou pu-erh ?", "en": "What distinguishes sheng from shou pu-erh?"}, "x": {"fr": "Le sheng vieillit naturellement ; le shou est accéléré par compostage humide.", "en": "Sheng ages naturally; shou is accelerated by wet piling."}, "a": [{"fr": "Le sheng est cru, le shou est composté", "en": "Sheng is raw, shou is piled"}, {"fr": "Le sheng est noir, le shou est blanc", "en": "Sheng is black, shou is white"}, {"fr": "Le sheng est sucré", "en": "Sheng is sweetened"}, {"fr": "Aucune", "en": "There is none"}]}, {"d": 3, "q": {"fr": "Pourquoi presse-t-on certains thés en briques ?", "en": "Why are some teas pressed into bricks?"}, "x": {"fr": "Faciles à transporter et à conserver, elles servaient même de monnaie.", "en": "Easy to carry and store, they even served as currency."}, "a": [{"fr": "Pour le transport et le stockage", "en": "For transport and storage"}, {"fr": "Pour les parfumer", "en": "To flavour them"}, {"fr": "Pour les refroidir", "en": "To cool them"}, {"fr": "Pour les décorer", "en": "To decorate them"}]}, {"d": 3, "q": {"fr": "De quel type est le thé « Junshan Yinzhen » ?", "en": "What type is \"Junshan Yinzhen\" tea?"}, "x": {"fr": "C'est un thé jaune, rare, cultivé sur une île du lac Dongting.", "en": "It is a rare yellow tea, grown on an island in Lake Dongting."}, "a": [{"fr": "Un thé jaune", "en": "A yellow tea"}, {"fr": "Un thé fumé", "en": "A smoked tea"}, {"fr": "Une tisane", "en": "A tisane"}, {"fr": "Un maté", "en": "A mate"}]}, {"d": 3, "q": {"fr": "Qu'a de particulier le thé Anji Bai Cha ?", "en": "What is special about Anji Bai Cha?"}, "x": {"fr": "Ce thé vert vient d'un cultivar à feuilles pâles, presque albinos au printemps.", "en": "This green tea comes from a pale-leaved, almost albino cultivar in spring."}, "a": [{"fr": "Un cultivar à feuilles pâles", "en": "A pale-leaved cultivar"}, {"fr": "Une fermentation de deux ans", "en": "Two years of fermentation"}, {"fr": "Du lait", "en": "Milk"}, {"fr": "Un séchage au soleil de plomb", "en": "Scorching sun drying"}]}, {"d": 3, "q": {"fr": "Où pousse le thé Biluochun ?", "en": "Where does Biluochun grow?"}, "x": {"fr": "Le « Printemps d'émeraude en spirale » vient des monts Dongting, près de Suzhou.", "en": "\"Green Snail Spring\" comes from the Dongting hills near Suzhou."}, "a": [{"fr": "Près de Suzhou", "en": "Near Suzhou"}, {"fr": "Au Tibet", "en": "In Tibet"}, {"fr": "Au Xinjiang", "en": "In Xinjiang"}, {"fr": "À Taïwan", "en": "In Taiwan"}]}, {"d": 3, "q": {"fr": "Quels oolongs sont appelés « Phoenix » ?", "en": "Which oolongs are called \"Phoenix\"?"}, "x": {"fr": "Les Dancong de Phoenix viennent de Chaozhou, dans le Guangdong.", "en": "Phoenix Dancong come from Chaozhou, in Guangdong."}, "a": [{"fr": "Les Dancong du Guangdong", "en": "Guangdong Dancong"}, {"fr": "Les Matcha de Kyoto", "en": "Kyoto matcha"}, {"fr": "Les rooibos", "en": "Rooibos"}, {"fr": "Les chai", "en": "Chai"}]}, {"d": 3, "q": {"fr": "Quel moine japonais a rapporté des graines de thé de Chine et écrit sur le thé en 1211 ?", "en": "Which Japanese monk brought tea seeds from China and wrote about tea in 1211?"}, "x": {"fr": "Eisai a rédigé le Kissa Yōjōki, sur les vertus du thé.", "en": "Eisai wrote the Kissa Yōjōki, on the virtues of tea."}, "a": [{"fr": "Eisai", "en": "Eisai"}, {"fr": "Sen no Rikyū", "en": "Sen no Rikyū"}, {"fr": "Lu Yu", "en": "Lu Yu"}, {"fr": "Bodhidharma", "en": "Bodhidharma"}]}, {"d": 3, "q": {"fr": "Qui est le célèbre maître japonais du thé du XVIᵉ siècle ?", "en": "Who is the famous 16th-century Japanese tea master?"}, "x": {"fr": "Sen no Rikyū a fixé l'esthétique wabi-cha de la cérémonie.", "en": "Sen no Rikyū defined the wabi-cha aesthetic of the ceremony."}, "a": [{"fr": "Sen no Rikyū", "en": "Sen no Rikyū"}, {"fr": "Matsuo Bashō", "en": "Matsuo Bashō"}, {"fr": "Miyamoto Musashi", "en": "Miyamoto Musashi"}, {"fr": "Hokusai", "en": "Hokusai"}]}, {"d": 3, "q": {"fr": "Qui a écrit le « Classique du thé » sous les Tang ?", "en": "Who wrote the \"Classic of Tea\" under the Tang?"}, "x": {"fr": "Lu Yu est considéré comme le « saint du thé » ; son Chajing date du VIIIᵉ siècle.", "en": "Lu Yu, the \"sage of tea\", wrote his Chajing in the 8th century."}, "a": [{"fr": "Lu Yu", "en": "Lu Yu"}, {"fr": "Li Bai", "en": "Li Bai"}, {"fr": "Sun Tzu", "en": "Sun Tzu"}, {"fr": "Du Fu", "en": "Du Fu"}]}, {"d": 3, "q": {"fr": "Quelle reine a popularisé le thé en Angleterre ?", "en": "Which queen popularized tea in England?"}, "x": {"fr": "Catherine de Bragance, épouse de Charles II, en a fait une boisson de cour.", "en": "Catherine of Braganza, wife of Charles II, made it a court drink."}, "a": [{"fr": "Catherine de Bragance", "en": "Catherine of Braganza"}, {"fr": "Elizabeth Iʳᵉ", "en": "Elizabeth I"}, {"fr": "Victoria", "en": "Victoria"}, {"fr": "Anne Boleyn", "en": "Anne Boleyn"}]}, {"d": 3, "q": {"fr": "Qui aurait lancé la mode du thé de l'après-midi vers 1840 ?", "en": "Who is said to have started the afternoon tea habit around 1840?"}, "x": {"fr": "Anna, duchesse de Bedford, comblait sa petite faim de fin d'après-midi.", "en": "Anna, Duchess of Bedford, bridged her late-afternoon hunger."}, "a": [{"fr": "La duchesse de Bedford", "en": "The Duchess of Bedford"}, {"fr": "Marie-Antoinette", "en": "Marie Antoinette"}, {"fr": "La reine Victoria", "en": "Queen Victoria"}, {"fr": "Jane Austen", "en": "Jane Austen"}]}, {"d": 3, "q": {"fr": "Quel agrume est cultivé surtout en Calabre pour le Earl Grey ?", "en": "Which citrus grown mostly in Calabria is used for Earl Grey?"}, "x": {"fr": "La bergamote, Citrus bergamia, vient presque entièrement de Calabre.", "en": "Bergamot, Citrus bergamia, comes almost entirely from Calabria."}, "a": [{"fr": "La bergamote", "en": "Bergamot"}, {"fr": "Le cédrat", "en": "Citron"}, {"fr": "Le kumquat", "en": "Kumquat"}, {"fr": "Le yuzu", "en": "Yuzu"}]}, {"d": 3, "q": {"fr": "Qu'est-ce que le « muscatel » à Darjeeling ?", "en": "What is \"muscatel\" in Darjeeling?"}, "x": {"fr": "Une note de raisin muscat caractéristique des second flush.", "en": "A muscat-grape note typical of second flush teas."}, "a": [{"fr": "Une note de raisin muscat", "en": "A muscat grape note"}, {"fr": "Une marque de théière", "en": "A teapot brand"}, {"fr": "Un dessert", "en": "A dessert"}, {"fr": "Un défaut de séchage", "en": "A drying defect"}]}, {"d": 3, "q": {"fr": "Quelle maladie a poussé Ceylan à passer du café au thé ?", "en": "Which disease pushed Ceylon from coffee to tea?"}, "x": {"fr": "La rouille du caféier a détruit les plantations dans les années 1870.", "en": "Coffee leaf rust devastated plantations in the 1870s."}, "a": [{"fr": "La rouille du caféier", "en": "Coffee leaf rust"}, {"fr": "Le phylloxéra", "en": "Phylloxera"}, {"fr": "Le mildiou", "en": "Mildew"}, {"fr": "La peste", "en": "Plague"}]}, {"d": 3, "q": {"fr": "Qui a fondé la première plantation de thé commerciale de Ceylan ?", "en": "Who founded Ceylon's first commercial tea estate?"}, "x": {"fr": "James Taylor a planté du thé à Loolecondera en 1867.", "en": "James Taylor planted tea at Loolecondera in 1867."}, "a": [{"fr": "James Taylor", "en": "James Taylor"}, {"fr": "Thomas Lipton", "en": "Thomas Lipton"}, {"fr": "Robert Fortune", "en": "Robert Fortune"}, {"fr": "Charles Dickens", "en": "Charles Dickens"}]}, {"d": 3, "q": {"fr": "Quel Écossais a découvert le théier assam en 1823 ?", "en": "Who found the Assam tea plant in 1823?"}, "x": {"fr": "Robert Bruce a repéré des théiers sauvages en Assam.", "en": "Robert Bruce noticed wild tea bushes in Assam."}, "a": [{"fr": "Robert Bruce", "en": "Robert Bruce"}, {"fr": "Robert Burns", "en": "Robert Burns"}, {"fr": "James Watt", "en": "James Watt"}, {"fr": "Walter Scott", "en": "Walter Scott"}]}, {"d": 3, "q": {"fr": "Qu'est-ce que la caisse de Ward ?", "en": "What is a Wardian case?"}, "x": {"fr": "Une petite serre vitrée qui permettait de transporter des plantes vivantes sur mer.", "en": "A small glazed case that let live plants travel by sea."}, "a": [{"fr": "Une serre de transport", "en": "A transport glasshouse"}, {"fr": "Une boîte à thé", "en": "A tea tin"}, {"fr": "Une table de dégustation", "en": "A tasting table"}, {"fr": "Un bateau à vapeur", "en": "A steamship"}]}, {"d": 3, "q": {"fr": "Quelle enzyme déclenche l'oxydation du thé ?", "en": "Which enzyme triggers tea oxidation?"}, "x": {"fr": "La polyphénol oxydase transforme les catéchines en théaflavines et thearubigines.", "en": "Polyphenol oxidase turns catechins into theaflavins and thearubigins."}, "a": [{"fr": "La polyphénol oxydase", "en": "Polyphenol oxidase"}, {"fr": "La lactase", "en": "Lactase"}, {"fr": "L'amylase", "en": "Amylase"}, {"fr": "La pepsine", "en": "Pepsin"}]}, {"d": 3, "q": {"fr": "Que sont les théaflavines ?", "en": "What are theaflavins?"}, "x": {"fr": "Ce sont des pigments orangés formés pendant l'oxydation du thé noir.", "en": "They are orange pigments formed during black tea oxidation."}, "a": [{"fr": "Des pigments du thé noir", "en": "Pigments of black tea"}, {"fr": "Des sucres", "en": "Sugars"}, {"fr": "Des vitamines", "en": "Vitamins"}, {"fr": "Des minéraux", "en": "Minerals"}]}, {"d": 3, "q": {"fr": "Comment appelle-t-on la tasse couverte chinoise ?", "en": "What is the Chinese lidded cup called?"}, "x": {"fr": "Le gaiwan sert à infuser et à boire.", "en": "The gaiwan is used to brew and drink."}, "a": [{"fr": "Le gaiwan", "en": "Gaiwan"}, {"fr": "Le kyusu", "en": "Kyusu"}, {"fr": "Le chasen", "en": "Chasen"}, {"fr": "Le tetsubin", "en": "Tetsubin"}]}, {"d": 3, "q": {"fr": "Quelle cuisson stoppe l'oxydation du thé vert japonais ?", "en": "Which heating step stops oxidation in Japanese green tea?"}, "x": {"fr": "Les feuilles sont étuvées à la vapeur, alors qu'en Chine on les poêle souvent.", "en": "Leaves are steamed, whereas in China they are often pan-fired."}, "a": [{"fr": "La vapeur", "en": "Steaming"}, {"fr": "Le fumage", "en": "Smoking"}, {"fr": "La friture", "en": "Frying"}, {"fr": "Le gel", "en": "Freezing"}]}, {"d": 3, "q": {"fr": "Que sont les fukamushi ?", "en": "What is fukamushi?"}, "x": {"fr": "Ce sont des thés verts japonais étuvés plus longtemps, au liquide trouble et doux.", "en": "These are Japanese green teas steamed longer, with a cloudy, mellow liquor."}, "a": [{"fr": "Des thés verts étuvés longuement", "en": "Deep-steamed green teas"}, {"fr": "Des thés fumés", "en": "Smoked teas"}, {"fr": "Des tisanes", "en": "Tisanes"}, {"fr": "Des thés glacés", "en": "Iced teas"}]}, {"d": 3, "q": {"fr": "Quel arbuste donne le rooibos ?", "en": "Which shrub gives rooibos?"}, "x": {"fr": "Aspalathus linearis pousse dans le fynbos sud-africain.", "en": "Aspalathus linearis grows in South African fynbos."}, "a": [{"fr": "Aspalathus linearis", "en": "Aspalathus linearis"}, {"fr": "Cyclopia genistoides", "en": "Cyclopia genistoides"}, {"fr": "Hibiscus sabdariffa", "en": "Hibiscus sabdariffa"}, {"fr": "Mentha piperita", "en": "Mentha piperita"}]}, {"d": 3, "q": {"fr": "Qu'est-ce que le honeybush ?", "en": "What is honeybush?"}, "x": {"fr": "Une tisane sud-africaine de Cyclopia au goût miellé, proche du rooibos.", "en": "A South African Cyclopia tisane with a honeyed taste, like rooibos."}, "a": [{"fr": "Une tisane sud-africaine", "en": "A South African tisane"}, {"fr": "Un thé japonais", "en": "A Japanese tea"}, {"fr": "Une variété de miel", "en": "A type of honey"}, {"fr": "Un maté", "en": "A mate"}]}, {"d": 3, "q": {"fr": "Quelle fleur change de couleur quand on ajoute du citron ?", "en": "Which flower changes colour when lemon is added?"}, "x": {"fr": "La clitoria bleue vire au violet quand on acidifie l'infusion.", "en": "Butterfly pea turns purple when the infusion is acidified."}, "a": [{"fr": "La clitoria", "en": "Butterfly pea"}, {"fr": "L'hibiscus", "en": "Hibiscus"}, {"fr": "La camomille", "en": "Chamomile"}, {"fr": "Le tilleul", "en": "Linden"}]}, {"d": 3, "q": {"fr": "Quel est le point commun entre un sencha et un matcha ?", "en": "What do sencha and matcha have in common?"}, "x": {"fr": "Tous deux sont des thés verts japonais issus de Camellia sinensis.", "en": "Both are Japanese green teas from Camellia sinensis."}, "a": [{"fr": "Ils sont tous deux des thés verts japonais", "en": "Both are Japanese green teas"}, {"fr": "Ils sont fermentés", "en": "Both are fermented"}, {"fr": "Ils sont sans théine", "en": "Both are caffeine-free"}, {"fr": "Ils sont fumés", "en": "Both are smoked"}]}, {"d": 3, "q": {"fr": "Quel type de thé est le Jin Jun Mei ?", "en": "What kind of tea is Jin Jun Mei?"}, "x": {"fr": "Un thé noir rare du village de Tongmu, dans les monts Wuyi.", "en": "A rare black tea from Tongmu village in the Wuyi mountains."}, "a": [{"fr": "Un thé noir", "en": "A black tea"}, {"fr": "Un thé vert", "en": "A green tea"}, {"fr": "Une tisane", "en": "A tisane"}, {"fr": "Un matcha", "en": "A matcha"}]}, {"d": 3, "q": {"fr": "Quel mot désigne l'infusion elle-même chez les dégustateurs ?", "en": "Which word do tasters use for the infusion itself?"}, "x": {"fr": "Les dégustateurs parlent de « liqueur » pour le liquide obtenu.", "en": "Tasters call the resulting liquid the \"liquor\"."}, "a": [{"fr": "La liqueur", "en": "The liquor"}, {"fr": "Le sirop", "en": "The syrup"}, {"fr": "Le jus", "en": "The juice"}, {"fr": "Le nectar", "en": "The nectar"}]}, {"d": 3, "q": {"fr": "Quel thé fumé est né au village de Tongmu ?", "en": "Which smoked tea was born in the village of Tongmu?"}, "x": {"fr": "Le Lapsang Souchong, ou Zhengshan Xiaozhong, est né dans ce village des monts Wuyi.", "en": "Lapsang Souchong, or Zhengshan Xiaozhong, was born in this Wuyi village."}, "a": [{"fr": "Le Lapsang Souchong", "en": "Lapsang Souchong"}, {"fr": "Le Earl Grey", "en": "Earl Grey"}, {"fr": "Le Sencha", "en": "Sencha"}, {"fr": "Le Kombucha", "en": "Kombucha"}]}, {"d": 3, "q": {"fr": "Quelle plante sauvage américaine contient de la caféine ?", "en": "Which wild North American plant contains caffeine?"}, "x": {"fr": "Le yaupon, Ilex vomitoria, est le seul arbuste caféiné indigène d'Amérique du Nord.", "en": "Yaupon, Ilex vomitoria, is North America's only native caffeinated shrub."}, "a": [{"fr": "Le yaupon", "en": "Yaupon"}, {"fr": "Le trèfle", "en": "Clover"}, {"fr": "Le tournesol", "en": "Sunflower"}, {"fr": "Le sapin", "en": "Fir"}]}, {"d": 3, "q": {"fr": "Quelle est l'origine de la guayusa ?", "en": "What is the origin of guayusa?"}, "x": {"fr": "C'est une feuille caféinée d'Amazonie équatorienne, de la famille des houx.", "en": "It is a caffeinated leaf from the Ecuadorian Amazon, a holly relative."}, "a": [{"fr": "L'Amazonie", "en": "The Amazon"}, {"fr": "L'Himalaya", "en": "The Himalayas"}, {"fr": "La Sibérie", "en": "Siberia"}, {"fr": "Le Sahara", "en": "The Sahara"}]}, {"d": 3, "q": {"fr": "Quel pays est célèbre pour le thé de la région de Nuwara Eliya ?", "en": "Which country is famed for Nuwara Eliya tea?"}, "x": {"fr": "Cette région d'altitude du Sri Lanka donne des thés légers et parfumés.", "en": "This high-altitude Sri Lankan region yields light, fragrant teas."}, "a": [{"fr": "Le Sri Lanka", "en": "Sri Lanka"}, {"fr": "Le Japon", "en": "Japan"}, {"fr": "Le Rwanda", "en": "Rwanda"}, {"fr": "Le Vietnam", "en": "Vietnam"}]}, {"d": 4, "q": {"fr": "En quelle année a été signé le traité de Nankin, qui a clos la première guerre de l'opium ?", "en": "In what year was the Treaty of Nanking, ending the First Opium War, signed?"}, "x": {"fr": "Il date de 1842 et a ouvert plusieurs ports chinois au commerce britannique, dont celui du thé.", "en": "It dates from 1842 and opened several Chinese ports to British trade, including tea."}, "a": [{"fr": "1842", "en": "1842"}, {"fr": "1776", "en": "1776"}, {"fr": "1905", "en": "1905"}, {"fr": "1688", "en": "1688"}]}, {"d": 4, "q": {"fr": "En quelle année la Boston Tea Party a-t-elle eu lieu ?", "en": "In which year did the Boston Tea Party take place?"}, "x": {"fr": "C'était le 16 décembre 1773, en protestation contre le Tea Act.", "en": "It happened on 16 December 1773, protesting the Tea Act."}, "a": [{"fr": "1773", "en": "1773"}, {"fr": "1812", "en": "1812"}, {"fr": "1607", "en": "1607"}, {"fr": "1865", "en": "1865"}]}, {"d": 4, "q": {"fr": "Quel empereur Ming a imposé en 1391 le thé en feuilles plutôt qu'en galettes ?", "en": "Which Ming emperor decreed loose-leaf instead of cakes in 1391?"}, "x": {"fr": "Hongwu a remplacé le tribut en galettes par du thé en feuilles.", "en": "Hongwu replaced tribute cakes with loose-leaf tea."}, "a": [{"fr": "Hongwu", "en": "Hongwu"}, {"fr": "Qianlong", "en": "Qianlong"}, {"fr": "Kangxi", "en": "Kangxi"}, {"fr": "Puyi", "en": "Puyi"}]}, {"d": 4, "q": {"fr": "Quel maître du thé japonais a été condamné à se donner la mort en 1591 ?", "en": "Which Japanese tea master was ordered to take his own life in 1591?"}, "x": {"fr": "Sen no Rikyū a dû commettre le seppuku sur ordre de Toyotomi Hideyoshi.", "en": "Sen no Rikyū was ordered to commit seppuku by Toyotomi Hideyoshi."}, "a": [{"fr": "Sen no Rikyū", "en": "Sen no Rikyū"}, {"fr": "Eisai", "en": "Eisai"}, {"fr": "Oda Nobunaga", "en": "Oda Nobunaga"}, {"fr": "Takeda Shingen", "en": "Takeda Shingen"}]}, {"d": 4, "q": {"fr": "Quel mot anglais vient du malais « kati », une unité de poids ?", "en": "Which English word comes from the Malay \"kati\", a unit of weight?"}, "x": {"fr": "Un « caddy » était à l'origine une boîte contenant un kati de thé.", "en": "A \"caddy\" was originally a box holding a kati of tea."}, "a": [{"fr": "Tea caddy", "en": "Tea caddy"}, {"fr": "Teapot", "en": "Teapot"}, {"fr": "Saucer", "en": "Saucer"}, {"fr": "Scone", "en": "Scone"}]}, {"d": 4, "q": {"fr": "Quel nom portait la ville de Pu'er avant 2007 ?", "en": "What was Pu'er city called before 2007?"}, "x": {"fr": "Simao a été rebaptisée Pu'er pour profiter de la renommée du thé.", "en": "Simao was renamed Pu'er to cash in on the tea's fame."}, "a": [{"fr": "Simao", "en": "Simao"}, {"fr": "Lijiang", "en": "Lijiang"}, {"fr": "Dali", "en": "Dali"}, {"fr": "Kunming", "en": "Kunming"}]}, {"d": 4, "q": {"fr": "Qui a planté les premières graines de thé à Darjeeling en 1841 ?", "en": "Who planted the first tea seeds at Darjeeling in 1841?"}, "x": {"fr": "Le médecin Archibald Campbell y a semé des graines de Chine.", "en": "The physician Archibald Campbell sowed seeds from China there."}, "a": [{"fr": "Archibald Campbell", "en": "Archibald Campbell"}, {"fr": "Robert Bruce", "en": "Robert Bruce"}, {"fr": "James Taylor", "en": "James Taylor"}, {"fr": "Thomas Twining", "en": "Thomas Twining"}]}, {"d": 4, "q": {"fr": "Quelle course de clippers à thé a opposé le Taeping et l'Ariel en 1866 ?", "en": "Which tea clipper race pitted Taeping against Ariel in 1866?"}, "x": {"fr": "La Grande course du thé de 1866 a été remportée de justesse par le Taeping.", "en": "The Great Tea Race of 1866 was narrowly won by Taeping."}, "a": [{"fr": "La Grande course du thé", "en": "The Great Tea Race"}, {"fr": "La Coupe de l'America", "en": "The America's Cup"}, {"fr": "La Route du Rhum", "en": "The Route du Rhum"}, {"fr": "Le Vendée Globe", "en": "The Vendée Globe"}]}, {"d": 4, "q": {"fr": "Qui est crédité de l'invention du sachet de thé en soie vers 1908 ?", "en": "Who is credited with the silk tea bag around 1908?"}, "x": {"fr": "Le New-Yorkais Thomas Sullivan aurait envoyé des échantillons dans de petits sacs de soie.", "en": "New Yorker Thomas Sullivan reportedly sent samples in little silk bags."}, "a": [{"fr": "Thomas Sullivan", "en": "Thomas Sullivan"}, {"fr": "Thomas Edison", "en": "Thomas Edison"}, {"fr": "Thomas Lipton", "en": "Thomas Lipton"}, {"fr": "Thomas Twining", "en": "Thomas Twining"}]}, {"d": 4, "q": {"fr": "Quel acide aminé propre au thé a été isolé au Japon en 1949 ?", "en": "Which amino acid typical of tea was isolated in Japan in 1949?"}, "x": {"fr": "La théanine a été isolée à partir de gyokuro par Yajiro Sakato.", "en": "Theanine was isolated from gyokuro by Yajiro Sakato."}, "a": [{"fr": "La théanine", "en": "Theanine"}, {"fr": "La lysine", "en": "Lysine"}, {"fr": "La glycine", "en": "Glycine"}, {"fr": "La cystéine", "en": "Cysteine"}]}, {"d": 4, "q": {"fr": "Que signifie la lettre « T » dans TGFOP ?", "en": "What does the \"T\" in TGFOP stand for?"}, "x": {"fr": "TGFOP signifie Tippy Golden Flowery Orange Pekoe : beaucoup de bourgeons dorés.", "en": "TGFOP means Tippy Golden Flowery Orange Pekoe: many golden buds."}, "a": [{"fr": "Tippy (riche en bourgeons)", "en": "Tippy (rich in buds)"}, {"fr": "Tea", "en": "Tea"}, {"fr": "Taiwan", "en": "Taiwan"}, {"fr": "Thick", "en": "Thick"}]}, {"d": 4, "q": {"fr": "De quel mot vient le mot « caddy » ?", "en": "Which word does \"caddy\" derive from?"}, "x": {"fr": "Le kati malais mesurait environ 600 grammes.", "en": "The Malay kati weighed about 600 grams."}, "a": [{"fr": "Kati", "en": "Kati"}, {"fr": "Candy", "en": "Candy"}, {"fr": "Caddie", "en": "Caddie"}, {"fr": "Khadi", "en": "Khadi"}]}, {"d": 4, "q": {"fr": "Quelle maison française de thé a été fondée en 1854 à Paris ?", "en": "Which French tea house was founded in Paris in 1854?"}, "x": {"fr": "Mariage Frères est l'une des plus anciennes maisons de thé françaises.", "en": "Mariage Frères is one of France's oldest tea houses."}, "a": [{"fr": "Mariage Frères", "en": "Mariage Frères"}, {"fr": "Palais des Thés", "en": "Palais des Thés"}, {"fr": "Dammann Frères", "en": "Dammann Frères"}, {"fr": "Kusmi Tea", "en": "Kusmi Tea"}]}, {"d": 4, "q": {"fr": "Quelle maison de thé a été fondée à Saint-Pétersbourg en 1867 ?", "en": "Which tea house was founded in Saint Petersburg in 1867?"}, "x": {"fr": "Pavel Kousmichoff a créé Kusmi Tea, qui s'est ensuite installée à Paris.", "en": "Pavel Kousmichoff created Kusmi Tea, later based in Paris."}, "a": [{"fr": "Kusmi Tea", "en": "Kusmi Tea"}, {"fr": "Twinings", "en": "Twinings"}, {"fr": "Lipton", "en": "Lipton"}, {"fr": "Ronnefeldt", "en": "Ronnefeldt"}]}, {"d": 4, "q": {"fr": "En quelle année la maison Twinings a-t-elle ouvert à Londres ?", "en": "In what year did Twinings open in London?"}, "x": {"fr": "Thomas Twining a ouvert son premier établissement en 1706.", "en": "Thomas Twining opened his first establishment in 1706."}, "a": [{"fr": "1706", "en": "1706"}, {"fr": "1850", "en": "1850"}, {"fr": "1920", "en": "1920"}, {"fr": "1590", "en": "1590"}]}, {"d": 4, "q": {"fr": "Quelle maison française de thé remonte à 1692 ?", "en": "Which French tea house dates back to 1692?"}, "x": {"fr": "Dammann Frères tient ses lettres patentes de Louis XIV.", "en": "Dammann Frères holds letters patent from Louis XIV."}, "a": [{"fr": "Dammann Frères", "en": "Dammann Frères"}, {"fr": "Mariage Frères", "en": "Mariage Frères"}, {"fr": "Palais des Thés", "en": "Palais des Thés"}, {"fr": "Les 2 Marmottes", "en": "Les 2 Marmottes"}]}, {"d": 4, "q": {"fr": "Quelle maison de Londres, ouverte en 1707, vend aussi du thé à Piccadilly ?", "en": "Which London store, opened in 1707, also sells tea on Piccadilly?"}, "x": {"fr": "Fortnum & Mason est un grand magasin londonien célèbre pour ses thés.", "en": "Fortnum & Mason is a London department store famed for its teas."}, "a": [{"fr": "Fortnum & Mason", "en": "Fortnum & Mason"}, {"fr": "Harrods", "en": "Harrods"}, {"fr": "Selfridges", "en": "Selfridges"}, {"fr": "Liberty", "en": "Liberty"}]}, {"d": 4, "q": {"fr": "Dans quelle ville a été fondée la maison TWG Tea en 2008 ?", "en": "In which city was TWG Tea founded in 2008?"}, "x": {"fr": "TWG Tea est une maison de thé de luxe de Singapour.", "en": "TWG Tea is a luxury tea house from Singapore."}, "a": [{"fr": "Singapour", "en": "Singapore"}, {"fr": "Tokyo", "en": "Tokyo"}, {"fr": "Dubaï", "en": "Dubai"}, {"fr": "Paris", "en": "Paris"}]}, {"d": 4, "q": {"fr": "Que veut dire « Souchong » dans Lapsang Souchong ?", "en": "What does \"Souchong\" refer to in Lapsang Souchong?"}, "x": {"fr": "Il désigne les grandes feuilles plus basses de la tige, plus grossières.", "en": "It refers to larger, lower leaves, coarser than the tips."}, "a": [{"fr": "Une feuille basse et grande", "en": "A large lower leaf"}, {"fr": "Un bourgeon d'or", "en": "A golden bud"}, {"fr": "Un fumage", "en": "A smoking process"}, {"fr": "Un nom de village", "en": "A village name"}]}, {"d": 4, "q": {"fr": "Quel pays se cache derrière le thé de Gilan, au bord de la Caspienne ?", "en": "Which country is behind Gilan tea on the Caspian shore?"}, "x": {"fr": "Lahijan, dans le Gilan, est la capitale du thé iranien.", "en": "Lahijan, in Gilan, is the capital of Iranian tea."}, "a": [{"fr": "L'Iran", "en": "Iran"}, {"fr": "Le Maroc", "en": "Morocco"}, {"fr": "L'Égypte", "en": "Egypt"}, {"fr": "Le Chili", "en": "Chile"}]}, {"d": 4, "q": {"fr": "Que signifie le terme « shincha » ?", "en": "What does the term \"shincha\" mean?"}, "x": {"fr": "Shincha, « nouveau thé », est le tout premier thé de la saison au Japon.", "en": "Shincha, \"new tea\", is the very first tea of the season in Japan."}, "a": [{"fr": "Le thé nouveau", "en": "New tea"}, {"fr": "Le thé fumé", "en": "Smoked tea"}, {"fr": "Le thé en poudre", "en": "Powdered tea"}, {"fr": "Le thé du soir", "en": "Evening tea"}]}, {"d": 4, "q": {"fr": "Quel est le nombre de chromosomes du théier diploïde ?", "en": "How many chromosomes does the diploid tea plant have?"}, "x": {"fr": "Camellia sinensis est diploïde avec 2n = 30 chromosomes.", "en": "Camellia sinensis is diploid with 2n = 30 chromosomes."}, "a": [{"fr": "30", "en": "30"}, {"fr": "12", "en": "12"}, {"fr": "64", "en": "64"}, {"fr": "100", "en": "100"}]}, {"d": 4, "q": {"fr": "Quel caractère chinois désignait le thé avant l'époque Tang ?", "en": "Which Chinese character meant tea before the Tang era?"}, "x": {"fr": "Le caractère « tu » (荼) désignait le thé et d'autres plantes amères avant que « cha » (茶) ne s'impose.", "en": "The character \"tu\" (荼) meant tea and other bitter herbs until \"cha\" (茶) took over."}, "a": [{"fr": "荼 (tu)", "en": "荼 (tu)"}, {"fr": "花 (hua)", "en": "花 (hua)"}, {"fr": "木 (mu)", "en": "木 (mu)"}, {"fr": "米 (mi)", "en": "米 (mi)"}]}, {"d": 4, "q": {"fr": "Quelle étape de fabrication du thé jaune lui donne son nom ?", "en": "Which production step gives yellow tea its name?"}, "x": {"fr": "Le « menhuang » : les feuilles sont étouffées et jaunissent doucement.", "en": "\"Menhuang\": the leaves are sweated and yellow slowly."}, "a": [{"fr": "Le jaunissage étouffé", "en": "Sealed yellowing"}, {"fr": "Le séchage au soleil", "en": "Sun drying"}, {"fr": "Le fumage", "en": "Smoking"}, {"fr": "La teinture", "en": "Dyeing"}]}, {"d": 4, "q": {"fr": "Combien de pieds mères le Da Hong Pao d'origine compte-t-il ?", "en": "How many original mother bushes does Da Hong Pao have?"}, "x": {"fr": "Six vieux théiers des falaises du Wuyi sont vénérés comme pieds mères.", "en": "Six old bushes on Wuyi cliffs are revered as mother plants."}, "a": [{"fr": "Six", "en": "Six"}, {"fr": "Cent", "en": "One hundred"}, {"fr": "Mille", "en": "One thousand"}, {"fr": "Un seul", "en": "Only one"}]}, {"d": 4, "q": {"fr": "Quelle légende entoure le Tieguanyin ?", "en": "Which legend surrounds Tieguanyin?"}, "x": {"fr": "On dit qu'il est un cadeau de la déesse de la miséricorde Guanyin, « déesse de fer ».", "en": "It is said to be a gift of the \"Iron Goddess of Mercy\", Guanyin."}, "a": [{"fr": "La déesse de fer Guanyin", "en": "The Iron Goddess Guanyin"}, {"fr": "Un dragon de jade", "en": "A jade dragon"}, {"fr": "Un phénix doré", "en": "A golden phoenix"}, {"fr": "Un empereur endormi", "en": "A sleeping emperor"}]}, {"d": 4, "q": {"fr": "Quelle région japonaise de thé est la plus productive en volume ?", "en": "Which Japanese tea region is the largest by volume?"}, "x": {"fr": "Shizuoka est la première préfecture productrice de thé du Japon.", "en": "Shizuoka is Japan's top tea-producing prefecture."}, "a": [{"fr": "Shizuoka", "en": "Shizuoka"}, {"fr": "Hokkaido", "en": "Hokkaido"}, {"fr": "Okinawa", "en": "Okinawa"}, {"fr": "Aomori", "en": "Aomori"}]}, {"d": 4, "q": {"fr": "Comment appelle-t-on la première cueillette de l'année au Japon ?", "en": "What is the first picking of the year called in Japan?"}, "x": {"fr": "L'ichibancha, « première cueillette », donne les thés les plus fins.", "en": "Ichibancha, \"first picking\", gives the finest teas."}, "a": [{"fr": "Ichibancha", "en": "Ichibancha"}, {"fr": "Nibancha", "en": "Nibancha"}, {"fr": "Sanbancha", "en": "Sanbancha"}, {"fr": "Bancha", "en": "Bancha"}]}, {"d": 4, "q": {"fr": "Par gramme de matière sèche, qui contient le plus de caféine ?", "en": "By dry weight, which holds more caffeine?"}, "x": {"fr": "La feuille de thé sèche en contient davantage, mais on en utilise bien moins par tasse.", "en": "Dry tea leaf holds more, but far less is used per cup."}, "a": [{"fr": "La feuille de thé", "en": "Tea leaf"}, {"fr": "Le grain de café", "en": "Coffee bean"}, {"fr": "Ils sont à égalité", "en": "They are equal"}, {"fr": "Aucun des deux", "en": "Neither"}]}, {"d": 4, "q": {"fr": "Comment obtient-on couramment un thé déthéiné ?", "en": "How is tea commonly decaffeinated?"}, "x": {"fr": "On utilise le CO₂ supercritique ou l'acétate d'éthyle pour extraire la caféine.", "en": "Supercritical CO₂ or ethyl acetate is used to extract caffeine."}, "a": [{"fr": "Avec du CO₂ supercritique", "en": "With supercritical CO₂"}, {"fr": "En le lavant à l'eau froide seulement", "en": "By rinsing with cold water only"}, {"fr": "En le faisant geler", "en": "By freezing it"}, {"fr": "En le coupant plus fin", "en": "By cutting it finer"}]}, {"d": 4, "q": {"fr": "Quelle ville est le siège d'une des plus anciennes maisons de thé allemandes, fondée en 1823 ?", "en": "Which German tea house dates from 1823?"}, "x": {"fr": "Ronnefeldt a été fondée à Francfort en 1823.", "en": "Ronnefeldt was founded in Frankfurt in 1823."}, "a": [{"fr": "Ronnefeldt", "en": "Ronnefeldt"}, {"fr": "Teekanne", "en": "Teekanne"}, {"fr": "Bünting", "en": "Bünting"}, {"fr": "Meßmer", "en": "Meßmer"}]}, {"d": 4, "q": {"fr": "Comment dit-on « thé » en russe et en persan ?", "en": "How do Russian and Persian say \"tea\"?"}, "x": {"fr": "« Tchaï » vient de « cha » et a voyagé par les routes terrestres de la soie.", "en": "\"Chai\" comes from \"cha\" and travelled the overland Silk Roads."}, "a": [{"fr": "Tchaï", "en": "Chai"}, {"fr": "Té", "en": "Te"}, {"fr": "Thee", "en": "Thee"}, {"fr": "Tee", "en": "Tee"}]}, {"d": 4, "q": {"fr": "Quel nom les Égyptiens donnent-ils à l'infusion d'hibiscus ?", "en": "What do Egyptians call hibiscus infusion?"}, "x": {"fr": "Le karkadé se boit chaud ou glacé, de l'Égypte au Soudan.", "en": "Karkadé is drunk hot or iced, from Egypt to Sudan."}, "a": [{"fr": "Karkadé", "en": "Karkadé"}, {"fr": "Maté", "en": "Mate"}, {"fr": "Bissap", "en": "Bissap"}, {"fr": "Tisane d'or", "en": "Golden tisane"}]}]);
+
 /* ================= LANGUE ================= */
 var LANG='fr',EN={},MISS={};
 function t(s,v){
@@ -849,11 +911,11 @@ function lc(o){return o&&(o[LANG]||o.fr)}
 var MAXSTOCK=6,REGEN=15*60*1000,LS='teamaster.v2',LS1='teamaster.v1';
 function defLang(){try{return /^fr/i.test(navigator.language||'fr')?'fr':'en'}catch(e){return 'fr'}}
 function fresh(){return {v:2,updated:0,pseudo:'',leaves:60,stock:5,stockTs:Date.now(),owned:{},stats:{packs:0,quiz:0,right:0,trades:0,found:0},quests:null,streak:{last:'',n:0},loginClaimed:'',
-  set:{skin:'matcha',pat:'leaves',back:'classic',font:'serif',lang:defLang(),mascot:true,mode:'classy',soc:true},ob:0,bond:0,named:false,av:null,hw:{day:''},qz:{day:'',n:0},qseen:[],box:null,esc:{},fr:[],fn:{},ign:[],of:{},rs:{},recent:[],migr:0}}
+  set:{skin:'matcha',pat:'leaves',back:'classic',font:'serif',lang:defLang(),mascot:true,mode:'classy',soc:true},ob:0,bond:0,named:false,av:null,hw:{day:''},qz:{day:'',n:0},qseen:[],box:null,esc:{},fr:[],fn:{},ign:[],of:{},rs:{},bm:{},btl:{},bd:{day:'',n:0},recent:[],migr:0}}
 function norm(d){
   var f=fresh(),o=Object.assign(f,d||{}),F=fresh();
   ['set','stats','streak','qz'].forEach(function(k){o[k]=Object.assign(F[k],(d&&d[k])||{})});
-  ['fn','of','rs','esc'].forEach(function(k){if(!o[k]||typeof o[k]!=='object'||Array.isArray(o[k]))o[k]={}});
+  ['fn','of','rs','esc','bm','btl'].forEach(function(k){if(!o[k]||typeof o[k]!=='object'||Array.isArray(o[k]))o[k]={}});
   ['fr','recent','qseen','ign'].forEach(function(k){if(!Array.isArray(o[k]))o[k]=[]});
   if(!o.owned||typeof o.owned!=='object')o.owned={};
   if(!{classy:1,fan:1,infuse:1,quick:1,instant:1,coffret:1}[o.set.mode])o.set.mode='classy';
@@ -1499,7 +1561,7 @@ EN["Je suis le gardien de ce salon de thé, et je reste en bas à droite. Mon no
 "Salut, moi c'est Fabien ! Huit questions sur le thé et les tisanes. Choisis ta difficulté : plus c'est dur, plus ça rapporte.":"Hi, I'm Fabien! Eight questions about tea and herbal teas. Pick your difficulty: the harder, the more it pays.",
 "8 questions":"8 questions",
 "jusqu'à {n} feuilles":"up to {n} leaves",
-"Chaque jour, de nouvelles quêtes. Et dans l'onglet Quiz, Fabien te pose des questions sur le thé, en trois difficultés.":"New quests every day. And in the Quiz tab, Fabien asks you questions about tea, in three difficulty levels.",
+"Chaque jour, de nouvelles quêtes. Et dans l'onglet Quiz, Fabien te pose des questions sur le thé, en quatre difficultés.":"New quests every day. And in the Quiz tab, Fabien asks you questions about tea, in four difficulty levels.",
 "Ce navigateur ne sait pas lire ce code.":"This browser can't read this code.",
 "Ce code n'est pas valide. Copie-le en entier, il commence par TM.":"This code isn't valid. Copy it in full; it starts with TM.",
 "Code de sauvegarde":"Save code",
@@ -1574,6 +1636,106 @@ EN["Je suis le gardien de ce salon de thé, et je reste en bas à droite. Mon no
 "Invité · se connecter":"Guest · sign in",
 "Connecte-toi pour jouer avec tes amis":"Sign in to play with your friends",
 "Le social a besoin d'un compte : connecte-toi avec ton pseudo ou ton code permanent pour ajouter des amis et échanger.":"Social needs an account: sign in with your username or permanent code to add friends and trade.",
+"Maître":"Master",
+"Abandonner":"Forfeit",
+"Accepter et jouer":"Accept and play",
+"Adversaire indisponible":"Opponent unavailable",
+"Aucune carte ne correspond.":"No card matches.",
+"Bouquet éclatant":"Bright Bouquet",
+"Bravo, quelle victoire !":"Well done, what a win!",
+"C'est très efficace !":"It's very effective!",
+"Carte {n}":"Card {n}",
+"Ce défi n'est plus disponible.":"This challenge is no longer available.",
+"Ce sera pour la prochaine fois.":"Maybe next time.",
+"Cet adversaire n'est plus disponible. Tu peux annuler ce combat.":"This opponent is no longer available. You can cancel this battle.",
+"Chaque équipe compte 3 cartes. Les PV, l'attaque et la vitesse dépendent de la rareté et de la note de la carte. À chaque tour, les deux joueurs choisissent en secret : Infusion (dégâts sûrs), l'attaque signature de la famille (plus forte, 80 % de précision) ou Pause thé (soigne un peu et divise les dégâts reçus par deux, pas deux tours de suite). Le plus rapide frappe en premier. Une carte K.O. laisse la place à la suivante.":"Each team has 3 cards. HP, attack and speed depend on the card's rarity and score. Each turn, both players choose in secret: Steeping (reliable damage), the family's signature attack (stronger, 80% accuracy) or Tea Break (heals a little and halves the damage you take, not twice in a row). The faster card strikes first. A knocked-out card makes room for the next one.",
+"Chargement…":"Loading…",
+"Chercher une carte…":"Search a card…",
+"Choisis ton attaque. Ton adversaire choisit en même temps.":"Choose your attack. Your opponent chooses at the same time.",
+"Choisis ton équipe":"Choose your team",
+"Choix envoyé. En attente de {name}…":"Choice sent. Waiting for {name}…",
+"Classement entre amis":"Friends ranking",
+"Combat":"Battle",
+"Combat contre {name} : choisis 3 cartes.":"Battle against {name}: choose 3 cards.",
+"Comment ça marche ?":"How does it work?",
+"Corsé":"Bold",
+"Coup critique !":"Critical hit!",
+"Dommage… la prochaine fois !":"Too bad… next time!",
+"Défaite":"Defeat",
+"Défi envoyé !":"Challenge sent!",
+"Défi envoyé, en attente de {name}…":"Challenge sent, waiting for {name}…",
+"Défi envoyé. En attente de la réponse de {name}…":"Challenge sent. Waiting for {name} to answer…",
+"Défi refusé.":"Challenge declined.",
+"Défier":"Challenge",
+"Défier un ami":"Challenge a friend",
+"Défis reçus":"Challenges received",
+"Dégâts sûrs":"Reliable damage",
+"En attente de {name}…":"Waiting for {name}…",
+"Entraînement avec Teapee":"Training with Teapee",
+"Envoyer le défi":"Send challenge",
+"Floral":"Floral",
+"Forme une équipe de 3 cartes et affronte Teapee ou tes amis.":"Build a team of 3 cards and face Teapee or your friends.",
+"Fort · 80 % de précision":"Strong · 80% accuracy",
+"Fraîcheur":"Freshness",
+"Il te faut au moins 3 cartes pour te battre. Ouvre des sachets !":"You need at least 3 cards to battle. Open some packs!",
+"Indisponible ce tour":"Unavailable this turn",
+"Jouer":"Play",
+"Lancer le combat":"Start battle",
+"Limite de récompenses atteinte aujourd'hui.":"Daily reward limit reached.",
+"Mes combats":"My battles",
+"PV {hp} · ATQ {atk} · VIT {spd}":"HP {hp} · ATK {atk} · SPD {spd}",
+"Pause thé":"Tea Break",
+"Peu efficace ×0,75":"Not very effective ×0.75",
+"Peu efficace…":"Not very effective…",
+"Protégé":"Guarded",
+"Rafale d'umami":"Umami Gust",
+"Revanche":"Rematch",
+"Récompenses aujourd'hui : {a}/{b}":"Rewards today: {a}/{b}",
+"Récompenses limitées à {n} combats par jour.":"Rewards are limited to {n} battles per day.",
+"Soigne 12 % · dégâts ÷2":"Heals 12% · damage ÷2",
+"Torréfaction":"Roast Blast",
+"Tour {n}":"Turn {n}",
+"Très efficace ×1,5":"Very effective ×1.5",
+"Tu as abandonné ce combat.":"You forfeited this battle.",
+"Tu as abandonné.":"You forfeited.",
+"Tu as déjà trois combats en cours.":"You already have three battles in progress.",
+"Une famille bat la suivante (×1,5 sur l'attaque signature) et résiste mal à la précédente (×0,75).":"Each family beats the next one (×1.5 on the signature attack) and resists the previous one poorly (×0.75).",
+"Victoire !":"Victory!",
+"Voir":"View",
+"contre {name}":"against {name}",
+"te défie en combat !":"challenges you to a battle!",
+"toi":"you",
+"{a} / {b} PV":"{a} / {b} HP",
+"{name} a abandonné.":"{name} forfeited.",
+"{name} a refusé ton défi.":"{name} declined your challenge.",
+"{name} est K.O. !":"{name} is knocked out!",
+"{name} prend une Pause thé (+{n} PV).":"{name} takes a Tea Break (+{n} HP).",
+"{name} rate {mv} !":"{name} misses {mv}!",
+"{name} utilise {mv} : −{n} PV.":"{name} uses {mv}: −{n} HP.",
+"{n} carte":"{n} card",
+"{n} défaite":"{n} defeat",
+"{n} défaites":"{n} defeats",
+"{n} victoire":"{n} win",
+"{n} victoires":"{n} wins",
+"Épice ardente":"Fiery Spice",
+"Épicé":"Spicy",
+"Équipe auto":"Auto team",
+"Équipe invalide.":"Invalid team.",
+"Plus de cartes":"Most cards",
+"Carte la plus rare":"Rarest card",
+"Collection":"Collection",
+"Victoires en combat":"Battle wins",
+"Niveau":"Level",
+"Toutes":"All",
+"Trois cartes maximum.":"Three cards maximum.",
+"{name} te défie en combat !":"{name} challenges you to a battle!",
+"Bien joué !":"Well played!",
+"Infusion":"Steeping",
+"Teapee":"Teapee",
+"Du nouveau dans l'onglet Combat !":"Something new in the Battle tab!",
+"Combats":"Battles",
+"Forme une équipe de 3 cartes et bats-toi : entraîne-toi contre moi, ou défie tes amis. Chaque thé a ses attaques et ses points de vie.":"Build a team of 3 cards and fight: train against me, or challenge your friends. Every tea has its own attacks and hit points.",
+"Ajoute des amis avec leur code, vois qui est en ligne, compare vos collections dans le classement et échange des cartes. Tu peux aussi changer les couleurs dans Personnaliser, en haut de l'écran.":"Add friends with their code, see who is online, compare collections in the ranking and trade cards. You can also change the colours in Customize, at the top of the screen.",
 "Se connecter ou créer un compte":"Sign in or create an account",
 "Déconnecté. Ta progression reste sur ton compte.":"Signed out. Your progress stays on your account.",
 "Connecté en ligne comme {name}. Ta progression est enregistrée sur ton compte et te suit sur tous tes appareils.":"Signed in online as {name}. Your progress is saved to your account and follows you on all your devices."
@@ -1581,13 +1743,13 @@ EN["Je suis le gardien de ce salon de thé, et je reste en bas à droite. Mon no
 EN["Retrouve ta progression avec ton pseudo et ton mot de passe."]="Pick up your progress with your nickname and password.";EN["Pseudo et mot de passe, ta progression est sauvegardée en ligne."]="Nickname and password, your progress is saved online.";
 
 /* ================= QUIZ ================= */
-var QZS=null,QR=[0,5,9,15],QB=[0,20,40,70];
+var QZS=null,QR=[0,5,9,15,22],QB=[0,20,40,70,120];
 function quizStart(dd){
   dd=dd||2;
   var seen=S.qseen||[];
   function poolBy(d){var p=QBANK.map(function(q,i){return i}).filter(function(i){return QBANK[i].d===d});var fr=p.filter(function(i){return seen.indexOf(i)<0});return shuffle(fr.length>=8?fr:p)}
   var ix=poolBy(dd).slice(0,8);
-  S.qseen=seen.concat(ix).slice(-24);
+  S.qseen=seen.concat(ix).slice(-120);
   QZS={d:dd,i:0,right:0,streak:0,ans:null,hist:[],done:false,res:null,
    list:ix.map(function(qi){var q=QBANK[qi];return {qi:qi,opts:shuffle(q.a.map(function(a,k){return {a:a,ok:k===0}}))}})};
   touch();
@@ -1630,7 +1792,7 @@ function showCode(c){return c?c.slice(0,4)+'-'+c.slice(4):''}
 function myName(){return S.pseudo||t('Dégustateur')}
 function socialOn(){return !!(CL.db&&CL.uid&&S.set.soc&&CL.state!=='readonly'&&CL.canWrite!==false&&SO.err!=='invalid_argument'&&S.ob>=1)}
 function pubOwned(){return Object.keys(S.owned).map(function(id){return id+'~'+S.owned[id][0]}).join(',')}
-function pubDoc(){return {p:myName(),cd:myCode(),fr:S.fr,n:Object.keys(S.owned).length,lv:levelIdx(),o:pubOwned(),of:S.of,rs:S.rs,sk:S.set.skin,av:avPub()}}
+function pubDoc(){return {p:myName(),cd:myCode(),fr:S.fr,n:Object.keys(S.owned).length,lv:levelIdx(),o:pubOwned(),of:S.of,rs:S.rs,sk:S.set.skin,av:avPub(),bw:S.stats.bw||0,bt:pubBattles()}}
 function parseOwned(s){var o={};if(!s)return o;s.split(',').forEach(function(x){var p=x.split('~');if(BYID[p[0]])o[p[0]]=+p[1]||1});return o}
 function schedulePub(){if(!socialOn()||!SO.started)return;clearTimeout(pubTimer);pubTimer=setTimeout(function(){pubFlush()},2500)}
 function pubFlush(force){
@@ -1738,12 +1900,14 @@ function processSocial(){
     var r=S.rs[tid];if(!r.f)return;var F=SO.fans[r.f];if(!F)return;
     if((r.st==='ack'||r.st==='dec')&&!(F.of&&F.of[tid])){delete S.rs[tid];changed=true}
   });
+  if(battleSync())changed=true;
   if(changed){touch();pubFlush(true);if(done){toast(tp('Échange terminé avec {name} : {n} carte reçue','Échange terminé avec {name} : {n} cartes reçues',done.got,{name:done.name}));catReact('happy',t('Bel échange !'))}}
 }
 function notifySocial(){
   var n=pendingIn(),o=incomingOffers(),fresh=false;
   n.forEach(function(u){if(!SO.notified['f'+u]){SO.notified['f'+u]=1;fresh=true;toast(t('{name} veut devenir ton ami',{name:nameOfUid(u)}))}});
   o.forEach(function(x){if(!SO.notified[x.tid]){SO.notified[x.tid]=1;fresh=true;toast(t('{name} te propose un échange',{name:x.name}))}});
+  incomingBattles().forEach(function(x){if(!SO.notified['b'+x.tid]){SO.notified['b'+x.tid]=1;fresh=true;toast(t('{name} te défie en combat !',{name:x.name}))}});
   SO.ping=n.length+o.length>0;
   if(fresh)catReact('surprised',t('Du nouveau dans l\'onglet Social !'));
 }
@@ -1764,6 +1928,221 @@ function addFriendByCode(raw){
 function removeFriend(u){S.fr=S.fr.filter(function(x){return x!==u});touch();pubFlush(true)}
 function acceptFriend(u){if(S.fr.indexOf(u)<0){S.fr.push(u);S.fn[u]=nameOfUid(u);touch();pubFlush(true)}}
 function ignoreFriend(u){if(S.ign.indexOf(u)<0){S.ign.push(u);touch()}}
+
+/* ================= COMBAT : moteur et protocole ================= */
+var ELS=[
+ {id:'f',n:'Fraîcheur',c:'#3f9d63',ks:['vert','matcha','blanc','jaune'],mv:'Rafale d\'umami'},
+ {id:'l',n:'Floral',c:'#cf5d8a',ks:['plantes','fruits','aroma','oolong'],mv:'Bouquet éclatant'},
+ {id:'c',n:'Corsé',c:'#8a4a2a',ks:['noir','puerh'],mv:'Torréfaction'},
+ {id:'e',n:'Épicé',c:'#d4821f',ks:['chai','rooibos','mate'],mv:'Épice ardente'}
+];
+var ELIDX={};ELS.forEach(function(e,i){e.ks.forEach(function(k){ELIDX[k]=i})});
+var BMAX=30,BTEAM=3,BCAP=8;
+function bMult(a,d){return ((a+1)%4===d)?1.5:(((d+1)%4===a)?.75:1)}
+function bStats(c){return {id:c.id,el:ELIDX[c.k]||0,max:Math.round(40+12*c.r+c.s*.35),atk:Math.round((9+2.2*c.r+c.s/14)*1.6),spd:30+(c.hh%40)+c.r*2}}
+function bNew(ta,tb){
+  function mk(ids){return ids.map(function(id){var s=bStats(BYID[id]);s.hp=s.max;return s})}
+  return {s:[{t:mk(ta),i:0,gcd:0,g:0},{t:mk(tb),i:0,gcd:0,g:0}],r:0,over:false,win:-1,last:[]};
+}
+function bAct(st,k){var sd=st.s[k];return sd.t[Math.min(sd.i,sd.t.length-1)]}
+function bAlive(sd){return sd.t.some(function(f){return f.hp>0})}
+function bNorm(st,k,m){m=+m;if(m===2&&st.s[k].gcd>0)m=0;return (m===1||m===2)?m:0}
+function bRound(st,seed,ca,cb){
+  var rng=mulberry(h32(seed+':'+st.r)),ev=[],m=[bNorm(st,0,ca),bNorm(st,1,cb)];
+  st.s[0].g=0;st.s[1].g=0;
+  var act=[bAct(st,0),bAct(st,1)];
+  [0,1].forEach(function(k){
+    if(m[k]!==2)return;
+    var f=act[k],h=Math.round(f.max*.12),real=Math.max(0,Math.min(h,f.max-f.hp));f.hp+=real;st.s[k].g=1;
+    ev.push({k:'guard',side:k,card:f.id,heal:real});
+  });
+  var order=(act[1].spd>act[0].spd)?[1,0]:[0,1];
+  order.forEach(function(k){
+    if(m[k]===2)return;
+    var A=act[k],dk=1-k,D=bAct(st,dk);
+    if(A.hp<=0)return;
+    var pow=1,acc=1,mult=1;
+    if(m[k]===1){pow=1.6;acc=.8;mult=bMult(A.el,D.el)}
+    var r1=rng(),r2=rng(),r3=rng(),hit=r1<acc,crit=r3<.1;
+    if(!hit){ev.push({k:'miss',side:k,card:A.id,mv:m[k]});return}
+    var dmg=Math.max(1,Math.round(A.atk*pow*mult*(.9+r2*.2)*(crit?1.5:1)));
+    if(st.s[dk].g)dmg=Math.max(1,Math.round(dmg*.5));
+    D.hp=Math.max(0,D.hp-dmg);
+    ev.push({k:'hit',side:k,card:A.id,tgt:D.id,mv:m[k],dmg:dmg,mult:mult,crit:crit,left:D.hp,guard:!!st.s[dk].g});
+    if(D.hp<=0){
+      ev.push({k:'ko',side:dk,card:D.id});
+      var sd=st.s[dk];while(sd.i<sd.t.length&&sd.t[sd.i].hp<=0)sd.i++;if(sd.i>=sd.t.length)sd.i=sd.t.length-1;
+    }
+  });
+  [0,1].forEach(function(k){var sd=st.s[k];if(m[k]===2)sd.gcd=1;else if(sd.gcd>0)sd.gcd--});
+  st.r++;st.last=ev;
+  var a0=bAlive(st.s[0]),a1=bAlive(st.s[1]);
+  if(!a0||!a1){st.over=true;st.win=a0?0:1}
+  else if(st.r>=BMAX){
+    st.over=true;
+    var p=function(sd){var h=0,mx=0;sd.t.forEach(function(f){h+=f.hp;mx+=f.max});return h/mx};
+    st.win=p(st.s[0])>p(st.s[1])?0:1;
+  }
+  return ev;
+}
+function bSim(seed,ta,tb,ma,mb){
+  var st=bNew(ta,tb),n=Math.min(ma.length,mb.length);
+  for(var r=0;r<n&&!st.over;r++)bRound(st,seed,ma.charAt(r),mb.charAt(r));
+  return st;
+}
+function bMoveName(el,m){return m===0?'Infusion':m===1?ELS[el].mv:'Pause thé'}
+
+/* ---------- état ---------- */
+function bList(){return Object.keys(S.bm||{}).map(function(tid){return {tid:tid,e:S.bm[tid]}}).sort(function(a,b){return (b.e.ts||0)-(a.e.ts||0)})}
+function bOpenCount(){return bList().filter(function(x){return !x.e.ai&&x.e.st!=='end'&&x.e.st!=='dec'}).length}
+function bNewTid(){return 'b'+Date.now().toString(36)+Math.floor(Math.random()*1296).toString(36)}
+function bTeamOk(ids){
+  if(!Array.isArray(ids)||ids.length!==BTEAM)return false;
+  var seen={};
+  for(var i=0;i<ids.length;i++){if(!BYID[ids[i]]||!S.owned[ids[i]]||seen[ids[i]])return false;seen[ids[i]]=1}
+  return true;
+}
+function bPower(c){var s=bStats(c);return s.max+s.atk*4}
+function bAutoTeam(){
+  var own=Object.keys(S.owned).map(function(id){return BYID[id]}).filter(Boolean).sort(function(a,b){return bPower(b)-bPower(a)}),team=[],els={};
+  own.forEach(function(c){if(team.length<BTEAM&&!els[ELIDX[c.k]]){els[ELIDX[c.k]]=1;team.push(c.id)}});
+  own.forEach(function(c){if(team.length<BTEAM&&team.indexOf(c.id)<0)team.push(c.id)});
+  return team;
+}
+function bAiTeam(tid,mine,lv){
+  var rng=mulberry(h32(tid+':team')),team=[],pool=[[],[],[],[],[]];
+  CARDS.forEach(function(c){pool[c.r].push(c)});
+  mine.forEach(function(id){
+    var r=BYID[id].r+(lv-1);if(rng()<.3)r+=1;else if(rng()<.2)r-=1;
+    r=Math.max(0,Math.min(4,r));var L=pool[r];if(!L.length)L=pool[0];
+    var c=L[Math.floor(rng()*L.length)];if(team.indexOf(c.id)>=0)c=L[(L.indexOf(c)+1)%L.length];team.push(c.id)
+  });
+  return team;
+}
+function bAiPick(seed,st,r,lv){
+  var rng=mulberry(h32(seed+':ai:'+r)),A=bAct(st,1),D=bAct(st,0),p=rng(),q=rng();
+  if(st.s[1].gcd===0&&A.hp/A.max<(.25+lv*.05)&&p<(.35+lv*.15))return '2';
+  var sp=(bMult(A.el,D.el)>1?.7:.4)+lv*.1;
+  return q<sp?'1':'0';
+}
+/* ---------- création / réponse ---------- */
+function battleTraining(team,lv){
+  if(!bTeamOk(team))return 'team';
+  var tid=bNewTid();
+  S.bm[tid]={a:1,o:'ai',on:'Teapee',t:team.slice(),m:'',am:'',ot:bAiTeam(tid,team,lv),lv:lv,st:'go',ai:1,ts:Date.now()};
+  touch();return tid;
+}
+function battleChallenge(peer,team){
+  if(!isFriend(peer))return 'nofriend';
+  if(!bTeamOk(team))return 'team';
+  if(bOpenCount()>=3)return 'toomany';
+  var tid=bNewTid();
+  S.bm[tid]={a:1,o:peer,on:nameOfUid(peer),t:team.slice(),m:'',st:'ch',ts:Date.now()};
+  touch();pubFlush(true);return tid;
+}
+function battleAccept(from,tid,team){
+  var F=SO.fans[from],off=F&&F.bt&&F.bt[tid];
+  if(!off||off.st!=='ch'||off.o!==CL.uid||S.bm[tid])return 'gone';
+  if(!bTeamOk(team))return 'team';
+  if(bOpenCount()>=3)return 'toomany';
+  S.bm[tid]={a:0,o:from,on:nameOfUid(from),t:team.slice(),m:'',st:'go',ts:Date.now()};
+  touch();pubFlush(true);return 'ok';
+}
+function battleDecline(from,tid){
+  if(S.bm[tid])return;
+  S.bm[tid]={a:0,o:from,on:nameOfUid(from),t:[],m:'',st:'dec',ts:Date.now()};
+  touch();pubFlush(true);
+}
+function battleForfeit(tid){var e=S.bm[tid];if(!e||e.st==='end')return;e.ff=1;e.ts2=Date.now();touch();if(!e.ai)pubFlush(true);battleSync()}
+function battleDismiss(tid){var e=S.bm[tid];if(!e)return;if(e.ai||e.st==='ch'||e.st==='dec')delete S.bm[tid];else e.dis=1;touch();if(!e.ai)pubFlush(true)}
+/* ---------- vue d'un combat ---------- */
+function bOpp(tid,e){
+  if(e.ai)return {t:e.ot,m:e.am||'',ff:0,ok:true,st:'go',name:'Teapee'};
+  var F=SO.fans[e.o],oe=F&&F.bt&&F.bt[tid];
+  return {t:(oe&&oe.t)||[],m:(oe&&oe.m)||'',ff:(oe&&oe.ff)?1:0,st:oe&&oe.st,ok:!!oe,name:nameOfUid(e.o)};
+}
+function bView(tid){
+  var e=S.bm[tid];if(!e)return null;
+  var oe=bOpp(tid,e),v={tid:tid,e:e,oe:oe,mine:e.a?0:1,st:null,phase:'',win:-1,iWon:false};
+  if(e.st==='dec'){v.phase='dec';return v}
+  if(e.ff){v.phase='over';v.win=1-v.mine;v.ff='me';v.iWon=false;return v}
+  if(!e.ai&&!SO.ok&&!oe.ok){v.phase='load';return v}
+  if(e.st==='ch'&&!(oe.ok&&oe.st==='go')){v.phase='pend';return v}
+  if(!oe.ok||oe.t.length!==BTEAM){v.phase=(e.st==='end')?'end':'gone';return v}
+  var ta=e.a?e.t:oe.t,tb=e.a?oe.t:e.t,ma=e.a?e.m:oe.m,mb=e.a?oe.m:e.m;
+  var okIds=function(L){return L.length===BTEAM&&L.every(function(id){return !!BYID[id]})};
+  if(!okIds(ta)||!okIds(tb)){v.phase='gone';return v}
+  v.st=bSim(tid,ta,tb,ma,mb);
+  if(oe.ff){v.phase='over';v.win=v.mine;v.ff='op'}
+  else if(v.st.over){v.phase='over';v.win=v.st.win}
+  else v.phase=(e.m.length===v.st.r)?'choose':'wait';
+  v.iWon=v.win===v.mine;
+  return v;
+}
+function battleMove(tid,m){
+  var e=S.bm[tid],v=bView(tid);
+  if(!e||!v||v.phase!=='choose')return false;
+  e.m+=String(+m===1||+m===2?+m:0);
+  if(e.ai){
+    var st=bSim(tid,e.t,e.ot,e.m.slice(0,-1),e.am||'');
+    e.am=(e.am||'')+bAiPick(tid,st,st.r,e.lv||1);
+  }
+  touch();if(!e.ai){pubFlush(true)}
+  battleSync();return true;
+}
+/* ---------- fin de combat, récompenses ---------- */
+function bReward(win,ai,lv){
+  var day=todayKey();if(!S.bd||S.bd.day!==day)S.bd={day:day,n:0};
+  if(S.bd.n>=BCAP)return 0;
+  S.bd.n++;
+  var g=ai?(win?[0,6,10,16][(lv||1)+1]||10:2):(win?22:6);
+  S.leaves+=g;return g;
+}
+function battleSync(){
+  var changed=false,done=null;
+  Object.keys(S.bm).forEach(function(tid){
+    var e=S.bm[tid],v=bView(tid);if(!v)return;
+    if(e.st==='ch'&&v.phase!=='pend'&&v.phase!=='load'){e.st='go';changed=true}
+    if(e.st==='ch'&&!e.ai&&SO.ok&&v.oe.ok&&v.oe.st==='dec'){delete S.bm[tid];changed=true;toast(t('{name} a refusé ton défi.',{name:nameOfUid(e.o)}));return}
+    if(v.phase==='over'&&e.st!=='end'){
+      e.st='end';e.te=Date.now();
+      var rw=bReward(v.iWon,e.ai,e.lv);
+      S.btl[tid]={w:v.iWon?1:0,ts:e.te,on:e.on||nameOfUid(e.o),ai:e.ai?1:0,rw:rw};
+      var ks=Object.keys(S.btl);if(ks.length>30){ks.sort(function(a,b){return S.btl[a].ts-S.btl[b].ts});ks.slice(0,ks.length-30).forEach(function(k){delete S.btl[k]})}
+      if(v.iWon){S.stats.bw=(S.stats.bw||0)+1}else{S.stats.bl=(S.stats.bl||0)+1}
+      addBond(1);changed=true;done={w:v.iWon,rw:rw,tid:tid};
+    }
+  });
+  var now=Date.now();
+  Object.keys(S.bm).forEach(function(tid){
+    var e=S.bm[tid];
+    if(e.st==='end'&&e.te&&now-e.te>36*3600*1000){delete S.bm[tid];changed=true}
+    else if((e.st==='ch'||e.st==='dec')&&now-(e.ts||0)>24*3600*1000){delete S.bm[tid];changed=true}
+    else if(e.st==='go'&&!e.ai&&now-(e.ts||0)>72*3600*1000){delete S.bm[tid];changed=true}
+  });
+  SO.fast=bFastNeeded();
+  if(changed){touch();pubFlush(true)}
+  if(done&&typeof catReact==='function')catReact(done.w?'happy':'sad',done.w?t('Bravo, quelle victoire !'):t('Dommage… la prochaine fois !'));
+  return changed;
+}
+function bFastNeeded(){return !!(typeof BV!=='undefined'&&BV)}
+function pubBattles(){
+  var o={};
+  Object.keys(S.bm||{}).forEach(function(tid){var e=S.bm[tid];if(e.ai)return;var x={a:e.a,o:e.o,t:e.t,m:e.m,st:e.st,ts:e.ts};if(e.ff)x.ff=1;o[tid]=x});
+  return o;
+}
+function incomingBattles(){
+  var out=[];
+  friendsList().forEach(function(f){
+    var bt=f.d.bt||{};
+    Object.keys(bt).forEach(function(tid){var b=bt[tid];if(b&&b.o===CL.uid&&b.st==='ch'&&!S.bm[tid]&&(Date.now()-(b.ts||0))<24*3600*1000)out.push({tid:tid,from:f.uid,name:f.d.p,team:b.t||[]})});
+  });
+  return out;
+}
+function battlePing(){
+  if(incomingBattles().length)return true;
+  return bList().some(function(x){if(x.e.ai||x.e.st==='end'||x.e.st==='dec'||x.e.st==='ch')return false;var v=bView(x.tid);return v&&v.phase==='choose'});
+}
 
 var LOGO_URI='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj4KPGRlZnM+CjxsaW5lYXJHcmFkaWVudCBpZD0iYmciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiMzZjhmNWYiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMxYzRhMzgiLz48L2xpbmVhckdyYWRpZW50Pgo8bGluZWFyR3JhZGllbnQgaWQ9ImN1cCIgeDE9IjAiIHkxPSIwIiB4Mj0iMCIgeTI9IjEiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2ZmZmFmMCIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2VhZGZjNCIvPjwvbGluZWFyR3JhZGllbnQ+CjwvZGVmcz4KPHJlY3Qgd2lkdGg9IjUxMiIgaGVpZ2h0PSI1MTIiIGZpbGw9InVybCgjYmcpIi8+CjxjaXJjbGUgY3g9IjI1NiIgY3k9IjI1NiIgcj0iMTk2IiBmaWxsPSJub25lIiBzdHJva2U9IiNmM2VhZDIiIHN0cm9rZS1vcGFjaXR5PSIuMjgiIHN0cm9rZS13aWR0aD0iNiIvPgo8IS0tIHZhcGV1ciAtLT4KPGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZjNlYWQyIiBzdHJva2Utd2lkdGg9IjE0IiBzdHJva2UtbGluZWNhcD0icm91bmQiIG9wYWNpdHk9Ii45Ij4KPHBhdGggZD0iTTIxMiAxNTBjLTE2IDE4IDE2IDMwIDAgNTIiLz48cGF0aCBkPSJNMjU2IDEzNGMtMTYgMTggMTYgMzAgMCA1MiIvPjxwYXRoIGQ9Ik0zMDAgMTUwYy0xNiAxOCAxNiAzMCAwIDUyIi8+CjwvZz4KPCEtLSBhbnNlIC0tPgo8cGF0aCBkPSJNMzU2IDI1OGgyMGMyOCAwIDQ0IDE4IDQ0IDQwcy0xNiA0MC00NCA0MGgtMzQiIGZpbGw9Im5vbmUiIHN0cm9rZT0idXJsKCNjdXApIiBzdHJva2Utd2lkdGg9IjI2IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPCEtLSB0YXNzZSAtLT4KPHBhdGggZD0iTTEyMCAyMzZoMjUwYzAgNzgtOCAxMTgtNDQgMTQ2LTIyIDE3LTQ2IDIyLTgxIDIycy01OS01LTgxLTIyYy0zNi0yOC00NC02OC00NC0xNDZ6IiBmaWxsPSJ1cmwoI2N1cCkiLz4KPGVsbGlwc2UgY3g9IjI0NSIgY3k9IjIzNiIgcng9IjEyNSIgcnk9IjE4IiBmaWxsPSIjYjlhODc4Ii8+CjxlbGxpcHNlIGN4PSIyNDUiIGN5PSIyMzYiIHJ4PSIxMTMiIHJ5PSIxMiIgZmlsbD0iIzdhOWE0YSIvPgo8IS0tIHNvdWNvdXBlIC0tPgo8ZWxsaXBzZSBjeD0iMjQ1IiBjeT0iNDEwIiByeD0iMTUwIiByeT0iMjAiIGZpbGw9IiNlYWRmYzQiLz4KPGVsbGlwc2UgY3g9IjI0NSIgY3k9IjQwNCIgcng9IjE1MCIgcnk9IjE4IiBmaWxsPSIjZmZmYWYwIi8+CjwhLS0gZmV1aWxsZSAtLT4KPHBhdGggZD0iTTE5MCAzMzBjMC00OCAzNC03OCA5MC03OCAwIDQ4LTMwIDg0LTkwIDc4eiIgZmlsbD0iIzJmN2Q0YSIvPgo8cGF0aCBkPSJNMTkwIDMzMGw2Mi02MCIgc3Ryb2tlPSIjZmZmYWYwIiBzdHJva2Utd2lkdGg9IjkiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgZmlsbD0ibm9uZSIvPgo8L3N2Zz4K';
 function logoImg(px,r){return '<img src="'+LOGO_URI+'" width="'+px+'" height="'+px+'" alt="" style="border-radius:'+r+'px;display:block;flex:none">'}
@@ -2046,6 +2425,7 @@ var NAV=[
  ['col','Collection','<path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/>'],
  ['rank','Classement','<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM7 6H4v1a3 3 0 0 0 3 3M17 6h3v1a3 3 0 0 1-3 3"/>'],
  ['ch','Défis','<path d="M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/>'],
+ ['bt','Combat','<path d="M5 19L17 7M15 5h4v4M19 19L7 7M9 5H5v4M4 20l2-2M20 20l-2-2"/>'],
  ['soc','Social','<path d="M9 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7zM2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 6.5M18 14a6 6 0 0 1 3.5 6"/>'],
  ['me','Profil','<path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0"/>']
 ];
@@ -2219,10 +2599,10 @@ function vQuests(){
    '<p class="note" style="margin-top:12px">'+(S.quests&&S.quests.bonus?t('Bonus des trois quêtes récupéré : +100 feuilles et un sachet.'):t('Termine les trois quêtes pour gagner 100 feuilles et un sachet classique.'))+'</p></section>';
 }
 function vQuizHome(){
-  var left=quizLeft(),DN=[t('Facile'),t('Moyen'),t('Expert')];
+  var left=quizLeft(),DN=[t('Facile'),t('Moyen'),t('Expert'),t('Maître')];
   return '<section class="sec"><div class="box"><div class="qz-stage"><div class="qz-cat" id="qzcat">'+fabienSVG({emo:'happy'})+'</div><div class="qz-bubble"><h3 style="font-size:1.2rem;margin-bottom:6px">'+t('Le quiz du thé avec Fabien')+'</h3><p>'+t('Salut, moi c\'est Fabien ! Huit questions sur le thé et les tisanes. Choisis ta difficulté : plus c\'est dur, plus ça rapporte.')+'</p>'+
    '<p class="note">'+(left>0?tp('Encore {n} quiz avec la récompense complète aujourd\'hui.','Encore {n} quiz avec la récompense complète aujourd\'hui.',left):t('Récompense complète épuisée aujourd\'hui : les quiz rapportent un peu moins, mais le lien avec Teapee grandit toujours.'))+'</p></div></div>'+
-   '<div class="qz-diffs">'+[1,2,3].map(function(d){return '<button class="qz-diff d'+d+'" data-act="qzstart" data-d="'+d+'"><b>'+DN[d-1]+'</b><span>'+t('8 questions')+'</span><small>'+t('jusqu\'à {n} feuilles',{n:QR[d]*8+QB[d]})+'</small></button>'}).join('')+'</div>'+
+   '<div class="qz-diffs">'+[1,2,3,4].map(function(d){return '<button class="qz-diff d'+d+'" data-act="qzstart" data-d="'+d+'"><b>'+DN[d-1]+'</b><span>'+t('8 questions')+'</span><small>'+t('jusqu\'à {n} feuilles',{n:QR[d]*8+QB[d]})+'</small></button>'}).join('')+'</div>'+
    '<p class="note" style="margin:10px 0 0">'+t('Bonnes réponses au total : {n}',{n:fmt(S.stats.right||0)})+'</p></div></section>'+
    '<section class="sec"><div class="box"><h3>'+t('Lien avec Teapee')+'</h3><p class="mono" style="font-size:1.5rem;letter-spacing:.2em;margin:0 0 8px">'+esc(nameShown())+'</p><p class="note" style="margin:0">'+(S.named?t('Lien au maximum : merci pour tout !'):t('Réponds juste et retrouve-le quand il se cache : quand votre lien est au maximum, il t\'offre un cadeau.'))+'</p><div class="bar" style="margin-top:10px"><i style="width:'+Math.min(100,S.bond/(CATLET*3)*100).toFixed(0)+'%"></i></div></div></section>';
 }
@@ -2276,6 +2656,7 @@ function vSocial(){
    (m?'<div class="msg '+m.k+'" style="margin-top:10px">'+esc(m.t)+'</div>':'')+'</div></div>';
   if(pin.length)h+='<section class="sec"><h2>'+t('Demandes d\'amis')+'</h2><div class="stack">'+pin.map(function(u){var d=SO.fans[u];return '<div class="frow">'+avatarHTML(avParse(d.av),d.p)+'<div class="fi"><b>'+esc(d.p||t('Ami'))+'</b><small>'+t('veut devenir ton ami')+'</small></div><div class="fa"><button class="btn btn-primary" data-act="facc" data-u="'+esc(u)+'">'+t('Accepter')+'</button><button class="btn" data-act="figno" data-u="'+esc(u)+'">'+t('Ignorer')+'</button></div></div>'}).join('')+'</div></section>';
   if(inc.length)h+='<section class="sec"><h2>'+t('Offres d\'échange reçues')+'</h2><div class="stack">'+inc.map(function(x){var ok=hasCards(x.w);return '<div class="offer"><b>'+t('{name} te propose un échange',{name:esc(x.name||t('Ami'))})+'</b><div><span class="note">'+t('Tu reçois')+'</span>'+cardPills(x.g)+'</div><div><span class="note">'+t('Tu donnes')+'</span>'+cardPills(x.w)+'</div>'+(ok?'':'<div class="msg err">'+t('Il te manque une des cartes demandées.')+'</div>')+'<div class="row2"><button class="btn btn-primary" data-act="tacc" data-u="'+esc(x.from)+'" data-tid="'+esc(x.tid)+'"'+(ok?'':' disabled')+'>'+t('Accepter l\'échange')+'</button><button class="btn" data-act="tdec" data-u="'+esc(x.from)+'" data-tid="'+esc(x.tid)+'">'+t('Refuser')+'</button></div></div>'}).join('')+'</div></section>';
+  h+=rankHTML();
   h+='<section class="sec"><h2>'+t('Mes amis')+' <small>'+(SO.roomOk?t('{n} en ligne',{n:fl.filter(function(f){return f.on}).length}):t('Statut en ligne indisponible'))+'</small></h2>';
   if(!SO.ok)h+='<div class="empty">'+t('Chargement de tes amis…')+'</div>';
   else if(!fl.length)h+='<div class="empty">'+t('Pas encore d\'amis. Ajoute-en un avec son code.')+'</div>';
@@ -2342,6 +2723,194 @@ function trSendNow(){
   var r=tradeSend(TR.uid,TR.give,TR.want),msgs={nofriend:t('Cet ami n\'est plus disponible.'),size:t('Choisis entre 1 et 5 cartes de chaque côté.'),toomany:t('Tu as déjà trois offres en cours.'),theirs:t('Une des cartes demandées n\'est plus chez ton ami.'),mine:t('Une de tes cartes n\'est plus disponible.')};
   if(r==='ok'){closeTrade();toast(t('Offre envoyée'));render();return}
   var el=$('#trMsg');if(el)el.innerHTML='<div class="msg err">'+esc(msgs[r]||t('Impossible d\'envoyer l\'offre.'))+'</div>';
+}
+
+/* ================= COMBAT : interface ================= */
+var BP=null,BV=null;
+function elName(i){return t(ELS[i].n)}
+function elBadge(i){return '<i class="elb" style="--ec:'+ELS[i].c+'">'+esc(elName(i))+'</i>'}
+function cardEl(c){return ELIDX[c.k]||0}
+function statLine(c){var s=bStats(c);return t('PV {hp} · ATQ {atk} · VIT {spd}',{hp:s.max,atk:s.atk,spd:s.spd})}
+function bThumb(c,px){return '<span class="bthumb" style="width:'+px+'px;height:'+px+'px;--cc:'+CATS[c.k].c+'">'+pkgSVG(c)+'</span>'}
+function btRules(){
+  return '<details class="bt-rules"><summary>'+t('Comment ça marche ?')+'</summary><p>'+t('Chaque équipe compte 3 cartes. Les PV, l\'attaque et la vitesse dépendent de la rareté et de la note de la carte. À chaque tour, les deux joueurs choisissent en secret : Infusion (dégâts sûrs), l\'attaque signature de la famille (plus forte, 80 % de précision) ou Pause thé (soigne un peu et divise les dégâts reçus par deux, pas deux tours de suite). Le plus rapide frappe en premier. Une carte K.O. laisse la place à la suivante.')+'</p><p>'+ELS.map(function(e,i){return elBadge(i)}).join(' › ')+' › '+elBadge(0)+'</p><p class="note">'+t('Une famille bat la suivante (×1,5 sur l\'attaque signature) et résiste mal à la précédente (×0,75).')+' '+t('Récompenses limitées à {n} combats par jour.',{n:BCAP})+'</p></details>';
+}
+function vBattle(){
+  var head='<section class="lead"><div><h1>'+t('Combat')+'</h1><p>'+t('Forme une équipe de 3 cartes et affronte Teapee ou tes amis.')+'</p></div></section>';
+  if(Object.keys(S.owned).length<BTEAM)return head+'<div class="box"><p>'+t('Il te faut au moins 3 cartes pour te battre. Ouvre des sachets !')+'</p></div>';
+  var h=head,w=S.stats.bw||0,l=S.stats.bl||0,day=todayKey(),used=(S.bd&&S.bd.day===day)?S.bd.n:0;
+  h+='<div class="bt-rec"><span class="chip">'+tp('{n} victoire','{n} victoires',w)+'</span><span class="chip">'+tp('{n} défaite','{n} défaites',l)+'</span><span class="chip">'+t('Récompenses aujourd\'hui : {a}/{b}',{a:Math.min(used,BCAP),b:BCAP})+'</span></div>'+btRules();
+  h+='<section class="sec"><h2>'+t('Entraînement avec Teapee')+'</h2><div class="qz-diffs" style="grid-template-columns:repeat(3,minmax(0,1fr))">'+[0,1,2].map(function(lv){var N=[t('Facile'),t('Moyen'),t('Expert')];return '<button class="qz-diff d'+(lv+1)+'" data-act="btnew" data-lv="'+lv+'"><b>'+N[lv]+'</b><span>'+t('Teapee')+'</span><small>'+t('+{n} feuilles',{n:[6,10,16][lv]})+'</small></button>'}).join('')+'</div></section>';
+  var inc=socialOn()?incomingBattles():[];
+  if(inc.length)h+='<section class="sec"><h2>'+t('Défis reçus')+'</h2><div class="stack">'+inc.map(function(x){var d=SO.fans[x.from]||{};return '<div class="frow">'+avatarHTML(avParse(d.av),d.p)+'<div class="fi"><b>'+esc(x.name||t('Ami'))+'</b><small>'+t('te défie en combat !')+'</small></div><div class="fa"><button class="btn btn-primary" data-act="bacc" data-u="'+esc(x.from)+'" data-tid="'+esc(x.tid)+'">'+t('Accepter')+'</button><button class="btn" data-act="bdec" data-u="'+esc(x.from)+'" data-tid="'+esc(x.tid)+'">'+t('Refuser')+'</button></div></div>'}).join('')+'</div></section>';
+  var L=bList().filter(function(x){return !x.e.dis&&x.e.st!=='dec'});
+  if(L.length)h+='<section class="sec"><h2>'+t('Mes combats')+'</h2><div class="stack">'+L.map(function(x){
+    var v=bView(x.tid),e=x.e,nm=e.ai?'Teapee':nameOfUid(e.o),txt='',btn='',cls='';
+    var ph=v?v.phase:'gone';
+    if(ph==='choose'){txt=t('À toi de jouer !');btn='<button class="btn btn-primary" data-act="bopen" data-tid="'+esc(x.tid)+'">'+t('Jouer')+'</button>';cls=' go'}
+    else if(ph==='wait'){txt=t('En attente de {name}…',{name:esc(nm)});btn='<button class="btn" data-act="bopen" data-tid="'+esc(x.tid)+'">'+t('Voir')+'</button>'}
+    else if(ph==='pend'){txt=t('Défi envoyé, en attente de {name}…',{name:esc(nm)});btn=''}
+    else if(ph==='load'){txt=t('Chargement…')}
+    else if(ph==='over'||ph==='end'){var r=S.btl[x.tid],won=v&&ph==='over'?v.iWon:(r&&r.w);txt=won?t('Victoire !'):t('Défaite');btn='<button class="btn" data-act="bopen" data-tid="'+esc(x.tid)+'">'+t('Voir')+'</button>';cls=won?' won':' lost'}
+    else{txt=t('Adversaire indisponible')}
+    var close=(ph==='over'||ph==='end')?'<button class="btn" data-act="bdel" data-tid="'+esc(x.tid)+'">'+t('Terminer')+'</button>':((ph==='pend'||ph==='gone'||ph==='load')?'<button class="btn" data-act="bdel" data-tid="'+esc(x.tid)+'">'+t('Annuler')+'</button>':'<button class="btn" data-act="bff" data-tid="'+esc(x.tid)+'">'+t('Abandonner')+'</button>');
+    var d=SO.fans[e.o]||{};
+    return '<div class="frow bt-row'+cls+'">'+(e.ai?'<div class="avatar bt-teapee">'+catSVG({emo:'happy'})+'</div>':avatarHTML(avParse(d.av),nm))+'<div class="fi"><b>'+esc(e.ai?t('Entraînement avec Teapee'):nm)+'</b><small>'+txt+'</small></div><div class="fa">'+btn+close+'</div></div>';
+  }).join('')+'</div></section>';
+  if(socialOn()){
+    var fl=friendsList();
+    h+='<section class="sec"><h2>'+t('Défier un ami')+'</h2>'+(fl.length?'<div class="stack">'+fl.map(function(f){var d=f.d;return '<div class="frow">'+avatarHTML(avParse(d.av),d.p,'<i class="st'+(f.on?' on':'')+'"></i>')+'<div class="fi"><b>'+esc(d.p||t('Ami'))+'</b><small>'+(f.on?t('En ligne'):t('Hors ligne'))+' · '+tp('{n} victoire','{n} victoires',d.bw||0)+'</small></div><div class="fa"><button class="btn btn-primary" data-act="btch" data-u="'+esc(f.uid)+'">'+t('Défier')+'</button></div></div>'}).join('')+'</div>':'<div class="empty">'+t('Pas encore d\'amis. Ajoute-en un avec son code.')+'</div>')+'</section>';
+  }else if(STANDALONE&&WEB.on&&!(WEB.sess&&WEB.sess.uid)){
+    h+='<section class="sec"><div class="box"><h3>'+t('Connecte-toi pour jouer avec tes amis')+'</h3><button class="btn btn-primary" data-act="web-open">'+t('Se connecter ou créer un compte')+'</button></div></section>';
+  }
+  return h;
+}
+/* ---------- choix de l'équipe ---------- */
+function bpEl(){var e=$('#btp');if(!e){e=document.createElement('div');e.id='btp';e.className='sh solid';e.setAttribute('role','dialog');e.setAttribute('aria-modal','true');e.setAttribute('aria-label',t('Choisis ton équipe'));document.body.appendChild(e)}return e}
+function bpOpen(o){BP=Object.assign({sel:[],q:'',el:'',lim:40},o);bpRender()}
+function bpClose(){BP=null;var e=$('#btp');if(e)e.remove()}
+function bpRender(){
+  if(!BP)return;
+  var e=bpEl(),lab={ai:t('Lancer le combat'),ch:t('Envoyer le défi'),acc:t('Accepter et jouer')}[BP.mode];
+  var who=BP.mode==='ai'?'Teapee':nameOfUid(BP.peer||BP.from);
+  e.innerHTML='<div class="sh-box" style="max-width:760px"><button class="sh-x" data-act="bpx">'+t('Fermer')+'</button><h2>'+t('Choisis ton équipe')+'</h2><p class="note" style="margin:0 0 10px">'+t('Combat contre {name} : choisis 3 cartes.',{name:esc(who)})+'</p><div id="bpSel" class="bp-sel"></div>'+
+   '<div class="bp-filters"><input id="bpq" type="search" placeholder="'+esc(t('Chercher une carte…'))+'" autocomplete="off" value="'+esc(BP.q)+'" aria-label="'+esc(t('Chercher une carte…'))+'"><div class="seg" role="group"><button data-act="bpel" data-e="" aria-pressed="'+(BP.el==='')+'">'+t('Toutes')+'</button>'+ELS.map(function(x,i){return '<button data-act="bpel" data-e="'+i+'" aria-pressed="'+(BP.el===String(i))+'">'+esc(elName(i))+'</button>'}).join('')+'</div></div>'+
+   '<div id="bpList" class="bp-list"></div><div class="sh-actions"><button class="btn btn-primary" id="bpGo" data-act="bpgo" disabled>'+lab+'</button><button class="btn" data-act="bpauto">'+t('Équipe auto')+'</button></div></div>';
+  bpFill();
+}
+function bpFill(){
+  if(!BP)return;
+  var sel=$('#bpSel'),lst=$('#bpList'),go=$('#bpGo');if(!sel||!lst)return;
+  sel.innerHTML=[0,1,2].map(function(i){var id=BP.sel[i],c=id&&BYID[id];return c?'<button class="bp-slot on" data-act="bppick" data-id="'+esc(id)+'">'+bThumb(c,40)+'<span><b>'+esc(c.n)+'</b><small>'+elName(cardEl(c))+'</small></span></button>':'<div class="bp-slot"><span class="note">'+t('Carte {n}',{n:i+1})+'</span></div>'}).join('');
+  if(go)go.disabled=BP.sel.length!==BTEAM;
+  var q=BP.q.trim().toLowerCase(),own=Object.keys(S.owned).map(function(id){return BYID[id]}).filter(Boolean);
+  own=own.filter(function(c){return (BP.el===''||String(cardEl(c))===BP.el)&&(!q||c.n.toLowerCase().indexOf(q)>=0||BRANDS[c.b].n.toLowerCase().indexOf(q)>=0)});
+  own.sort(function(a,b){return bPower(b)-bPower(a)});
+  var tot=own.length;own=own.slice(0,BP.lim);
+  lst.innerHTML=(own.length?own.map(function(c){var on=BP.sel.indexOf(c.id)>=0;return '<button class="bp-card rc'+c.r+'" data-act="bppick" data-id="'+esc(c.id)+'" aria-pressed="'+on+'">'+bThumb(c,46)+'<span class="bp-i"><b>'+esc(c.n)+'</b><small>'+esc(BRANDS[c.b].n)+' · '+esc(rarName(c.r))+'</small><small>'+esc(statLine(c))+'</small></span>'+elBadge(cardEl(c))+'</button>'}).join(''):'<div class="empty">'+t('Aucune carte ne correspond.')+'</div>')+(tot>own.length?'<button class="btn" data-act="bpmore">'+t('Afficher plus')+'</button>':'');
+}
+function bpConfirm(){
+  if(!BP||BP.sel.length!==BTEAM)return;
+  var m=BP.mode,r;
+  if(m==='ai'){r=battleTraining(BP.sel,BP.lv);if(r==='team'){toast(t('Équipe invalide.'));return}bpClose();render();bvOpen(r);return}
+  if(m==='ch'){r=battleChallenge(BP.peer,BP.sel);var M={nofriend:t('Cet ami n\'est plus disponible.'),team:t('Équipe invalide.'),toomany:t('Tu as déjà trois combats en cours.')};if(M[r]){toast(M[r]);return}bpClose();toast(t('Défi envoyé !'));render();return}
+  r=battleAccept(BP.from,BP.tid,BP.sel);
+  var M2={gone:t('Ce défi n\'est plus disponible.'),team:t('Équipe invalide.'),toomany:t('Tu as déjà trois combats en cours.')};
+  if(M2[r]){toast(M2[r]);if(r==='gone'){bpClose();render()}return}
+  var tid2=BP.tid;bpClose();render();bvOpen(tid2);
+}
+/* ---------- écran de combat ---------- */
+function bvEl(){var e=$('#btl');if(!e){e=document.createElement('div');e.id='btl';e.className='sh solid';e.setAttribute('role','dialog');e.setAttribute('aria-modal','true');e.setAttribute('aria-label',t('Combat'));document.body.appendChild(e)}return e}
+function bvOpen(tid){BV={tid:tid,sig:'',seen:-1};SO.fast=true;catHush(true);bvRender()}
+function bvClose(){BV=null;SO.fast=false;var e=$('#btl');if(e)e.remove();catHush(false);render()}
+function bCardName(id){var c=BYID[id];return c?c.n:'?'}
+function bvText(ev,v){
+  var mine=v.mine,who=function(side){return '<b class="'+(side===mine?'me':'op')+'">'+esc(bCardName(ev.card))+'</b>'};
+  if(ev.k==='guard')return {s:ev.side,h:t('{name} prend une Pause thé (+{n} PV).',{name:who(ev.side),n:ev.heal})};
+  if(ev.k==='miss'){var c=BYID[ev.card];return {s:ev.side,h:t('{name} rate {mv} !',{name:who(ev.side),mv:esc(t(bMoveName(cardEl(c),ev.mv)))})}}
+  if(ev.k==='ko')return {s:ev.side,h:t('{name} est K.O. !',{name:who(ev.side)}),ko:1};
+  var c2=BYID[ev.card],tx=t('{name} utilise {mv} : −{n} PV.',{name:who(ev.side),mv:esc(t(bMoveName(cardEl(c2),ev.mv))),n:ev.dmg});
+  if(ev.crit)tx+=' '+t('Coup critique !');
+  if(ev.mult>1)tx+=' '+t('C\'est très efficace !');else if(ev.mult<1)tx+=' '+t('Peu efficace…');
+  return {s:ev.side,h:tx,hit:ev};
+}
+function fighterHTML(st,side,v){
+  var sd=st.s[side],f=bAct(st,side),c=BYID[f.id],pc=Math.max(0,Math.round(100*f.hp/f.max));
+  return '<div class="bt-f'+(side===v.mine?' me':' op')+(f.hp<=0?' ko':'')+'" id="btf'+side+'"><div class="bt-art" style="--cc:'+CATS[c.k].c+'">'+pkgSVG(c)+'</div><div class="bt-info"><div class="bt-nm"><b>'+esc(c.n)+'</b>'+elBadge(f.el)+'</div><div class="bt-hp" role="progressbar" aria-valuemin="0" aria-valuemax="'+f.max+'" aria-valuenow="'+f.hp+'"><i style="width:'+pc+'%" class="'+(pc<30?'low':pc<60?'mid':'')+'"></i></div><div class="bt-hpt">'+t('{a} / {b} PV',{a:f.hp,b:f.max})+(sd.g?' · '+t('Protégé'):'')+'</div>'+
+   '<div class="bt-team">'+sd.t.map(function(x,i){var cc=BYID[x.id];return '<span class="tok'+(x.hp<=0?' ko':'')+(sd.t[Math.min(sd.i,2)]===x?' on':'')+'" title="'+esc(cc.n)+'">'+bThumb(cc,30)+'</span>'}).join('')+'</div></div><span class="bt-float" id="btfl'+side+'"></span></div>';
+}
+function bvRender(){
+  if(!BV)return;
+  var v=bView(BV.tid);if(!v){bvClose();return}
+  var sig=[v.phase,v.st?v.st.r:'x',v.e.m.length,v.oe.m.length,v.e.ff||0,v.oe.ff||0].join('|');
+  if(sig===BV.sig&&$('#btl'))return;
+  BV.sig=sig;
+  var e=bvEl(),h='<div class="sh-box bt-box"><button class="sh-x" data-act="btx">'+t('Fermer')+'</button>',nm=v.oe.name||'?';
+  var ph=v.phase,msg='';
+  if(ph==='pend')msg=t('Défi envoyé. En attente de la réponse de {name}…',{name:esc(nm)});
+  else if(ph==='load')msg=t('Chargement…');
+  else if(ph==='dec')msg=t('Défi refusé.');
+  else if(ph==='gone')msg=t('Cet adversaire n\'est plus disponible. Tu peux annuler ce combat.');
+  else if(ph==='end'&&!v.st){var r0=S.btl[BV.tid];msg=(r0&&r0.w)?t('Victoire !'):t('Défaite')}
+  if(!v.st&&!(ph==='over')){
+    h+='<h2>'+t('Combat')+'</h2><div class="bt-msg">'+msg+'</div><div class="sh-actions"><button class="btn" data-act="btx">'+t('Fermer')+'</button></div></div>';
+    e.innerHTML=h;return;
+  }
+  if(!v.st){ // abandon sans simulation
+    h+='<h2>'+t('Défaite')+'</h2><div class="bt-msg">'+t('Tu as abandonné ce combat.')+'</div><div class="sh-actions"><button class="btn btn-primary" data-act="bdis" data-tid="'+esc(BV.tid)+'">'+t('Terminer')+'</button></div></div>';
+    e.innerHTML=h;return;
+  }
+  var st=v.st,opp=1-v.mine,my=v.mine;
+  h+='<div class="bt-top"><span>'+t('Tour {n}',{n:Math.min(st.r+(ph==='over'?0:1),BMAX)})+' / '+BMAX+'</span><span>'+t('contre {name}',{name:esc(nm)})+'</span></div>';
+  h+=fighterHTML(st,opp,v);
+  var evs=st.r>0?st.last.map(function(x){return bvText(x,v)}):[];
+  h+='<div class="bt-log" id="btlog" aria-live="polite">'+(evs.length?evs.map(function(x,i){return '<p class="ln'+(x.s===my?' me':' op')+(x.ko?' ko':'')+'" style="--i:'+i+'">'+x.h+'</p>'}).join(''):'<p class="note">'+t('Choisis ton attaque. Ton adversaire choisit en même temps.')+'</p>')+'</div>';
+  h+=fighterHTML(st,my,v);
+  if(ph==='over'){
+    var r=S.btl[BV.tid],won=v.iWon;
+    h+='<div class="bt-end '+(won?'won':'lost')+'"><h2>'+(won?t('Victoire !'):t('Défaite'))+'</h2><p>'+(v.ff==='op'?t('{name} a abandonné.',{name:esc(nm)}):v.ff==='me'?t('Tu as abandonné.'):(won?t('Bien joué !'):t('Ce sera pour la prochaine fois.')))+(r&&r.rw?' '+t('+{n} feuilles',{n:r.rw}):(r&&!r.rw?' '+t('Limite de récompenses atteinte aujourd\'hui.'):''))+'</p><div class="sh-actions" style="justify-content:center"><button class="btn btn-primary" data-act="bdis" data-tid="'+esc(BV.tid)+'">'+t('Terminer')+'</button>'+(v.e.ai?'<button class="btn" data-act="brem" data-tid="'+esc(BV.tid)+'">'+t('Revanche')+'</button>':'')+'</div></div>';
+  }else{
+    var A=bAct(st,my),D=bAct(st,opp),can=ph==='choose',mu=BMULTTXT(A,D);
+    var mv=[0,1,2].map(function(m){
+      var dis=!can||(m===2&&st.s[my].gcd>0),nmv=t(bMoveName(A.el,m)),ds=m===0?t('Dégâts sûrs'):m===1?t('Fort · 80 % de précision'):(st.s[my].gcd>0?t('Indisponible ce tour'):t('Soigne 12 % · dégâts ÷2'));
+      var extra=m===1&&mu?'<em class="'+(mu.up?'up':'down')+'">'+mu.t+'</em>':'';
+      return '<button class="bt-mv m'+m+'" data-act="bmove" data-m="'+m+'"'+(dis?' disabled':'')+'><b>'+esc(nmv)+'</b><small>'+ds+'</small>'+extra+'</button>';
+    }).join('');
+    h+='<div class="bt-moves">'+mv+'</div>'+(ph==='wait'?'<p class="bt-wait">'+t('Choix envoyé. En attente de {name}…',{name:esc(nm)})+'</p>':'')+'<div class="sh-actions"><button class="btn" data-act="bff" data-tid="'+esc(BV.tid)+'">'+t('Abandonner')+'</button></div>';
+  }
+  e.innerHTML=h+'</div>';
+  if(st.r>BV.seen&&st.r>0)bvAnimate(st,v,evs);
+  BV.seen=st.r;
+}
+function BMULTTXT(A,D){var m=bMult(A.el,D.el);return m>1?{up:1,t:t('Très efficace ×1,5')}:m<1?{up:0,t:t('Peu efficace ×0,75')}:null}
+function bvAnimate(st,v,evs){
+  var tk=BV;
+  evs.forEach(function(x,i){
+    setTimeout(function(){
+      if(BV!==tk)return;
+      var ln=document.querySelector('#btlog .ln:nth-child('+(i+1)+')');if(ln)ln.classList.add('show');
+      if(x.hit){
+        var side=1-x.hit.side,f=$('#btf'+side),fl=$('#btfl'+side);
+        if(f){f.classList.remove('shake');void f.offsetWidth;f.classList.add('shake')}
+        if(fl){fl.textContent='−'+x.hit.dmg;fl.className='bt-float '+(x.hit.crit?'crit':'')+' on';setTimeout(function(){if(fl)fl.classList.remove('on')},900)}
+      }
+    },i*650);
+  });
+}
+/* ---------- classement entre amis ---------- */
+var RKB=[['n','Plus de cartes'],['r','Carte la plus rare'],['c','Collection'],['w','Victoires en combat'],['l','Niveau']];
+var RKC={};
+function rkBest(key,ids){
+  var b=null;ids.forEach(function(id){var c=BYID[id];if(!c)return;if(!b||c.r>b.r||(c.r===b.r&&c.s>b.s))b=c});return b;
+}
+function rkEntries(){
+  var out=[],mine=Object.keys(S.owned);
+  out.push({me:1,uid:CL.uid,p:myName(),av:S.av,n:mine.length,lv:levelIdx(),best:rkBest('me',mine),bw:S.stats.bw||0});
+  friendsList().forEach(function(f){
+    var d=f.d,k=f.uid,sig=String(d.o||'').length+':'+(d.n||0);
+    if(!RKC[k]||RKC[k].sig!==sig)RKC[k]={sig:sig,best:rkBest(k,Object.keys(parseOwned(d.o)))};
+    out.push({me:0,uid:k,p:d.p,av:avParse(d.av),n:d.n||0,lv:d.lv||0,best:RKC[k].best,bw:d.bw||0,on:f.on});
+  });
+  return out;
+}
+function rkValue(k,x){
+  if(k==='n')return {v:x.n,txt:tp('{n} carte','{n} cartes',x.n)};
+  if(k==='r')return {v:x.best?x.best.r*1000+x.best.s:-1,txt:x.best?x.best.n:'—',sub:x.best?rarName(x.best.r):'',cls:x.best?'rc'+x.best.r:''};
+  if(k==='c')return {v:x.n,txt:(Math.round(1000*x.n/N)/10).toLocaleString(LANG==='en'?'en-US':'fr-FR')+' %'};
+  if(k==='w')return {v:x.bw,txt:tp('{n} victoire','{n} victoires',x.bw)};
+  return {v:x.lv*100000+x.n,txt:t(LVL[Math.min(x.lv,LVL.length-1)][1])};
+}
+function rankHTML(){
+  var k=V.soc.rk||'n',E=rkEntries();
+  if(E.length<2)return '';
+  var L=E.map(function(x){return {x:x,r:rkValue(k,x)}}).sort(function(a,b){return (b.r.v-a.r.v)||(b.x.n-a.x.n)||(a.x.me?-1:1)});
+  var h='<section class="sec"><h2>'+t('Classement entre amis')+'</h2><div class="sub"><div class="seg" role="group" aria-label="'+esc(t('Classement entre amis'))+'">'+RKB.map(function(b){return '<button data-act="rkb" data-k="'+b[0]+'" aria-pressed="'+(k===b[0])+'">'+t(b[1])+'</button>'}).join('')+'</div></div><div class="rows rk-rows">';
+  var prev=null,rank=0;
+  L.forEach(function(it,i){
+    if(prev===null||it.r.v!==prev)rank=i+1;prev=it.r.v;
+    h+='<div class="frow rk-row'+(it.x.me?' me':'')+' p'+(rank<=3?rank:0)+'"><span class="rk-n">'+rank+'</span><div class="rk-who">'+avatarHTML(it.x.av,it.x.p)+'<div class="fi"><b>'+esc(it.x.p||t('Ami'))+(it.x.me?' <small>('+t('toi')+')</small>':'')+'</b><small>'+esc(t(LVL[Math.min(it.x.lv,LVL.length-1)][1]))+'</small></div></div><div class="rk-v '+(it.r.cls||'')+'"><b>'+esc(it.r.txt)+'</b>'+(it.r.sub?'<small>'+esc(it.r.sub)+'</small>':'')+'</div></div>';
+  });
+  return h+'</div></section>';
 }
 
 /* ================= OUVERTURE ================= */
@@ -2443,7 +3012,7 @@ function showBox(first){
   catHush(true);bxRender();
 }
 function bxRender(){
-  var e=bxEl();
+  var e=bxEl();e.style.display='';
   if(!S.box){
     if(BX&&BX.log.length){bxSummary(e);return}
     e.remove();BX=null;catHush(false);render();return;
@@ -2562,8 +3131,9 @@ var TSTEPS=[
  {tab:'home',emo:'surprised',h:'Raretés et doublons',p:'Les cartes vont de Commune à Légendaire. Un doublon n\'est jamais perdu : il se change en feuilles, la monnaie du salon, pour ouvrir d\'autres sachets ou des boîtes de 10.'},
  {tab:'col',emo:'surprised',h:'Chaque thé a son emballage',p:'Chaque carte montre l\'emballage illustré du thé. Ouvre une carte et touche l\'image : tu vois la couleur de l\'infusion dans une tasse.'},
  {tab:'col',emo:'think',h:'Collection et classement',p:'Retrouve tes cartes dans la Collection. Le Classement note les thés, les tisanes et les maisons sur 100. Les notes sont inventées pour le jeu.'},
- {tab:'ch',emo:'happy',h:'Défis et quiz',p:'Chaque jour, de nouvelles quêtes. Et dans l\'onglet Quiz, Fabien te pose des questions sur le thé, en trois difficultés.'},
- {tab:'soc',emo:'excited',h:'Amis et échanges',p:'Ajoute des amis avec leur code, vois qui est en ligne et échange des cartes. Tu peux aussi changer les couleurs dans Personnaliser, en haut de l\'écran.'},
+ {tab:'ch',emo:'happy',h:'Défis et quiz',p:'Chaque jour, de nouvelles quêtes. Et dans l\'onglet Quiz, Fabien te pose des questions sur le thé, en quatre difficultés.'},
+ {tab:'bt',emo:'excited',h:'Combats',p:'Forme une équipe de 3 cartes et bats-toi : entraîne-toi contre moi, ou défie tes amis. Chaque thé a ses attaques et ses points de vie.'},
+ {tab:'soc',emo:'excited',h:'Amis et échanges',p:'Ajoute des amis avec leur code, vois qui est en ligne, compare vos collections dans le classement et échange des cartes. Tu peux aussi changer les couleurs dans Personnaliser, en haut de l\'écran.'},
  {tab:'',emo:'excited',h:'À toi de jouer !',p:'Ton premier sachet est offert. Ouvre-le !',last:true}
 ];
 function startTutorial(){
@@ -2626,7 +3196,7 @@ function qzRender(){
   if(a){
     fb='<div class="msg '+(a.ok?'ok':'err')+'" style="margin-top:12px"><b>'+(a.ok?(QZS.streak>=3?esc(t('Série de {n} ! Tu es brillant.',{n:QZS.streak})):esc(pick([t('Bien joué !'),t('Exact !'),t('Tu t\'y connais !')]))):esc(pick([t('Pas tout à fait…'),t('Aïe, raté !'),t('Presque !')])))+'</b> '+esc(lc(Q.x))+'</div><div class="sh-actions"><button class="btn btn-primary" data-act="qznext">'+(QZS.i>=QZS.list.length-1?t('Voir mon résultat'):t('Question suivante'))+'</button></div>';
   }
-  e.innerHTML='<div class="sh-box"><button class="sh-x" data-act="qzx">'+t('Fermer')+'</button><div class="qz-meta"><span>'+t('Question {i} sur {n}',{i:QZS.i+1,n:QZS.list.length})+'</span><span>'+t('{n} bonnes réponses',{n:QZS.right})+'</span><span>'+[t('Facile'),t('Moyen'),t('Expert')][QZS.d-1]+'</span></div>'+
+  e.innerHTML='<div class="sh-box"><button class="sh-x" data-act="qzx">'+t('Fermer')+'</button><div class="qz-meta"><span>'+t('Question {i} sur {n}',{i:QZS.i+1,n:QZS.list.length})+'</span><span>'+t('{n} bonnes réponses',{n:QZS.right})+'</span><span>'+[t('Facile'),t('Moyen'),t('Expert'),t('Maître')][QZS.d-1]+'</span></div>'+
    '<div class="qz-stage"><div class="qz-cat" id="qzCat">'+fabienSVG({emo:a?(a.ok?(QZS.streak>=3?'excited':'happy'):'sad'):'think'})+'</div><div class="qz-bubble"><p class="qz-q">'+esc(lc(Q.q))+'</p></div></div>'+opts+fb+dots+'</div>';
   var f=e.querySelector(a?'[data-act="qznext"]':'.qz-opt');if(f)f.focus({preventScroll:true});
 }
@@ -2967,7 +3537,7 @@ function rebuildTabs(){
 }
 function render(){
   var v=$('#view');if(!v)return;
-  v.innerHTML=({home:vHome,col:vCol,rank:vRank,ch:vChallenges,soc:vSocial,me:vProfile})[V.view]();
+  v.innerHTML=({home:vHome,col:vCol,rank:vRank,ch:vChallenges,bt:vBattle,soc:vSocial,me:vProfile})[V.view]();
   $$('.tab').forEach(function(tb){var on=tb.getAttribute('data-v')===V.view;tb.classList.toggle('on',on);if(on)tb.setAttribute('aria-current','page');else tb.removeAttribute('aria-current')});
   if(V.view==='col')renderGrid();
   updateHead();
@@ -2984,12 +3554,12 @@ function updateHead(){
   var lg=$('#hLang');if(lg)lg.textContent=LANG.toUpperCase();
   var cb=$('#hCustom');if(cb)cb.setAttribute('aria-label',t('Personnaliser'));
   var lb=$('#hLang');if(lb)lb.setAttribute('aria-label',t('Changer de langue'));
-  [['ch',questsPending()],['soc',SO.ping]].forEach(function(x){
+  [['ch',questsPending()],['soc',SO.ping],['bt',battlePing()]].forEach(function(x){
     var tb=$('.tab[data-v="'+x[0]+'"]');if(!tb)return;var p=tb.querySelector('.ping');
     if(x[1]&&!p)tb.insertAdjacentHTML('beforeend','<span class="ping"></span>');if(!x[1]&&p)p.remove();
   });
 }
-function socRefresh(){updateHead();var ae=document.activeElement;if(V.view==='soc'&&!(ae&&ae.id==='fcode'))render()}
+function socRefresh(){updateHead();var ae=document.activeElement;if((V.view==='soc'||(V.view==='bt'&&!BP&&!BV))&&!(ae&&ae.id==='fcode'))render();if(BV)bvRender()}
 function setLang(l){
   if(!LANGS[l]||LANG===l)return;
   S.set.lang=l;LANG=l;touch();applyTheme();rebuildTabs();render();
@@ -3002,6 +3572,24 @@ document.addEventListener('click',function(ev){
   var a=el.getAttribute('data-act'),d=function(k){return el.getAttribute('data-'+k)};
   switch(a){
    case 'nav':V.view=d('v');V.reset=false;window.scrollTo(0,0);render();if(V.view==='soc'){SO.ping=false;updateHead()}break;
+   case 'btnew':bpOpen({mode:'ai',lv:+d('lv')});break;
+   case 'btch':bpOpen({mode:'ch',peer:d('u')});break;
+   case 'bacc':bpOpen({mode:'acc',from:d('u'),tid:d('tid')});break;
+   case 'bdec':battleDecline(d('u'),d('tid'));render();break;
+   case 'bopen':bvOpen(d('tid'));break;
+   case 'bff':battleForfeit(d('tid'));if(BV)bvRender();else render();break;
+   case 'bdel':battleDismiss(d('tid'));render();break;
+   case 'bdis':battleDismiss(d('tid'));bvClose();break;
+   case 'brem':{var e0=S.bm[d('tid')];if(e0&&e0.ai){var tm=e0.t.slice(),lv0=e0.lv;battleDismiss(d('tid'));var nt=battleTraining(tm,lv0);BV.tid=nt;BV.sig='';BV.seen=-1;bvRender()}break}
+   case 'bpx':bpClose();break;
+   case 'btx':bvClose();break;
+   case 'bpel':BP.el=d('e');BP.lim=40;bpRender();break;
+   case 'bpmore':BP.lim+=40;bpFill();break;
+   case 'bpauto':BP.sel=bAutoTeam();bpFill();break;
+   case 'bppick':{var id=d('id'),ix=BP.sel.indexOf(id);if(ix>=0)BP.sel.splice(ix,1);else if(BP.sel.length<BTEAM)BP.sel.push(id);else toast(t('Trois cartes maximum.'));bpFill();break}
+   case 'bpgo':bpConfirm();break;
+   case 'bmove':if(BV){battleMove(BV.tid,+d('m'));BV.sig='';bvRender()}break;
+   case 'rkb':V.soc.rk=d('k');render();break;
    case 'lang':setLang(LANG==='fr'?'en':'fr');break;
    case 'setlang':setLang(d('l'));break;
    case 'open':{var r=openPack(d('t'));if(r)showOpen(r);else toast(t('Tu ne peux pas ouvrir ce sachet pour le moment.'));break}
@@ -3100,6 +3688,7 @@ document.addEventListener('click',function(ev){
 });
 function renderTradeSum(){trUpdateSum()}
 document.addEventListener('input',function(ev){
+  if(ev.target&&ev.target.id==='bpq'&&BP){BP.q=ev.target.value;BP.lim=40;bpFill();return}
   var tg=ev.target;
   if(tg.id==='fq'){V.col.q=tg.value;V.col.limit=48;renderGrid()}
   else if(tg.id==='pseudo'){S.pseudo=tg.value.slice(0,20);touch()}
@@ -3134,7 +3723,7 @@ document.addEventListener('submit',function(ev){
 });
 document.addEventListener('keydown',function(ev){
   if(ev.key==='Escape'){
-    if($('#tr'))closeTrade();else if($('#cu'))closeCustom();else if($('#md'))closeDetail();
+    if($('#btp'))bpClose();else if(BV)bvClose();else if($('#tr'))closeTrade();else if($('#cu'))closeCustom();else if($('#md'))closeDetail();
     else if($('#qzs'))closeQuiz();
     else if(OV){if(OV.phase!=='summary'){OV.phase='summary';OV.quick=false;ovRender()}else ovClose()}
     else if($('#bxov'))bxClose();
@@ -3174,7 +3763,7 @@ if(S.ob===0){showWelcome()}
 else if(S.ob===1){startTutorial()}
 if(S.migr){toast(t('La boutique a changé : {n} anciennes cartes ont été remplacées par des feuilles.',{n:S.migr}));S.migr=0;touch()}
 scheduleHide(true);catSync();
-if(window.__TMDEBUG)window.__tm={t:t,MISS:MISS,S:function(){return S},CL:CL,SO:SO,render:render,PACKS:PACKS,TSTEPS:TSTEPS,MODED:MODED,MODES:MODES,PATS:PATS,BACKS:BACKS,TIPS:TIPS,LVL:LVL,RN:RN,TIERS:TIERS,TIERL:TIERL,GN:GN,N:N,CARDS:CARDS,BRANDS:BRANDS,openPack:openPack,showOpen:showOpen,catHide:catHide,peekFound:peekFound,CAT:CAT,openQuiz:openQuiz,V:V,setLang:setLang,processSocial:processSocial,QT:QT,genQuests:genQuests,addBond:addBond,tradeSend:tradeSend,tradeAccept:tradeAccept,addCards:addCards,touch:touch,pubFlush:pubFlush,addFriendByCode:addFriendByCode,acceptFriend:acceptFriend,myCode:myCode};
+if(window.__TMDEBUG)window.__tm={t:t,MISS:MISS,S:function(){return S},CL:CL,SO:SO,render:render,PACKS:PACKS,TSTEPS:TSTEPS,MODED:MODED,MODES:MODES,PATS:PATS,BACKS:BACKS,TIPS:TIPS,LVL:LVL,RN:RN,TIERS:TIERS,TIERL:TIERL,GN:GN,N:N,CARDS:CARDS,BRANDS:BRANDS,openPack:openPack,showOpen:showOpen,catHide:catHide,peekFound:peekFound,CAT:CAT,openQuiz:openQuiz,V:V,setLang:setLang,processSocial:processSocial,QT:QT,genQuests:genQuests,addBond:addBond,tradeSend:tradeSend,tradeAccept:tradeAccept,addCards:addCards,touch:touch,pubFlush:pubFlush,addFriendByCode:addFriendByCode,acceptFriend:acceptFriend,myCode:myCode,bSim:bSim,bStats:bStats,bAutoTeam:bAutoTeam,battleTraining:battleTraining,battleMove:battleMove,bView:bView,battleChallenge:battleChallenge,battleAccept:battleAccept,battleSync:battleSync,rkEntries:rkEntries,bAiTeam:bAiTeam,bpOpen:bpOpen,bvOpen:bvOpen};
 setInterval(function(){
   var before=S.stock;tickStock();
   if(ensureDay()){render()}else if(S.stock!==before&&V.view==='home'&&!OV&&!$('#bxov')){render()}

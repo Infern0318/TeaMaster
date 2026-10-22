@@ -71,3 +71,8 @@ Dans Supabase : **SQL Editor → New query**, colle le contenu de `social.sql` (
 Ensuite, dans le jeu : onglet **Social** → « Activer le profil social ». Les amis s'ajoutent avec le code ami (8 caractères) ; les échanges se confirment des deux côtés.
 
 Notes : seuls les joueurs connectés peuvent voir les profils sociaux activés (pseudo, niveau, liste de cartes). Le statut « en ligne » se met à jour toutes les ~40 secondes, et les demandes apparaissent après quelques secondes (le jeu interroge le serveur toutes les 7 secondes quand l'onglet est ouvert).
+
+## Combat, classement et questions
+- Onglet **Combat** : entraînement contre l'IA ou défi PvP entre amis (équipe de 3 cartes, 4 éléments, attaques par tour).
+- Onglet **Social** : classement entre amis (cartes rares, nombre de cartes).
+- Quiz : 4 difficultés dont **Maître**, plus de 180 questions.
