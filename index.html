@@ -2799,7 +2799,7 @@ function webErr(e){
   if(c==='over_request_rate_limit'||c==='over_email_send_rate_limit'||(e&&e.status===429))return t('Trop d\'essais. Réessaie dans quelques minutes.');
   if(e&&e.noSession)return t('Le serveur demande une confirmation par e-mail : désactive « Confirm email » dans Supabase.');
   if(!e||e instanceof TypeError||!e.status)return t('Connexion au serveur impossible. Vérifie ta connexion.');
-  return t('Une erreur est survenue. Réessaie dans un instant.');
+  return t('Une erreur est survenue. Réessaie dans un instant.')+' ['+e.status+(e.code?' '+e.code:'')+(e.message?' – '+String(e.message).slice(0,160):'')+']';
 }
 function webAdopt(prefCloud){
   CL.uid=WEB.sess.uid;CL.db=null;CL.user=null;CL.canWrite=true;CL.state='pending';
