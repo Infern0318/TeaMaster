@@ -943,6 +943,23 @@ function load(){
 var S=load();
 LANG=S.set.lang;
 function persist(){try{localStorage.setItem(LS,JSON.stringify(packState()))}catch(e){}}
+try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
+/* Fusion sans perte : on ne retire jamais une carte, quel que soit le côté (local ou cloud) le plus récent */
+function mergeState(loc,cl,prefCloud){
+  try{localStorage.setItem('teamaster.bak',JSON.stringify(packState()))}catch(e){}
+  var newer=(prefCloud||(cl.updated||0)>(loc.updated||0)),base=newer?cl:loc,other=newer?loc:cl;
+  var o=base,own=Object.assign({},base.owned);
+  Object.keys(other.owned||{}).forEach(function(id){
+    var a=own[id],b=other.owned[id];
+    if(!a)own[id]=b;else own[id]=[Math.max(a[0],b[0]),Math.min(a[1]||b[1],b[1]||a[1])];
+  });
+  o.owned=own;
+  ['packs','quiz','right','trades','found'].forEach(function(k){o.stats[k]=Math.max(o.stats[k]||0,(other.stats&&other.stats[k])||0)});
+  if(!o.pseudo&&other.pseudo)o.pseudo=other.pseudo;
+  o.ob=Math.max(o.ob||0,other.ob||0);
+  o.updated=Math.max(base.updated||0,other.updated||0)+1;
+  return o;
+}
 
 var CL={db:null,user:null,uid:null,ref:null,state:'pending',canWrite:null,last:0};
 var saving=false,dirty=false,saveTimer=0,pubTimer=0,pubBusy=false,lastPub='';
@@ -969,7 +986,7 @@ function initCloud(){
         var adopted=false;
         if(snap.exists){
           var d=unpackState(snap.data()||{});
-          if((d.updated||0)>(S.updated||0)){S=d;LANG=S.set.lang;persist();adopted=true}else dirty=true;
+          var mg=mergeState(S,d,false);S=mg;LANG=S.set.lang;persist();adopted=true;dirty=true;
         }else dirty=true;
         CL.last=Date.now();
         hooks.cloudAdopt(adopted);
@@ -3390,7 +3407,7 @@ function webAdopt(prefCloud){
   };
   return CL.ref.get().then(function(snap){
     CL.state='ok';var adopted=false;
-    if(snap.exists){var d=unpackState(snap.data()||{});if(prefCloud||(d.updated||0)>(S.updated||0)){S=d;LANG=S.set.lang;persist();adopted=true}else dirty=true}else dirty=true;
+    if(snap.exists){var d=unpackState(snap.data()||{});S=mergeState(S,d,!!prefCloud);LANG=S.set.lang;persist();adopted=true;dirty=true}else dirty=true;
     CL.last=Date.now();hooks.cloudAdopt(adopted);flush();return adopted;
   }).catch(function(){CL.state='error';dirty=true;hooks.status();return false});
 }
