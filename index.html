@@ -732,6 +732,37 @@ html[data-planet="energy"] .card{box-shadow:0 0 0 1px color-mix(in srgb,var(--cc
 .pm-load{flex:1;display:grid;place-items:center;color:#b8c4ee}
 .pm .btn:not(.btn-primary){background:rgba(255,255,255,.1);color:#eef2ff;border-color:rgba(255,255,255,.3)}
 
+/* Contenants propres à chaque planète */
+.bag[data-pl]{filter:drop-shadow(0 .9em 1.1em rgba(0,0,0,.35))}
+.bag[data-pl] .bag-body{box-shadow:none}
+/* sodas : canette */
+.bag[data-pl="soda"]{width:9.4em}
+.bag[data-pl="soda"] .bag-body{inset:1.4em 0 0 0;border-radius:1.1em 1.1em 1.4em 1.4em/.9em .9em 1.2em 1.2em;background:linear-gradient(90deg,rgba(0,0,0,.28),rgba(255,255,255,.34) 22%,rgba(255,255,255,.04) 48%,rgba(0,0,0,.3)),linear-gradient(180deg,var(--pk),var(--pk2))}
+.bag[data-pl="soda"] .bag-flap{height:1.5em;left:.5em;right:.5em;border-radius:50%;clip-path:none;background:radial-gradient(ellipse at 50% 40%,#e6e9ee,#8d949e 70%);box-shadow:inset 0 0 0 .18em #cfd4db}
+.bag[data-pl="soda"] .bag-label{width:84%;border-color:rgba(255,255,255,.7);border-radius:.4em}
+/* alcools : bouteille */
+.bag[data-pl="alcohol"]{width:8.6em;height:18em}
+.bag[data-pl="alcohol"] .bag-body{inset:2.4em 0 0 0;clip-path:polygon(32% 0,68% 0,68% 16%,92% 28%,100% 34%,100% 96%,92% 100%,8% 100%,0 96%,0 34%,8% 28%,32% 16%);border-radius:0;background:linear-gradient(90deg,rgba(0,0,0,.35),rgba(255,255,255,.22) 24%,rgba(0,0,0,0) 50%,rgba(0,0,0,.35)),linear-gradient(180deg,var(--pk),var(--pk2));padding-top:3.4em}
+.bag[data-pl="alcohol"] .bag-flap{left:34%;right:34%;height:2.6em;clip-path:none;border-radius:.3em .3em .1em .1em;background:linear-gradient(90deg,#8a6a3a,#d6b46a 40%,#8a6a3a)}
+.bag[data-pl="alcohol"] .bag-label{width:82%;border-radius:.2em;background:rgba(243,230,192,.14)}
+.bag[data-pl="alcohol"] .bag-tag{right:34%}
+/* eaux : gourde */
+.bag[data-pl="water"]{width:9em;height:17.4em}
+.bag[data-pl="water"] .bag-body{inset:2.2em 0 0 0;clip-path:polygon(34% 0,66% 0,66% 10%,86% 22%,100% 34%,100% 94%,90% 100%,10% 100%,0 94%,0 34%,14% 22%,34% 10%);border-radius:0;padding-top:2.4em;background:repeating-linear-gradient(180deg,rgba(255,255,255,.1) 0 .25em,transparent .25em 1.2em),linear-gradient(90deg,rgba(255,255,255,.35),rgba(255,255,255,0) 40%,rgba(0,0,0,.22)),linear-gradient(180deg,var(--pk),var(--pk2))}
+.bag[data-pl="water"] .bag-flap{left:35%;right:35%;height:2.2em;clip-path:none;border-radius:.35em;background:repeating-linear-gradient(90deg,#e8f4fb 0 .25em,#a9cfe6 .25em .5em)}
+.bag[data-pl="water"] .bag-label{border-radius:.9em;border-color:rgba(255,255,255,.8)}
+.bag[data-pl="water"] .bag-tag{right:35%}
+/* cafés : paquet kraft */
+.bag[data-pl="coffee"] .bag-body{border-radius:.3em .3em .6em .6em;background:repeating-linear-gradient(0deg,rgba(255,255,255,.05) 0 .15em,transparent .15em .5em),linear-gradient(170deg,var(--pk),var(--pk2))}
+.bag[data-pl="coffee"] .bag-body::before{content:"";position:absolute;left:.5em;right:.5em;top:.7em;border-top:.14em dashed rgba(255,255,255,.55)}
+.bag[data-pl="coffee"] .bag-flap{height:2.2em;clip-path:polygon(0 0,100% 0,100% 100%,92% 60%,84% 100%,76% 60%,68% 100%,60% 60%,52% 100%,44% 60%,36% 100%,28% 60%,20% 100%,12% 60%,4% 100%,0 80%)}
+.bag[data-pl="coffee"] .bag-label{border-radius:50% / 28%;border-style:double;border-width:.25em}
+/* énergisantes : canette fine à pans coupés */
+.bag[data-pl="energy"]{width:8.4em;height:17em}
+.bag[data-pl="energy"] .bag-body{inset:1.6em 0 0 0;clip-path:polygon(10% 0,90% 0,100% 8%,100% 92%,88% 100%,12% 100%,0 92%,0 8%);border-radius:0;background:repeating-linear-gradient(115deg,rgba(255,255,255,.16) 0 .5em,transparent .5em 1.4em),linear-gradient(180deg,var(--pk),var(--pk2))}
+.bag[data-pl="energy"] .bag-flap{height:1.4em;left:.9em;right:.9em;clip-path:polygon(8% 0,92% 0,100% 100%,0 100%);background:linear-gradient(180deg,#e9ecef,#8d949e)}
+.bag[data-pl="energy"] .bag-label{border-color:#fff;border-radius:0;transform:skewX(-8deg);box-shadow:0 0 .8em var(--pk)}
+
 </style>
 
 </head>
@@ -1231,10 +1262,15 @@ PLANETS.forEach(function(p){if(p.id==='tea')return;
     if(i===0)PACKS[id].box=200;if(i===2)PACKS[id].min=2;});
 });
 PLANETS.forEach(function(p){if(p.id==='tea')return;
+  p.catk.forEach(function(k){var id=p.id+'k_'+k;PACKS[id]={n:CATS[k].n,cost:55,d:'Six cartes de la catégorie « '+CATS[k].n+' ».',w:[46,31,15,6,2],c:CATS[k].c,pl:p.id,kind:'cat',f:(function(pid,kk){return function(c){return c.pl===pid&&c.k===kk}})(p.id,k)}});
+  PACKS[p.id+'m']={n:'Grande maison',cost:120,d:'Six cartes '+p.of+' issues des plus grandes maisons, au moins une Peu commune.',w:[24,34,26,12,4],min:1,c:shade(p.col,.7),pl:p.id,f:(function(pid){return function(c){return c.pl===pid&&BRANDS[c.b].t>=4}})(p.id)};
+  PACKS[p.id+'o']={n:'Édition dorée',cost:450,d:'Six cartes '+p.of+' dont au moins une Épique, avec une chance de Légendaire.',w:[0,15,35,40,10],min:3,c:'#a8791f',pl:p.id,f:(function(pid){return function(c){return c.pl===pid}})(p.id)};
+});
+PLANETS.forEach(function(p){if(p.id==='tea')return;
   [['hw0','Citrouille',60,'Édition Halloween : six cartes ensorcelées '+p.of+', uniquement dans ce sachet. Jusqu\'au 2 novembre.',[46,31,15,6,2],'#e8761a'],['hw1','Chaudron',170,'Édition Halloween : six cartes ensorcelées '+p.of+' dont au moins une Rare. Jusqu\'au 2 novembre.',[20,34,29,14,3],'#5a2a8a']].forEach(function(a,i){
     PACKS[p.id+a[0]]={n:a[1],cost:a[2],d:a[3],w:a[4],c:a[5],ev:'hw',pl:p.id,f:(function(pid){return function(c){return c.hw&&c.pl===pid}})(p.id)};if(i)PACKS[p.id+a[0]].min=2});
 });
-var PACKORDER=['classic','tisane','noir','vert','oolong','blanc','aroma','fruit','japon','grand','maison','domaine','dore','citrouille','chaudron'];PLANETS.forEach(function(p){if(p.id!=='tea'){p.packs.forEach(function(x,i){PACKORDER.push(p.id+i)});PACKORDER.push(p.id+'hw0',p.id+'hw1')}});
+var PACKORDER=['classic','tisane','noir','vert','oolong','blanc','aroma','fruit','japon','grand','maison','domaine','dore','citrouille','chaudron'];PLANETS.forEach(function(p){if(p.id!=='tea'){p.packs.forEach(function(x,i){PACKORDER.push(p.id+i)});PACKORDER.push(p.id+'hw0',p.id+'hw1',p.id+'m',p.id+'o');p.catk.forEach(function(k){PACKORDER.push(p.id+'k_'+k)})}});
 PACKORDER.forEach(function(id){
   var P=PACKS[id];P.id=id;
   (function(){var w=P.w.slice(),cut=w[4]*.9,j=0;for(var q=1;q<4;q++)if(w[q]>w[j])j=q;w[4]-=cut;w[j]+=cut;P.w=w})();P.boxCost=P.box||Math.round(P.cost*9);
@@ -2767,12 +2803,14 @@ function backHTML(id){
   id=id||S.set.back;
   return '<div class="cw"><div class="cback cb-'+id+'"><div><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 24c0-10 7-16 19-16 0 10-6 17-19 16z" fill="currentColor"/><path d="M6 24l11-11" stroke="var(--cbi,#0f2a20)" stroke-width="1.6" stroke-linecap="round"/></svg><span>TeaMaster</span></div></div></div>';
 }
+var PKN={soda:'Soda',alcohol:'Cave',water:'Source',coffee:'Torréfaction',energy:'Boost'};
+var PKH={soda:'Tire l\'anneau pour ouvrir la canette',alcohol:'Tire sur le bouchon pour ouvrir la bouteille',water:'Dévisse le bouchon pour ouvrir la gourde',coffee:'Déchire le paquet pour l\'ouvrir',energy:'Tire la languette pour ouvrir la canette'};
 function bagHTML(type,o){
   o=o||{};var P=PACKS[type],c1=P.c,c2=shade(P.c,.55);
   var tagTag=o.stat?'span':'button';
-  return '<div class="bag'+(o.stat?' static':'')+'" '+(o.id===false?'':'id="bag" ')+'style="--pk:'+c1+';--pk2:'+c2+'">'+
+  return '<div class="bag'+(o.stat?' static':'')+'" '+(P.pl?'data-pl="'+P.pl+'" ':'')+(o.id===false?'':'id="bag" ')+'style="--pk:'+c1+';--pk2:'+c2+'">'+
    '<div class="bag-peek"><i></i><i></i><i></i></div>'+
-   '<div class="bag-body"><div class="bag-label"><small>'+(P.pl?'Pack':t('Sachet'))+'</small><b>'+esc(t(P.n))+'</b><i>'+t('6 cartes')+'</i></div></div>'+
+   '<div class="bag-body"><div class="bag-label"><small>'+(P.pl?t(PKN[P.pl]||'Pack'):t('Sachet'))+'</small><b>'+esc(t(P.n))+'</b><i>'+t('6 cartes')+'</i></div></div>'+
    '<div class="bag-flap"></div>'+
    (o.tag||o.stat?'<'+tagTag+' class="bag-tag"'+(o.stat?'':' data-act="tear" aria-label="'+esc(t('Tirer l\'étiquette pour ouvrir'))+'"')+'><svg viewBox="0 0 26 56" aria-hidden="true"><path d="M13 0v19" stroke="#e8d9a0" stroke-width="1.5" fill="none"/><path d="M4 19h18l3 4v29a3 3 0 0 1-3 3H4a3 3 0 0 1-3-3V23z" fill="#f3e6c0" stroke="#bda35a"/><circle cx="13" cy="28" r="2.2" fill="'+c1+'"/><path d="M7 38h12M7 43h12M9 48h8" stroke="#bda35a" stroke-width="1.2" stroke-linecap="round"/></svg></'+tagTag+'>':'')+
    '<div class="steam"><i></i><i></i><i></i><i></i><i></i></div></div>';
@@ -3397,7 +3435,7 @@ function planetBar(){
 }
 function plPacks(grp){
   var p=curPl();
-  return (hwActive()?grp([p.id+'hw0',p.id+'hw1'],t('Édition Halloween')):'')+grp([p.id+'0',p.id+'1',p.id+'2'],t('Sachets')+' · '+t(p.n));
+  return (hwActive()?grp([p.id+'hw0',p.id+'hw1'],t('Édition Halloween')):'')+grp([p.id+'0',p.id+'1',p.id+'2'],t('Packs')+' · '+t(p.n))+grp([p.id+'m',p.id+'o'],t('Prestige'))+grp(p.catk.map(function(k){return p.id+'k_'+k}),t('Par catégorie'));
 }
 function setPlanet(id){
   if(!PLBY[id])return false;
@@ -3565,6 +3603,7 @@ function planetAct(a,el){
    'Boissons énergisantes, zéro sucre, boissons de sport, shots et énergie naturelle.':'Energy drinks, sugar-free, sports drinks, shots and natural energy.'
   };
   Object.keys(E).forEach(function(k){if(!EN[k])EN[k]=E[k]});
+  var PLOF={soda:'of sodas and fizzy drinks',alcohol:'of beers, wines and spirits',water:'of still, sparkling and flavoured waters',coffee:'of coffees and coffee drinks',energy:'of energy and sports drinks'};
   var OF={soda:['de sodas et de boissons gazeuses','of sodas and fizzy drinks'],alcohol:['de bières, de vins et de spiritueux','of beers, wines and spirits'],water:['d\'eaux plates, gazeuses et aromatisées','of still, sparkling and flavoured waters'],coffee:['de cafés et de boissons au café','of coffees and coffee drinks'],energy:['de boissons énergisantes et de sport','of energy and sports drinks']};
   Object.keys(OF).forEach(function(id){var f=OF[id][0],e=OF[id][1];
     EN['Six cartes '+f+'. Le sachet gratuit marche sur toutes les planètes.']='Six cards '+e+'. The free bag works on every planet.';
@@ -3574,7 +3613,12 @@ function planetAct(a,el){
     EN['Édition Halloween : six cartes ensorcelées '+f+' dont au moins une Rare. Jusqu\'au 2 novembre.']='Halloween edition: six bewitched cards '+e+', including at least one Rare. Until 2 November.';
   });
   var ML={'Planète':1};
-  PLANETS.forEach(function(p){EN[p.n]=p.en});
+  PLANETS.forEach(function(p){EN[p.n]=p.en;if(p.id==='tea')return;p.catk.forEach(function(k){EN['Six cartes de la catégorie « '+CATS[k].n+' ».']='Six cards from the “'+CAT_EN[k]+'” category.'});
+    EN['Six cartes '+p.of+' issues des plus grandes maisons, au moins une Peu commune.']='Six cards '+(PLOF[p.id]||'')+' from the biggest houses, at least one Uncommon.';
+    EN['Six cartes '+p.of+' dont au moins une Épique, avec une chance de Légendaire.']='Six cards '+(PLOF[p.id]||'')+', including at least one Epic, with a chance of a Legendary.'});
+  EN['Packs']='Packs';EN['Par catégorie']='By category';EN['Grande maison']=EN['Grande maison']||'Grand house';EN['Édition dorée']='Golden edition';EN['Prestige']=EN['Prestige']||'Prestige';
+  EN['Soda']='Soda';EN['Cave']='Cellar';EN['Source']='Spring';EN['Torréfaction']='Roast';EN['Boost']='Boost';
+  EN['Tire l\'anneau pour ouvrir la canette']='Pull the ring to open the can';EN['Tire sur le bouchon pour ouvrir la bouteille']='Pull the cork to open the bottle';EN['Dévisse le bouchon pour ouvrir la gourde']='Unscrew the cap to open the bottle';EN['Déchire le paquet pour l\'ouvrir']='Tear the bag to open it';EN['Tire la languette pour ouvrir la canette']='Pull the tab to open the can';
 })();
 
 EN['Décollage…']='Taking off…';EN['Vue d\'ensemble']='Overview';EN['Glisse pour tourner · pince pour zoomer · touche une planète']='Drag to look around · pinch to zoom · tap a planet';
@@ -3885,7 +3929,7 @@ function ovRender(){
       h+='<p class="ov-hint">'+t('Ouvre le coffret')+'</p><div class="bx" style="--pk:'+P.c+';--pk2:'+shade(P.c,.55)+'"><div class="bx-body"><div class="bx-title"><span>TeaMaster · '+esc(t(P.n))+'</span><small>'+t('6 cartes')+'</small></div><div class="bx-grid" style="grid-template-columns:repeat(3,1fr)">'+[0,1,2,3,4,5].map(function(i){return '<div class="bx-slot">'+bagHTML(OV.type,{stat:true,id:false})+'</div>'}).join('')+'</div><button class="bx-lid" data-act="clid"><b>'+esc(t(P.n))+'</b><small>'+t('6 cartes')+'</small><small>'+t('Touche pour ouvrir')+'</small></button></div></div>';
     }else if(OV.mode==='infuse'){
       h+='<p class="ov-hint">'+t('Plonge le sachet dans la tasse')+'</p><div class="cupscene" id="cupsc" style="--cupcol:'+dominantColor(OV.res)+'"><div class="sbag"><u></u><i style="background:linear-gradient(160deg,'+P.c+','+shade(P.c,.55)+')"></i></div><div class="steam"><i></i><i></i><i></i><i></i><i></i></div><div class="cup"><div class="water"></div></div><div class="handle"></div></div><div class="steepbar"><i></i></div><div class="ov-actions"><button class="btn btn-primary" data-act="steep" id="steepBtn">'+t('Plonger le sachet')+'</button></div><p class="ov-sub">'+t('Sachet {name} · 6 cartes',{name:esc(t(P.n))})+'</p>';
-    }else h+='<p class="ov-hint">'+t('Tire sur l\'étiquette pour ouvrir le sachet')+'</p>'+bagHTML(OV.type,{tag:true})+'<p class="ov-sub">'+t('Sachet {name} · 6 cartes',{name:esc(t(P.n))})+'</p>';
+    }else h+='<p class="ov-hint">'+t(PACKS[OV.type].pl&&PKH[PACKS[OV.type].pl]||'Tire sur l\'étiquette pour ouvrir le sachet')+'</p>'+bagHTML(OV.type,{tag:true})+'<p class="ov-sub">'+t('Sachet {name} · 6 cartes',{name:esc(t(P.n))})+'</p>';
   }else if(OV.phase==='steeping'){
     h+='<p class="ov-hint">'+t('L\'infusion se prépare…')+'</p><div class="cupscene steep" id="cupsc" style="--cupcol:'+dominantColor(OV.res)+'"><div class="sbag"><u></u><i style="background:linear-gradient(160deg,'+P.c+','+shade(P.c,.55)+')"></i></div><div class="steam"><i></i><i></i><i></i><i></i><i></i></div><div class="cup"><div class="water"></div></div><div class="handle"></div></div><div class="steepbar"><i></i></div>';
   }else if(OV.phase==='fan'){
