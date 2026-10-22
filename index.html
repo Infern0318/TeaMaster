@@ -763,6 +763,43 @@ html[data-planet="energy"] .card{box-shadow:0 0 0 1px color-mix(in srgb,var(--cc
 .bag[data-pl="energy"] .bag-flap{height:1.4em;left:.9em;right:.9em;clip-path:polygon(8% 0,92% 0,100% 100%,0 100%);background:linear-gradient(180deg,#e9ecef,#8d949e)}
 .bag[data-pl="energy"] .bag-label{border-color:#fff;border-radius:0;transform:skewX(-8deg);box-shadow:0 0 .8em var(--pk)}
 
+/* ouvertures par planète */
+.mscene{position:relative;width:230px;height:230px;margin:8px auto 0}
+.mscene svg{width:100%;height:100%;display:block;overflow:visible}
+.mscene .m-fill{transform-origin:50% 100%;transform-box:fill-box;transform:scaleY(var(--p));transition:transform .35s ease-out}
+.mscene.hit .m-obj{animation:mshake .35s}
+@keyframes mshake{0%,100%{transform:translate(0)}20%{transform:translate(-7px,2px) rotate(-5deg)}40%{transform:translate(7px,-2px) rotate(5deg)}60%{transform:translate(-5px,2px) rotate(-3deg)}80%{transform:translate(5px,-1px) rotate(3deg)}}
+.mscene .m-obj{transform-origin:50% 100%;transform-box:fill-box}
+.mscene .m-fizz circle{opacity:0;transform-origin:center;transform-box:fill-box}
+.mscene.m-shake{filter:drop-shadow(0 10px 14px rgba(0,0,0,.35))}
+.mscene.m-shake.hit .m-fizz circle{animation:mfizz .7s var(--d) ease-out}
+@keyframes mfizz{0%{opacity:.9;transform:translateY(0)}100%{opacity:0;transform:translateY(calc(-36px - var(--p)*60px)) scale(1.4)}}
+.mscene.m-shake.done .m-fizz circle{animation:mburst 1s ease-out forwards}
+@keyframes mburst{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-120px) scale(3)}}
+.mscene.m-charge{filter:drop-shadow(0 0 calc(var(--p)*26px) var(--mc))}
+.mscene.m-charge.hit svg{animation:mpulse .25s}
+@keyframes mpulse{50%{transform:scale(1.07)}}
+.mscene.m-charge.done svg{animation:mflash .9s}
+@keyframes mflash{0%{filter:brightness(1)}40%{filter:brightness(2.4);transform:scale(1.15)}100%{filter:brightness(1)}}
+.mscene .m-d{transform-origin:50% 0;transform-box:fill-box;transform:translateY(0)}
+.mscene.m-drip.hit .m-d{animation:mdrop .45s ease-in}
+@keyframes mdrop{0%{transform:translateY(0);opacity:1}85%{transform:translateY(100px);opacity:1}100%{transform:translateY(112px);opacity:0}}
+.mscene .m-rip{opacity:0;transform-origin:center;transform-box:fill-box}
+.mscene.m-drip.hit .m-rip{animation:mrip .6s .3s ease-out}
+.mscene.m-drip.done .m-rip{animation:mrip 1s ease-out 2}
+@keyframes mrip{0%{opacity:.9;transform:scale(.4)}100%{opacity:0;transform:scale(1.5)}}
+.mscene .m-bot{transform-origin:40px 120px;transition:transform .6s ease-out}
+.mscene.m-pour.go .m-bot{transform:rotate(-70deg) translate(90px,-20px)}
+.mscene .m-stream{transform-origin:50% 0;transform-box:fill-box;transform:scaleY(0);transition:transform .4s .5s}
+.mscene.go .m-stream{transform:scaleY(1)}
+.mscene.done .m-stream{transform:scaleY(0);transition-delay:0s}
+.mscene.m-pour .m-stream{transform-origin:50% 0}
+.mscene .m-steam{opacity:0}
+.mscene.go .m-steam{animation:mst 1.6s ease-in-out infinite;opacity:.6}
+@keyframes mst{0%{transform:translateY(8px);opacity:0}50%{opacity:.7}100%{transform:translateY(-14px);opacity:0}}
+.mscene.m-brew.go .m-stream{animation:mdrp .5s linear infinite}
+@keyframes mdrp{50%{opacity:.5}}
+
 </style>
 
 </head>
@@ -2848,8 +2885,8 @@ function vHome(){
   return planetBar()+(curPl().id==='tea'?hwBanner():'')+'<section class="lead"><div><h1>'+t('Bonjour, {name}',{name:esc(dispName())})+'</h1><p>'+esc(level())+' · '+t('{n} cartes sur {m}',{n:fmt(own),m:fmt(NN)})+'</p></div>'+
     '<div style="flex:1 1 220px;min-width:200px"><div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="'+pct.toFixed(1)+'" aria-label="'+esc(t('Avancement de la collection'))+'"><i style="width:'+Math.max(pct,own?1.5:0).toFixed(1)+'%"></i></div></div></section>'+box+
     '<section class="sec"><h2>'+t('Sachets')+' <small>'+t('Mode d\'ouverture')+'</small></h2>'+
-    '<div class="modes" role="group" aria-label="'+esc(t('Mode d\'ouverture'))+'">'+MODES.map(function(m){return '<button class="rchip" data-act="mode" data-m="'+m[0]+'" aria-pressed="'+(S.set.mode===m[0])+'">'+t(m[1])+'</button>'}).join('')+'</div>'+
-    '<p class="note" style="margin:8px 0 0">'+esc(t(MODED[S.set.mode]))+'</p>'+
+    '<div class="modes" role="group" aria-label="'+esc(t('Mode d\'ouverture'))+'">'+curModes().map(function(m){return '<button class="rchip" data-act="mode" data-m="'+m[0]+'" aria-pressed="'+(getMode()===m[0])+'">'+t(m[1])+'</button>'}).join('')+'</div>'+
+    '<p class="note" style="margin:8px 0 0">'+esc(t(MODED[getMode()]))+'</p>'+
     (curPl().id!=='tea'?plPacks(grp):((hwActive()?grp(['citrouille','chaudron'],t('Édition Halloween')):'')+grp(['classic'],t('Gratuit'))+grp(['tisane','noir','vert','oolong','blanc','aroma','fruit','japon'],t('Par famille'))+grp(['grand','maison','domaine','dore'],t('Prestige'))))+'</section>'+
     '<section class="sec"><h2>'+t('Défis du jour')+' <small>'+t('{n} sur 3 terminées',{n:q})+'</small></h2><div class="lead" style="margin:0;gap:12px"><p style="margin:0">'+(questsPending()?t('Une récompense ou un bonus du jour t\'attend.'):t('Rien à récupérer pour le moment.'))+'</p><button class="btn" data-act="nav" data-v="ch">'+t('Voir les défis')+'</button></div></section>'+
     '<section class="sec"><h2>'+t('Dernières trouvailles')+'</h2>'+(rec.length?'<div class="grid">'+rec.map(function(c){return '<button class="cell" data-act="card" data-id="'+c.id+'"><div class="cw">'+cardHTML(c)+'</div></button>'}).join('')+'</div>':'<div class="empty">'+t('Ouvre ton premier sachet pour remplir cette étagère.')+'</div>')+'</section>';
@@ -3560,6 +3597,7 @@ function vHL(){
 function planetAct(a,el){
   var d=function(k){return el.getAttribute('data-'+k)};
   switch(a){
+   case 'mtap':mTap();return true;
    case 'planets':openPlanets();return true;
    case 'pm-x':closePlanets();return true;
    case 'plsel':if(PM&&!PM.fly){PM.sel=d('p');pmRefresh()}return true;
@@ -3914,9 +3952,9 @@ var OV=null,BX=null;
 function ovEl(){var e=$('#ov');if(!e){e=document.createElement('div');e.id='ov';e.className='ov';e.setAttribute('role','dialog');e.setAttribute('aria-modal','true');e.setAttribute('aria-label',t('Ouverture du sachet'));document.body.appendChild(e)}return e}
 function dominantColor(res){var best=res.slice().sort(function(a,b){return b.c.r-a.c.r||b.c.s-a.c.s})[0];return CATS[best.c.k].c}
 function showOpen(r,o){
-  o=o||{};var res=r.res.slice(),mode=o.mode||S.set.mode;
+  o=o||{};var res=r.res.slice(),mode=o.mode||getMode();
   if(mode==='classy')res.sort(function(a,b){return a.c.r-b.c.r||a.c.s-b.c.s});
-  var phase=mode==='classy'||mode==='fan'||mode==='coffret'?'sealed':mode==='infuse'?'sealed':'summary';
+  var phase=mode==='classy'||mode==='fan'||mode==='coffret'||MSPEC[mode]?'sealed':mode==='infuse'?'sealed':'summary';
   OV={type:r.type,res:res,gain:r.gain,nNew:r.nNew,i:0,flipped:false,phase:phase,mode:mode,quick:mode==='quick',box:!!o.box,fl:res.map(function(){return false})};
   ovRender();updateHead();catHush(true);
 }
@@ -3927,6 +3965,7 @@ function ovRender(){
   if(OV.phase==='sealed'){
     if(OV.mode==='coffret'){
       h+='<p class="ov-hint">'+t('Ouvre le coffret')+'</p><div class="bx" style="--pk:'+P.c+';--pk2:'+shade(P.c,.55)+'"><div class="bx-body"><div class="bx-title"><span>DrinkMaster · '+esc(t(P.n))+'</span><small>'+t('6 cartes')+'</small></div><div class="bx-grid" style="grid-template-columns:repeat(3,1fr)">'+[0,1,2,3,4,5].map(function(i){return '<div class="bx-slot">'+bagHTML(OV.type,{stat:true,id:false})+'</div>'}).join('')+'</div><button class="bx-lid" data-act="clid"><b>'+esc(t(P.n))+'</b><small>'+t('6 cartes')+'</small><small>'+t('Touche pour ouvrir')+'</small></button></div></div>';
+    }else if(MSPEC[OV.mode]){h+=mSceneHTML()
     }else if(OV.mode==='infuse'){
       h+='<p class="ov-hint">'+t('Plonge le sachet dans la tasse')+'</p><div class="cupscene" id="cupsc" style="--cupcol:'+dominantColor(OV.res)+'"><div class="sbag"><u></u><i style="background:linear-gradient(160deg,'+P.c+','+shade(P.c,.55)+')"></i></div><div class="steam"><i></i><i></i><i></i><i></i><i></i></div><div class="cup"><div class="water"></div></div><div class="handle"></div></div><div class="steepbar"><i></i></div><div class="ov-actions"><button class="btn btn-primary" data-act="steep" id="steepBtn">'+t('Plonger le sachet')+'</button></div><p class="ov-sub">'+t('Sachet {name} · 6 cartes',{name:esc(t(P.n))})+'</p>';
     }else h+='<p class="ov-hint">'+t(PACKS[OV.type].pl&&PKH[PACKS[OV.type].pl]||'Tire sur l\'étiquette pour ouvrir le sachet')+'</p>'+bagHTML(OV.type,{tag:true})+'<p class="ov-sub">'+t('Sachet {name} · 6 cartes',{name:esc(t(P.n))})+'</p>';
@@ -4159,7 +4198,7 @@ function openCustom(){
    '<div class="cu-sec"><h3>'+t('Motif d\'arrière-plan')+'</h3><div class="swatches">'+patsAvail().map(function(p){var pt=patSVG(p.id,ink);return '<button class="sw" data-act="cu-pat" data-p="'+p.id+'" aria-pressed="'+(S.set.pat===p.id)+'"><div class="pat" style="'+(pt?'background-image:'+pt.url+';background-size:'+pt.size:'')+'"></div><span>'+t(p.n)+'</span></button>'}).join('')+'</div></div>'+
    '<div class="cu-sec"><h3>'+t('Dos des cartes')+'</h3><div class="swatches">'+BACKS.map(function(b){return '<button class="sw" data-act="cu-back" data-b="'+b.id+'" aria-pressed="'+(S.set.back===b.id)+'"><div class="cb">'+backHTML(b.id)+'</div><span>'+t(b.n)+'</span></button>'}).join('')+'</div></div>'+
    '<div class="cu-sec"><h3>'+t('Style des titres')+'</h3><div class="seg" role="group"><button data-act="cu-font" data-f="serif" aria-pressed="'+(S.set.font==='serif')+'">'+t('Classique')+'</button><button data-act="cu-font" data-f="cute" aria-pressed="'+(S.set.font==='cute')+'">'+t('Mignon')+'</button></div></div>'+
-   '<div class="cu-sec"><h3>'+t('Mode d\'ouverture')+'</h3><div class="modes">'+MODES.map(function(x){return '<button class="rchip" data-act="mode" data-m="'+x[0]+'" aria-pressed="'+(S.set.mode===x[0])+'">'+t(x[1])+'</button>'}).join('')+'</div><p class="note" style="margin:6px 0 0">'+esc(t(MODED[S.set.mode]))+'</p></div>'+
+   '<div class="cu-sec"><h3>'+t('Mode d\'ouverture')+'</h3><div class="modes">'+curModes().map(function(x){return '<button class="rchip" data-act="mode" data-m="'+x[0]+'" aria-pressed="'+(getMode()===x[0])+'">'+t(x[1])+'</button>'}).join('')+'</div><p class="note" style="margin:6px 0 0">'+esc(t(MODED[getMode()]))+'</p></div>'+
    '<div class="cu-sec row2"><div><h3>'+t('Langue')+'</h3>'+langSeg()+'</div><div><h3>'+t('Teapee, la mascotte')+'</h3><div class="seg" role="group"><button data-act="mascot" data-m="1" aria-pressed="'+!!S.set.mascot+'">'+t('Présent')+'</button><button data-act="mascot" data-m="0" aria-pressed="'+!S.set.mascot+'">'+t('Caché')+'</button></div></div></div>'+
    '</div>';
   m.scrollTop=top;
@@ -4207,6 +4246,58 @@ function qzResult(e){
    '<div class="sh-actions"><button class="btn btn-primary" data-act="qzstart" data-d="'+QZS.d+'">'+t('Rejouer')+'</button><button class="btn" data-act="qzx">'+t('Fermer')+'</button></div></div>';
 }
 function closeQuiz(){qzClear();var e=$('#qzs');if(e)e.remove();QZS=null;catHush(false);render()}
+
+/* ================= OUVERTURES PROPRES À CHAQUE PLANÈTE ================= */
+var PLMODE={soda:['shake','Secouer'],alcohol:['pour','Servir'],water:['drip','Goutte à goutte'],coffee:['brew','Percolateur'],energy:['charge','Surcharge']};
+var MSPEC={shake:1,pour:1,drip:1,brew:1,charge:1};
+var MTAPS={shake:8,charge:10,drip:6};
+function curModes(){
+  var id=S.planet||'tea';if(id==='tea'||!PLMODE[id])return MODES;
+  return [['classy','Classique'],['fan','Éventail'],['coffret','Coffret'],PLMODE[id],['quick','Rapide'],['instant','Instantané']];
+}
+function getMode(){
+  var id=S.planet||'tea';if(id==='tea'||!PLMODE[id])return S.set.mode;
+  var m=(S.set.pm||{})[id]||'classy';return curModes().some(function(x){return x[0]===m})?m:'classy';
+}
+function setMode(m){var id=S.planet||'tea';if(id==='tea'||!PLMODE[id]){S.set.mode=m;return}S.set.pm=S.set.pm||{};S.set.pm[id]=m}
+function mCol(){var P=PACKS[OV.type];return P.c}
+function mSceneHTML(){
+  var m=OV.mode,c=mCol(),c2=shade(c,.55),dc=dominantColor(OV.res),svg;
+  var can='<defs><linearGradient id="mg" x1="0" x2="1"><stop offset="0" stop-color="rgba(0,0,0,.35)"/><stop offset=".25" stop-color="rgba(255,255,255,.4)"/><stop offset=".6" stop-color="rgba(255,255,255,0)"/><stop offset="1" stop-color="rgba(0,0,0,.4)"/></linearGradient></defs>';
+  if(m==='shake')svg='<svg viewBox="0 0 200 220" class="m-can">'+can+'<g class="m-obj"><rect x="62" y="40" width="76" height="150" rx="14" fill="'+c+'"/><rect x="62" y="40" width="76" height="150" rx="14" fill="url(#mg)"/><ellipse cx="100" cy="40" rx="34" ry="8" fill="#cfd4db"/><ellipse cx="100" cy="38" rx="12" ry="4" fill="#8d949e"/><rect x="72" y="92" width="56" height="50" rx="6" fill="rgba(0,0,0,.25)" stroke="#fff" stroke-opacity=".7"/><text x="100" y="123" text-anchor="middle" font-size="15" fill="#fff" font-family="serif">'+esc(t(PACKS[OV.type].n)).slice(0,9)+'</text></g><g class="m-fizz" fill="#fff">'+[0,1,2,3,4,5,6,7].map(function(i){return '<circle cx="'+(66+i*10)+'" cy="34" r="'+(3+i%3*2)+'" style="--d:'+(i*.07)+'s"/>'}).join('')+'</g></svg>';
+  else if(m==='charge')svg='<svg viewBox="0 0 200 220" class="m-bolt"><defs><clipPath id="bc"><path d="M118 10L50 120h46l-14 92 78-124h-48z"/></clipPath></defs><path d="M118 10L50 120h46l-14 92 78-124h-48z" fill="rgba(255,255,255,.12)" stroke="#fff" stroke-width="4" stroke-linejoin="round"/><g clip-path="url(#bc)"><rect class="m-fill" x="30" y="10" width="150" height="205" fill="'+c+'"/></g></svg>';
+  else if(m==='drip')svg='<svg viewBox="0 0 200 220" class="m-drip"><path class="m-d" d="M100 14c14 20 22 32 22 46a22 22 0 0 1-44 0c0-14 8-26 22-46z" fill="'+dc+'"/><path d="M40 130h120c0 40-20 74-60 74s-60-34-60-74z" fill="rgba(255,255,255,.15)" stroke="#fff" stroke-width="4"/><clipPath id="bw"><path d="M42 132h116c0 38-19 70-58 70s-58-32-58-70z"/></clipPath><g clip-path="url(#bw)"><rect class="m-fill" x="30" y="130" width="140" height="76" fill="'+dc+'" opacity=".85"/></g><ellipse class="m-rip" cx="100" cy="130" rx="40" ry="6" fill="none" stroke="#fff" stroke-width="3"/></svg>';
+  else if(m==='pour')svg='<svg viewBox="0 0 220 220" class="m-pour"><g class="m-bot"><rect x="20" y="30" width="46" height="110" rx="10" fill="'+c+'"/><rect x="30" y="4" width="26" height="36" rx="6" fill="'+c+'"/><rect x="30" y="2" width="26" height="8" rx="3" fill="#d6b46a"/><rect x="26" y="66" width="34" height="40" rx="3" fill="rgba(243,230,192,.85)"/></g><rect class="m-stream" x="106" y="104" width="4" height="86" rx="2" fill="'+dc+'"/><path d="M82 150h86l-12 56c-1 6-6 10-12 10h-38c-6 0-11-4-12-10z" fill="rgba(255,255,255,.14)" stroke="#fff" stroke-width="4" stroke-linejoin="round"/><clipPath id="pg"><path d="M86 154h78l-11 50c-1 5-5 8-10 8h-36c-5 0-9-3-10-8z"/></clipPath><g clip-path="url(#pg)"><rect class="m-fill" x="70" y="150" width="110" height="66" fill="'+dc+'"/></g></svg>';
+  else svg='<svg viewBox="0 0 220 220" class="m-brew"><rect x="40" y="14" width="140" height="70" rx="12" fill="#3a2a20"/><rect x="60" y="84" width="100" height="12" rx="4" fill="#5a4636"/><circle cx="160" cy="40" r="8" fill="'+c+'"/><rect x="104" y="96" width="12" height="16" rx="3" fill="#8d949e"/><rect class="m-stream" x="108" y="112" width="4" height="62" rx="2" fill="#4a2a18"/><path d="M72 150h76l-8 44c-1 6-6 10-12 10H92c-6 0-11-4-12-10z" fill="rgba(255,255,255,.2)" stroke="#fff" stroke-width="4" stroke-linejoin="round"/><path d="M148 160h12c10 0 14 8 12 16s-8 12-18 12" fill="none" stroke="#fff" stroke-width="4"/><clipPath id="cq"><path d="M76 154h68l-7 40c-1 5-5 8-10 8H93c-5 0-9-3-10-8z"/></clipPath><g clip-path="url(#cq)"><rect class="m-fill" x="60" y="150" width="100" height="60" fill="#4a2a18"/></g><g class="m-steam" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round" opacity=".6"><path d="M96 138c-6-8 6-12 0-22"/><path d="M110 138c-6-8 6-12 0-22"/><path d="M124 138c-6-8 6-12 0-22"/></g></svg>';
+  var hint={shake:'Secoue la canette !',charge:'Tape vite pour charger l\'éclair !',drip:'Laisse tomber les gouttes une à une',pour:'Sers-toi un verre',brew:'Lance l\'extraction'}[m];
+  var btn={shake:'Secouer !',charge:'Charger !',drip:'Une goutte',pour:'Servir',brew:'Lancer'}[m];
+  return '<p class="ov-hint">'+t(hint)+'</p><div class="mscene m-'+m+'" id="msc" style="--p:0;--mc:'+c+'">'+svg+'</div><div class="steepbar"><i id="mbar" style="transform:scaleX(0)"></i></div><div class="ov-actions"><button class="btn btn-primary" data-act="mtap" id="mbtn">'+t(btn)+'</button></div><p class="ov-sub">'+t('Pack {name} · 6 cartes',{name:esc(t(PACKS[OV.type].n))})+'</p>';
+}
+function mSet(p){var sc=$('#msc'),b=$('#mbar');if(sc)sc.style.setProperty('--p',p);if(b)b.style.transform='scaleX('+p+')'}
+function mDone(delay){
+  var tk=OV;var sc=$('#msc');if(sc)sc.classList.add('done');var b=$('#mbtn');if(b)b.disabled=true;
+  setTimeout(function(){if(OV!==tk)return;OV.phase='fan';ovRender()},delay);
+}
+function mTap(){
+  if(!OV||OV.phase!=='sealed'||!MSPEC[OV.mode]||OV.mbusy)return;
+  var m=OV.mode,sc=$('#msc');if(!sc)return;
+  if(MTAPS[m]){
+    OV.mt=(OV.mt||0)+1;var p=Math.min(1,OV.mt/MTAPS[m]);mSet(p);
+    sc.classList.remove('hit');void sc.offsetWidth;sc.classList.add('hit');
+    if(p>=1){OV.mbusy=true;mDone(m==='charge'?900:m==='shake'?1100:1000)}
+  }else{
+    OV.mbusy=true;sc.classList.add('go');var b=$('#mbtn');if(b)b.disabled=true;
+    var tk=OV,t0=Date.now(),dur=m==='pour'?3000:3600;
+    (function step(){if(OV!==tk)return;var p=Math.min(1,(Date.now()-t0)/dur);mSet(p);if(p<1)setTimeout(step,60);else mDone(500)})();
+  }
+}
+MODED.shake='Secoue la canette jusqu\'à ce qu\'elle déborde, puis retourne les cartes une à une.';
+MODED.pour='Sers-toi un verre : la bouteille se penche, le verre se remplit, puis les cartes apparaissent.';
+MODED.drip='Laisse tomber les gouttes une à une dans la coupe, jusqu\'à ce qu\'elle déborde.';
+MODED.brew='Lance l\'extraction : le café coule dans la tasse, puis les cartes se dévoilent.';
+MODED.charge='Tape le plus vite possible pour charger l\'éclair, jusqu\'à la surcharge.';
+Object.assign(EN,{'Secouer':'Shake','Servir':'Serve','Goutte à goutte':'Drip by drip','Percolateur':'Brew','Surcharge':'Overcharge','Classique':'Classic','Secoue la canette !':'Shake the can!','Tape vite pour charger l\'éclair !':'Tap fast to charge the bolt!','Laisse tomber les gouttes une à une':'Let the drops fall one by one','Sers-toi un verre':'Pour yourself a drink','Lance l\'extraction':'Start the brew','Secouer !':'Shake!','Charger !':'Charge!','Une goutte':'One drop','Lancer':'Start','Pack {name} · 6 cartes':'{name} pack · 6 cards',
+'Secoue la canette jusqu\'à ce qu\'elle déborde, puis retourne les cartes une à une.':'Shake the can until it overflows, then flip the cards one by one.','Sers-toi un verre : la bouteille se penche, le verre se remplit, puis les cartes apparaissent.':'Pour a drink: the bottle tilts, the glass fills, then the cards appear.','Laisse tomber les gouttes une à une dans la coupe, jusqu\'à ce qu\'elle déborde.':'Let the drops fall one by one into the bowl until it overflows.','Lance l\'extraction : le café coule dans la tasse, puis les cartes se dévoilent.':'Start the brew: coffee pours into the cup, then the cards are revealed.','Tape le plus vite possible pour charger l\'éclair, jusqu\'à la surcharge.':'Tap as fast as you can to charge the bolt until it overloads.'});
 
 /* ================= TEAPEE, LA MASCOTTE ================= */
 var CAT={x:24,busy:false,hushed:false,timer:0,hideT:0,bubT:0,emoT:0,peek:null,peekT:0,queue:null,built:false};
@@ -4593,7 +4684,7 @@ document.addEventListener('click',function(ev){
    case 'open':{var r=openPack(d('t'));if(r)showOpen(r);else toast(t('Tu ne peux pas ouvrir ce sachet pour le moment.'));break}
    case 'buybox':if(buyBox(d('t'))){showBox(true);render()}else toast(t('Pas assez de feuilles, ou une boîte est déjà en cours.'));break;
    case 'boxopen':showBox(true);break;
-   case 'mode':S.set.mode=d('m');touch();if($('#cu'))openCustom();render();break;
+   case 'mode':setMode(d('m'));touch();if($('#cu'))openCustom();render();break;
    case 'tear':tear();break;
    case 'steep':steep();break;
    case 'flip':ovFlip();break;
