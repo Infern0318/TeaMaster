@@ -1555,6 +1555,18 @@ EN["Je suis le gardien de ce salon de thé, et je reste en bas à droite. Mon no
 "Pseudo : 2 à 20 caractères (lettres, chiffres, _ . -).":"Nickname: 2 to 20 characters (letters, digits, _ . -).",
 "Les deux mots de passe ne sont pas identiques.":"The two passwords don't match.",
 "Se déconnecter":"Sign out",
+"Code permanent":"Permanent code",
+"Un seul code à retenir, sans pseudo ni mot de passe.":"One code to remember, no username or password.",
+"Choisis un code que tu gardes pour toujours : il suffit pour retrouver ta progression sur n'importe quel appareil. Pas de pseudo ni de mot de passe. Il ne peut pas être récupéré si tu l'oublies, et quiconque le connaît accède à ton compte : note-le bien et ne le partage pas.":"Pick a code to keep forever: it is all you need to get your progress back on any device. No username or password. It cannot be recovered if you forget it, and anyone who knows it can access your account: write it down and do not share it.",
+"Ton code (10 caractères minimum)":"Your code (10 characters minimum)",
+"Générer un code":"Generate a code",
+"Me connecter avec ce code":"Sign in with this code",
+"Créer ce code":"Create this code",
+"Code trop court : 10 caractères minimum.":"Code too short: 10 characters minimum.",
+"Ton navigateur ne permet pas le code permanent ici. Utilise un pseudo et un mot de passe.":"Your browser does not support the permanent code here. Use a username and password.",
+"Code inconnu. Vérifie-le, ou crée-le avec « Créer ce code ».":"Unknown code. Check it, or create it with “Create this code”.",
+"Code inconnu.":"Unknown code.",
+"Ce code est déjà utilisé : choisis-en un autre.":"This code is already in use: choose another one.",
 "Se connecter ou créer un compte":"Sign in or create an account",
 "Déconnecté. Ta progression reste sur ton compte.":"Signed out. Your progress stays on your account.",
 "Connecté en ligne comme {name}. Ta progression est enregistrée sur ton compte et te suit sur tous tes appareils.":"Signed in online as {name}. Your progress is saved to your account and follows you on all your devices."
@@ -2489,6 +2501,7 @@ function wlRender(){
     h+='<div class="welcome-logo">'+logoSVG()+'<h1>TeaMaster</h1><p class="muted" style="margin:0">'+t('Collectionne les thés et les tisanes du monde entier.')+'</p><div style="width:120px">'+catSVG({emo:'happy',cls:'walk-no'})+'</div></div>'+
      '<div class="choice">'+((STANDALONE&&!WEB.on)?'':'<button class="btn btn-primary" data-act="wl-login"><span><b>'+t('Se connecter')+'</b><small>'+(WEB.on?t('Retrouve ta progression avec ton pseudo et ton mot de passe.'):t('Retrouve ta progression sur ton compte.'))+'</small></span></button>'+
      '<button class="btn" data-act="wl-create"><span><b>'+t('Créer un compte')+'</b><small>'+(WEB.on?t('Pseudo et mot de passe, ta progression est sauvegardée en ligne.'):t('Nouveau profil, sauvegardé sur ton compte Claude.'))+'</small></span></button>')+
+     (WEB.on?'<button class="btn" data-act="wl-perm"><span><b>'+t('Code permanent')+'</b><small>'+t('Un seul code à retenir, sans pseudo ni mot de passe.')+'</small></span></button>':'')+
      '<button class="btn" data-act="wl-guest"><span><b>'+t('Jouer en invité')+'</b><small>'+t('Sans compte : la progression reste sur cet appareil.')+'</small></span></button><button class="btn" data-act="wl-code"><span><b>'+t('J\'ai un code de sauvegarde')+'</b><small>'+t('Reprends ta progression depuis un autre appareil.')+'</small></span></button></div>';
   }else if(sc==='login'){
     h+='<div class="welcome-logo">'+logoSVG()+'<h2>'+t('Connexion…')+'</h2><div style="width:100px">'+catSVG({emo:'think'})+'</div><p class="muted">'+t('Je cherche ta sauvegarde.')+'</p></div>';
@@ -2498,6 +2511,8 @@ function wlRender(){
     h+='<div class="welcome-logo"><div style="width:100px">'+catSVG({emo:'sad'})+'</div><h2>'+t('Connexion impossible')+'</h2></div><p>'+t('Le compte de TeaMaster est ton compte Claude : il n\'y a pas de mot de passe dans le jeu. Pour te connecter, ouvre cette page depuis ton compte Claude connecté.')+'</p><div class="choice"><button class="btn btn-primary" data-act="wl-guest"><span><b>'+t('Continuer en invité')+'</b><small>'+t('Tu pourras te reconnecter plus tard : ta progression locale sera alors sauvegardée.')+'</small></span></button><button class="btn" data-act="wl-back"><span><b>'+t('Retour')+'</b></span></button></div>';
   }else if(sc==='code'){
     h+='<h2>'+t('Restaurer avec un code')+'</h2>'+(WL.msg?'<div class="msg err" style="margin:8px 0">'+esc(WL.msg)+'</div>':'')+'<div class="field"><label for="wlcode">'+t('Code de sauvegarde')+'</label><textarea id="wlcode" class="svta" rows="4" placeholder="TM2-…" spellcheck="false" autocomplete="off">'+esc(WL.code||'')+'</textarea></div><div class="sh-actions" style="margin:0"><button class="btn btn-primary" data-act="wl-code-go">'+t('Restaurer')+'</button><button class="btn" data-act="wl-back">'+t('Retour')+'</button></div>';
+  }else if(sc==='wperm'){
+    h+=webPermHTML();
   }else if(sc==='wlogin'||sc==='wcreate'){
     h+=webFormHTML(sc);
   }else if(sc==='create'){
@@ -2808,6 +2823,51 @@ function webSign(name,pw,create){
     webSetSess(j,name);return webAdopt(!create);
   });
 }
+/* Code permanent : un seul secret choisi par le joueur, converti en identifiants du compte */
+function webHex(str){
+  if(!(window.crypto&&crypto.subtle&&window.TextEncoder))return Promise.reject(new Error('nocrypto'));
+  return crypto.subtle.digest('SHA-256',new TextEncoder().encode(str)).then(function(b){return Array.prototype.map.call(new Uint8Array(b),function(x){return ('0'+x.toString(16)).slice(-2)}).join('')});
+}
+function webCodeNorm(c){return String(c||'').replace(/\s+/g,'').toUpperCase()}
+function webCodeOk(c){return webCodeNorm(c).replace(/-/g,'').length>=10}
+function webCodeGen(){
+  var A='ABCDEFGHJKMNPQRSTUVWXYZ23456789',a=new Uint8Array(12),o='';
+  (window.crypto&&crypto.getRandomValues)?crypto.getRandomValues(a):a.forEach(function(_,i){a[i]=Math.floor(Math.random()*256)});
+  for(var i=0;i<12;i++){o+=A[a[i]%A.length];if(i%4===3&&i<11)o+='-'}
+  return o;
+}
+function webSignCode(code,create){
+  var c=webCodeNorm(code);
+  return Promise.all([webHex('tm-id|'+c),webHex('tm-pw|'+c)]).then(function(h){
+    var email='c'+h[0].slice(0,30)+'@teamaster-players.com',path=create?'/auth/v1/signup':'/auth/v1/token?grant_type=password';
+    return webReq(path,{method:'POST',body:{email:email,password:h[1]}});
+  }).then(function(j){
+    if(!j||!j.access_token){var e=new Error('nosession');e.noSession=true;throw e}
+    webSetSess(j,'');return webAdopt(!create);
+  });
+}
+function webPermHTML(){
+  return '<h2>'+t('Code permanent')+'</h2>'+(WL.msg?'<div class="msg err" style="margin:8px 0">'+esc(WL.msg)+'</div>':'')+
+   '<div class="stack"><p class="note" style="margin:0">'+t('Choisis un code que tu gardes pour toujours : il suffit pour retrouver ta progression sur n\'importe quel appareil. Pas de pseudo ni de mot de passe. Il ne peut pas être récupéré si tu l\'oublies, et quiconque le connaît accède à ton compte : note-le bien et ne le partage pas.')+'</p>'+
+   '<div class="field" style="margin:0"><label for="wpcode">'+t('Ton code (10 caractères minimum)')+'</label><input id="wpcode" value="'+esc(WL.pcode||'')+'" autocomplete="off" autocapitalize="characters" spellcheck="false" style="letter-spacing:.08em"></div>'+
+   '<div class="sh-actions" style="margin:0"><button class="btn" type="button" data-act="wp-gen">'+t('Générer un code')+'</button></div>'+
+   '<div class="sh-actions" style="margin:0"><button class="btn btn-primary" type="button" data-act="wp-login"'+(WEB.busy?' disabled':'')+'>'+t('Me connecter avec ce code')+'</button><button class="btn" type="button" data-act="wp-create"'+(WEB.busy?' disabled':'')+'>'+t('Créer ce code')+'</button><button class="btn" type="button" data-act="wl-back">'+t('Retour')+'</button></div></div>';
+}
+function webPermGo(create){
+  var c=webCodeNorm(($('#wpcode')||{}).value);WL.pcode=c;
+  if(!webCodeOk(c)){WL.msg=t('Code trop court : 10 caractères minimum.');wlRender();return}
+  WEB.busy=true;WL.msg='';wlRender();
+  webSignCode(c,create).then(function(){
+    WEB.busy=false;
+    if(create||S.ob<1){S.ob=Math.max(S.ob,1);if(!S.pseudo)S.pseudo='Joueur';touch();wlFinish(false)}
+    else{WL.screen='found';wlRender()}
+  },function(e){
+    WEB.busy=false;
+    var m=String((e&&e.message)||'');
+    WL.msg=(e&&e.message==='nocrypto')?t('Ton navigateur ne permet pas le code permanent ici. Utilise un pseudo et un mot de passe.'):((e&&(e.code==='invalid_credentials'||m.toLowerCase().indexOf('invalid login')>=0))?t('Code inconnu. Vérifie-le, ou crée-le avec « Créer ce code ».'):webErr(e).replace(t('Pseudo ou mot de passe incorrect.'),t('Code inconnu.')).replace(t('Ce pseudo est déjà pris.'),t('Ce code est déjà utilisé : choisis-en un autre.')));
+    wlRender();
+  });
+}
 function webLogout(){
   if(dirty||saving){toast(t('Sauvegarde en cours, réessaie dans un instant.'));return false}
   WEB.sess=null;webSave();CL.ref=null;CL.uid=null;CL.state='guest';
@@ -2951,6 +3011,10 @@ document.addEventListener('click',function(ev){
    case 'tcan':tradeCancel(d('tid'));render();break;
    case 'wl-login':if(WEB.on){WL.screen='wlogin';WL.msg='';wlRender()}else wlLogin();break;
    case 'wl-create':WL.screen=WEB.on?'wcreate':'create';WL.msg='';wlRender();break;
+   case 'wl-perm':WL.screen='wperm';WL.msg='';wlRender();break;
+   case 'wp-gen':WL.pcode=webCodeGen();WL.msg='';wlRender();break;
+   case 'wp-login':webPermGo(false);break;
+   case 'wp-create':webPermGo(true);break;
    case 'web-open':showWelcome('home');break;
    case 'web-out':if(webLogout()){render();updateHead();toast(t('Déconnecté. Ta progression reste sur ton compte.'));showWelcome('home')}break;
    case 'wl-guest':wlFinish(true);break;
