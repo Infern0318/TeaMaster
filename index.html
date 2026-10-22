@@ -800,6 +800,26 @@ html[data-planet="energy"] .card{box-shadow:0 0 0 1px color-mix(in srgb,var(--cc
 .mscene.m-brew.go .m-stream{animation:mdrp .5s linear infinite}
 @keyframes mdrp{50%{opacity:.5}}
 
+/* musique */
+.ibtn.on{color:var(--accent)}
+.mus{position:fixed;inset:0;z-index:90;display:grid;place-items:center;background:rgba(0,0,0,.5);padding:16px}
+.mus-box{width:min(420px,100%);max-height:86vh;display:flex;flex-direction:column;gap:12px;padding:16px;border-radius:16px;background:var(--surface);color:var(--ink);border:1px solid var(--line);box-shadow:0 20px 50px rgba(0,0,0,.4)}
+.mus-h{display:flex;justify-content:space-between;align-items:center;font-size:1.1rem}
+.mus-now{display:flex;gap:12px;align-items:center}
+.mus-now small{display:block;color:var(--muted)}
+.mus-eq{display:flex;gap:3px;align-items:flex-end;height:28px;width:30px}
+.mus-eq i{flex:1;background:var(--accent);height:30%;border-radius:2px}
+.mus-eq.on i{animation:eq .8s ease-in-out infinite}
+.mus-eq.on i:nth-child(2){animation-delay:.2s}.mus-eq.on i:nth-child(3){animation-delay:.4s}.mus-eq.on i:nth-child(4){animation-delay:.1s}
+@keyframes eq{50%{height:100%}}
+.mus-ctl{display:flex;gap:8px;justify-content:center}
+.mus-vol{display:flex;gap:10px;align-items:center}.mus-vol input{flex:1}
+.mus-auto{font-size:.9rem;display:flex;gap:8px;align-items:center}
+.mus-list{overflow:auto;display:flex;flex-direction:column;gap:2px;min-height:0;border-top:1px solid var(--line);padding-top:8px}
+.mus-list h4{margin:10px 0 4px;font-size:.8rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+.mus-t{text-align:left;padding:8px 10px;border-radius:8px;border:0;background:none;color:inherit;font:inherit;cursor:pointer}
+.mus-t:hover{background:rgba(127,127,127,.12)}.mus-t.on{background:var(--accent);color:#fff}
+
 </style>
 
 </head>
@@ -814,6 +834,7 @@ html[data-planet="energy"] .card{box-shadow:0 0 0 1px color-mix(in srgb,var(--cc
       <span class="chip"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 20C4 10 10 4 21 4c0 10-6 16-17 16z"/></svg><b id="hLeaves">0</b></span>
       <span class="chip" id="hAcct"><i class="dot-guest"></i><span></span></span>
       <button class="ibtn" id="hPlanet" data-act="planets" type="button" aria-label="Planètes"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="5.2" fill="currentColor"/><ellipse cx="12" cy="12" rx="10" ry="3.6" fill="none" stroke="currentColor" stroke-width="1.6" transform="rotate(-20 12 12)"/></svg></button>
+      <button class="ibtn" id="hMusic" data-act="mus" type="button" aria-label="Musique"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V6l11-2v12" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="6.500" cy="18" r="2.800" fill="currentColor"/><circle cx="17.500" cy="16" r="2.800" fill="currentColor"/></svg></button>
       <button class="ibtn" id="hLang" data-act="lang" type="button">FR</button>
       <button class="ibtn" id="hCustom" data-act="custom" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18c1.2 0 2-.8 2-1.8 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-1 .8-1.8 1.8-1.8H17a4 4 0 0 0 4-4c0-4.4-4-8-9-8z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="14.5" cy="7" r="1"/></svg></button>
     </div>
@@ -3481,7 +3502,7 @@ function setPlanet(id){
   S.leaves=S.wal[id]!=null?S.wal[id]:(id==='tea'?S.leaves:120);
   S.planet=id;S.pv=S.pv||{};S.pv[id]=1;
   V.col.cat='';V.col.brand='';V.col.rar='';V.col.limit=48;V.rk.cat='';V.hlg=null;
-  touch();applyTheme();rebuildTabs();render();return true;
+  touch();applyTheme();rebuildTabs();render();try{musOnPlanet()}catch(e){}return true;
 }
 /* ---------- Carte des planètes ---------- */
 var PM=null;
@@ -3598,6 +3619,7 @@ function planetAct(a,el){
   var d=function(k){return el.getAttribute('data-'+k)};
   switch(a){
    case 'mtap':mTap();return true;
+   case 'mus':case 'mus-x':case 'mus-play':case 'mus-next':case 'mus-prev':case 'mus-t':return musAct(a,el);
    case 'planets':openPlanets();return true;
    case 'pm-x':closePlanets();return true;
    case 'plsel':if(PM&&!PM.fly){PM.sel=d('p');pmRefresh()}return true;
@@ -4299,6 +4321,124 @@ MODED.charge='Tape le plus vite possible pour charger l\'éclair, jusqu\'à la s
 Object.assign(EN,{'Secouer':'Shake','Servir':'Serve','Goutte à goutte':'Drip by drip','Percolateur':'Brew','Surcharge':'Overcharge','Classique':'Classic','Secoue la canette !':'Shake the can!','Tape vite pour charger l\'éclair !':'Tap fast to charge the bolt!','Laisse tomber les gouttes une à une':'Let the drops fall one by one','Sers-toi un verre':'Pour yourself a drink','Lance l\'extraction':'Start the brew','Secouer !':'Shake!','Charger !':'Charge!','Une goutte':'One drop','Lancer':'Start','Pack {name} · 6 cartes':'{name} pack · 6 cards',
 'Secoue la canette jusqu\'à ce qu\'elle déborde, puis retourne les cartes une à une.':'Shake the can until it overflows, then flip the cards one by one.','Sers-toi un verre : la bouteille se penche, le verre se remplit, puis les cartes apparaissent.':'Pour a drink: the bottle tilts, the glass fills, then the cards appear.','Laisse tomber les gouttes une à une dans la coupe, jusqu\'à ce qu\'elle déborde.':'Let the drops fall one by one into the bowl until it overflows.','Lance l\'extraction : le café coule dans la tasse, puis les cartes se dévoilent.':'Start the brew: coffee pours into the cup, then the cards are revealed.','Tape le plus vite possible pour charger l\'éclair, jusqu\'à la surcharge.':'Tap as fast as you can to charge the bolt until it overloads.'});
 
+/* ================= MUSIQUE (synthétisée, aucun fichier audio) ================= */
+var MUS_NAMES={
+ tea:['Brume du matin','Feuilles d\'or','Théière en fleurs','Jardin de Darjeeling','Vapeur douce','Sencha au crépuscule','Cérémonie du soir','Pluie sur les terrasses'],
+ soda:['Bulles d\'été','Pschitt !','Fizz Party','Rooftop Cola','Citron givré','Paille et néons','Canette dorée','Goûter pétillant'],
+ alcohol:['Vendanges','Cave à jazz','Last Call','Barrique','Terrasse de minuit','Velours rouge','Trinquons','Dernier verre'],
+ water:['Source claire','Gouttes de cristal','Lac de montagne','Glacier lointain','Rosée','Ruisseau d\'argent','Marée basse','Brume d\'eau'],
+ coffee:['Premier espresso','Moka du matin','Café de Vienne','Grains torréfiés','Crème dorée','Bossa Barista','Ristretto Blues','Filtre lent'],
+ energy:['Surcharge','Éclair blanc','Nuit de volts','Rush hour','Turbo Boost','Néon Drive','Pic d\'énergie','Dernier niveau'],
+ hw:['Nuit des sorcières','Chaudron hanté']
+};
+var MUS_STY={
+ tea:{sc:[0,2,4,7,9],root:57,bpm:[68,84],lead:'triangle',pad:'sine',dr:0,den:.35,sw:0,prog:[[0,5,3,4],[0,3,5,4],[0,4,3,3]]},
+ soda:{sc:[0,2,4,5,7,9,11],root:60,bpm:[108,124],lead:'square',pad:'triangle',dr:1,den:.55,sw:0,prog:[[0,4,5,3],[0,5,3,4],[0,3,4,4]]},
+ alcohol:{sc:[0,2,3,5,7,9,10],root:55,bpm:[78,98],lead:'triangle',pad:'sawtooth',dr:2,den:.4,sw:.18,prog:[[0,3,6,4],[0,5,3,4],[0,6,3,4]]},
+ water:{sc:[0,2,4,6,7,9,11],root:62,bpm:[58,74],lead:'sine',pad:'sine',dr:0,den:.5,sw:0,prog:[[0,3,4,0],[0,4,5,3],[0,2,3,4]]},
+ coffee:{sc:[0,2,4,5,7,9,11],root:57,bpm:[88,104],lead:'triangle',pad:'sine',dr:3,den:.45,sw:.12,prog:[[1,4,0,0],[0,5,1,4],[0,3,1,4]]},
+ energy:{sc:[0,2,3,5,7,8,10],root:57,bpm:[126,142],lead:'sawtooth',pad:'sawtooth',dr:4,den:.7,sw:0,prog:[[0,5,3,4],[0,3,5,6],[0,6,5,4]]},
+ hw:{sc:[0,2,3,5,7,8,11],root:52,bpm:[70,90],lead:'triangle',pad:'sawtooth',dr:5,den:.35,sw:0,prog:[[0,5,3,4],[0,3,6,4],[0,5,6,4]]}
+};
+var MUS_T=[];(function(){['tea','soda','alcohol','water','coffee','energy','hw'].forEach(function(pl){MUS_NAMES[pl].forEach(function(n,i){MUS_T.push({n:n,pl:pl,i:i,seed:h32('mus|'+pl+'|'+n)})})})})();
+function musRng(s){return function(){s=(s+0x6D2B79F5)|0;var t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function musBuild(tr){
+  var st=MUS_STY[tr.pl],R=musRng(tr.seed),bpm=st.bpm[0]+Math.floor(R()*(st.bpm[1]-st.bpm[0])),
+   prog=st.prog[Math.floor(R()*st.prog.length)],root=st.root+[0,0,2,-2,3,5,-5][Math.floor(R()*7)],mel=[],bass=[];
+  var cur=2;
+  for(var b=0;b<8;b++){var row=[];for(var s=0;s<16;s++){
+    var on=(s%4===0?R()<st.den+.35:s%2===0?R()<st.den:R()<st.den*.45);
+    if(on){var step=Math.floor(R()*5)-2;if(R()<.3)step=0;cur=Math.max(0,Math.min(st.sc.length*2-1,cur+step));row.push(cur)}else row.push(null)}
+   mel.push(row)}
+  return {n:tr.n,pl:tr.pl,st:st,bpm:bpm,prog:prog,root:root,mel:mel,R:R,idx:0};
+}
+var MUS={ctx:null,m:null,d:null,on:false,ti:0,tk:null,step:0,next:0,timer:0,open:false,nz:null};
+function musCfg(){S.set.mus=S.set.mus||{vol:.45,auto:1,t:0};return S.set.mus}
+function musInit(){
+  if(MUS.ctx)return true;
+  try{var C=window.AudioContext||window.webkitAudioContext;if(!C)return false;MUS.ctx=new C();
+   MUS.m=MUS.ctx.createGain();MUS.m.gain.value=musCfg().vol;
+   MUS.d=MUS.ctx.createDelay(1);MUS.d.delayTime.value=.32;var fb=MUS.ctx.createGain();fb.gain.value=.32;var w=MUS.ctx.createGain();w.gain.value=.28;
+   var lp=MUS.ctx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=2400;
+   MUS.m.connect(MUS.ctx.destination);MUS.m.connect(MUS.d);MUS.d.connect(lp);lp.connect(fb);fb.connect(MUS.d);lp.connect(w);w.connect(MUS.ctx.destination);
+   var n=MUS.ctx.sampleRate,b=MUS.ctx.createBuffer(1,n,n),dd=b.getChannelData(0);for(var i=0;i<n;i++)dd[i]=Math.random()*2-1;MUS.nz=b;return true}catch(e){return false}
+}
+function hz(m){return 440*Math.pow(2,(m-69)/12)}
+function musNote(type,f,t0,dur,g,dest){
+  var c=MUS.ctx,o=c.createOscillator(),e=c.createGain();o.type=type;o.frequency.value=f;
+  e.gain.setValueAtTime(0,t0);e.gain.linearRampToValueAtTime(g,t0+Math.min(.02,dur/3));e.gain.exponentialRampToValueAtTime(.0008,t0+dur);
+  o.connect(e);e.connect(dest||MUS.m);o.start(t0);o.stop(t0+dur+.05);
+}
+function musDrum(kind,t0,g){
+  var c=MUS.ctx;
+  if(kind==='k'){var o=c.createOscillator(),e=c.createGain();o.frequency.setValueAtTime(140,t0);o.frequency.exponentialRampToValueAtTime(45,t0+.14);e.gain.setValueAtTime(g,t0);e.gain.exponentialRampToValueAtTime(.001,t0+.2);o.connect(e);e.connect(MUS.m);o.start(t0);o.stop(t0+.22)}
+  else{var s=c.createBufferSource(),f=c.createBiquadFilter(),e2=c.createGain();s.buffer=MUS.nz;f.type=kind==='h'?'highpass':'bandpass';f.frequency.value=kind==='h'?7000:1800;e2.gain.setValueAtTime(g,t0);e2.gain.exponentialRampToValueAtTime(.001,t0+(kind==='h'?.05:.15));s.connect(f);f.connect(e2);e2.connect(MUS.m);s.start(t0);s.stop(t0+.2)}
+}
+function musStep(tk,s,t0){
+  var st=tk.st,bar=Math.floor(s/16)%8,sp=s%16,chord=tk.prog[Math.floor(bar/2)%tk.prog.length],sc=st.sc,sl=sc.length,
+   deg=function(d){var oct=Math.floor(d/sl);return tk.root+sc[((d%sl)+sl)%sl]+12*oct},
+   sd=60/tk.bpm/4;
+  if(sp===0&&bar%2===0){[0,2,4].forEach(function(k){musNote(st.pad,hz(deg(chord+k)),t0,sd*30,st.pad==='sawtooth'?.035:.06)})}
+  if(sp%8===0)musNote('sine',hz(deg(chord)-12),t0,sd*7,.2);
+  if(st.dr===4&&sp%2===0)musNote('sawtooth',hz(deg(chord)-12),t0,sd*1.6,.06);
+  var n=tk.mel[bar][sp];
+  if(n!=null){var f=hz(deg(chord+n-2)+12*(st.dr===4?0:1));musNote(st.lead,f,t0+(sp%2?st.sw*sd*2:0),sd*(st.lead==='sine'?3.5:2.2),st.lead==='square'?.05:.1)}
+  var dr=st.dr;
+  if(dr===1||dr===4){if(sp%4===0)musDrum('k',t0,dr===4?.5:.35);if(sp%8===4)musDrum('s',t0,.18);if(sp%2===1||dr===4&&sp%2===0)musDrum('h',t0,.05)}
+  if(dr===2){if(sp===0||sp===10)musDrum('k',t0,.28);if(sp%8===4)musDrum('s',t0,.1);if(sp%2===0)musDrum('h',t0+(sp%4===2?st.sw*sd:0),.035)}
+  if(dr===3){if(sp===0||sp===6||sp===10)musDrum('k',t0,.22);if(sp===4||sp===12)musDrum('s',t0,.07);if(sp%2===0)musDrum('h',t0,.03)}
+  if(dr===5){if(sp===0)musDrum('k',t0,.3);if(sp===8)musDrum('s',t0,.06)}
+}
+function musTick(){
+  if(!MUS.on||!MUS.tk)return;var c=MUS.ctx;
+  while(MUS.next<c.currentTime+.18){musStep(MUS.tk,MUS.step,MUS.next);MUS.next+=60/MUS.tk.bpm/4;MUS.step++;if(MUS.step>=128){MUS.step=0;musNext(true);return}}
+}
+function musPlay(i){
+  if(!musInit())return;var c=MUS.ctx;if(c.state==='suspended')c.resume();
+  MUS.ti=(i+MUS_T.length)%MUS_T.length;MUS.tk=musBuild(MUS_T[MUS.ti]);MUS.step=0;MUS.next=c.currentTime+.08;MUS.on=true;
+  clearInterval(MUS.timer);MUS.timer=setInterval(musTick,40);musCfg().t=MUS.ti;musRefresh();
+}
+function musPause(){MUS.on=false;clearInterval(MUS.timer);if(MUS.ctx&&MUS.ctx.state==='running')MUS.ctx.suspend();musRefresh()}
+function musToggle(){if(MUS.on)musPause();else if(MUS.tk&&MUS.ctx){MUS.on=true;MUS.ctx.resume();MUS.next=MUS.ctx.currentTime+.08;MUS.timer=setInterval(musTick,40);musRefresh()}else musPlay(musAutoStart())}
+function musNext(fromEnd){
+  var cfg=musCfg(),pl=MUS_T[MUS.ti].pl,i=MUS.ti+1;
+  if(cfg.auto&&fromEnd){var pk=S.planet||'tea',L=MUS_T.map(function(x,j){return j}).filter(function(j){return MUS_T[j].pl===pk});i=L[(L.indexOf(MUS.ti)+1)%L.length]!=null&&L.indexOf(MUS.ti)>=0?L[(L.indexOf(MUS.ti)+1)%L.length]:L[0]}
+  musPlay(i);
+}
+function musPrev(){musPlay(MUS.ti-1)}
+function musAutoStart(){var pk=S.planet||'tea',L=MUS_T.map(function(x,j){return j}).filter(function(j){return MUS_T[j].pl===pk});return L.length?L[Math.floor(Math.random()*L.length)]:0}
+function musOnPlanet(){if(MUS.on&&musCfg().auto&&MUS_T[MUS.ti].pl!==(S.planet||'tea')&&MUS_T[MUS.ti].pl!=='hw')musPlay(musAutoStart())}
+var MUS_GN={tea:'Thé',soda:'Sodas',alcohol:'Alcools',water:'Eaux',coffee:'Cafés',energy:'Énergisantes',hw:'Halloween'};
+function musHTML(){
+  var cfg=musCfg(),tr=MUS_T[MUS.ti],h='<div class="mus-box"><div class="mus-h"><b>'+t('Musique')+'</b><button class="ibtn" data-act="mus-x" aria-label="'+esc(t('Fermer'))+'">×</button></div>'+
+   '<div class="mus-now"><span class="mus-eq'+(MUS.on?' on':'')+'"><i></i><i></i><i></i><i></i></span><div><b>'+(MUS.tk||MUS.on?esc(t(tr.n)):t('Aucune piste'))+'</b><small>'+t(MUS_GN[tr.pl])+'</small></div></div>'+
+   '<div class="mus-ctl"><button class="btn" data-act="mus-prev" aria-label="'+esc(t('Précédent'))+'">⏮</button><button class="btn btn-primary" data-act="mus-play">'+(MUS.on?t('Pause'):t('Lecture'))+'</button><button class="btn" data-act="mus-next" aria-label="'+esc(t('Suivant'))+'">⏭</button></div>'+
+   '<label class="mus-vol"><span>'+t('Volume')+'</span><input type="range" id="musVol" min="0" max="100" value="'+Math.round(cfg.vol*100)+'"></label>'+
+   '<label class="mus-auto"><input type="checkbox" id="musAuto"'+(cfg.auto?' checked':'')+'> '+t('Suivre la planète')+'</label><div class="mus-list">';
+  var last='';MUS_T.forEach(function(x,i){if(x.pl!==last){last=x.pl;h+='<h4>'+t(MUS_GN[x.pl])+'</h4>'}h+='<button class="mus-t'+(i===MUS.ti&&MUS.tk?' on':'')+'" data-act="mus-t" data-i="'+i+'">'+esc(t(x.n))+'</button>'});
+  return h+'</div></div>';
+}
+function musRefresh(){var e=document.getElementById('mus');if(e){var sc=e.querySelector('.mus-list'),y=sc?sc.scrollTop:0;e.innerHTML=musHTML();var s2=e.querySelector('.mus-list');if(s2)s2.scrollTop=y}var b=document.getElementById('hMusic');if(b)b.classList.toggle('on',MUS.on)}
+function musOpen(){var e=document.getElementById('mus');if(!e){e=document.createElement('div');e.id='mus';e.className='sh solid mus';e.setAttribute('role','dialog');document.body.appendChild(e)}e.innerHTML=musHTML()}
+function musClose(){var e=document.getElementById('mus');if(e)e.remove()}
+function musAct(a,el){
+  switch(a){
+   case 'mus':musOpen();return true;
+   case 'mus-x':musClose();return true;
+   case 'mus-play':musToggle();return true;
+   case 'mus-next':musNext(false);return true;
+   case 'mus-prev':musPrev();return true;
+   case 'mus-t':musPlay(+el.getAttribute('data-i'));return true;
+  }
+  return false;
+}
+document.addEventListener('input',function(e){if(e.target&&e.target.id==='musVol'){var v=e.target.value/100;musCfg().vol=v;if(MUS.m)MUS.m.gain.value=v}});
+document.addEventListener('change',function(e){if(e.target&&e.target.id==='musAuto'){musCfg().auto=e.target.checked?1:0;touch()}if(e.target&&e.target.id==='musVol')touch()});
+document.addEventListener('visibilitychange',function(){if(!MUS.ctx)return;if(document.hidden){if(MUS.on)MUS.ctx.suspend()}else if(MUS.on)MUS.ctx.resume()});
+Object.assign(EN,{'Musique':'Music','Aucune piste':'No track','Précédent':'Previous','Suivant':'Next','Pause':'Pause','Lecture':'Play','Volume':'Volume','Suivre la planète':'Follow the planet','Thé':'Tea','Sodas':'Sodas','Alcools':'Spirits','Eaux':'Waters','Cafés':'Coffees','Énergisantes':'Energy','Halloween':'Halloween'});
+var MUS_EN={'Brume du matin':'Morning mist','Feuilles d\'or':'Golden leaves','Théière en fleurs':'Blooming teapot','Jardin de Darjeeling':'Darjeeling garden','Vapeur douce':'Soft steam','Sencha au crépuscule':'Twilight sencha','Cérémonie du soir':'Evening ceremony','Pluie sur les terrasses':'Rain on the terraces','Bulles d\'été':'Summer bubbles','Pschitt !':'Psst!','Fizz Party':'Fizz Party','Rooftop Cola':'Rooftop Cola','Citron givré':'Frosted lemon','Paille et néons':'Straws and neons','Canette dorée':'Golden can','Goûter pétillant':'Fizzy snack','Vendanges':'Harvest','Cave à jazz':'Jazz cellar','Last Call':'Last Call','Barrique':'Barrel','Terrasse de minuit':'Midnight terrace','Velours rouge':'Red velvet','Trinquons':'Cheers','Dernier verre':'Last glass','Source claire':'Clear spring','Gouttes de cristal':'Crystal drops','Lac de montagne':'Mountain lake','Glacier lointain':'Distant glacier','Rosée':'Dew','Ruisseau d\'argent':'Silver stream','Marée basse':'Low tide','Brume d\'eau':'Water mist','Premier espresso':'First espresso','Moka du matin':'Morning mocha','Café de Vienne':'Vienna café','Grains torréfiés':'Roasted beans','Crème dorée':'Golden crema','Bossa Barista':'Bossa Barista','Ristretto Blues':'Ristretto Blues','Filtre lent':'Slow filter','Surcharge':'Overcharge','Éclair blanc':'White lightning','Nuit de volts':'Night of volts','Rush hour':'Rush hour','Turbo Boost':'Turbo Boost','Néon Drive':'Neon Drive','Pic d\'énergie':'Energy peak','Dernier niveau':'Final level','Nuit des sorcières':'Witches\' night','Chaudron hanté':'Haunted cauldron'};
+Object.assign(EN,MUS_EN);
+
 /* ================= TEAPEE, LA MASCOTTE ================= */
 var CAT={x:24,busy:false,hushed:false,timer:0,hideT:0,bubT:0,emoT:0,peek:null,peekT:0,queue:null,built:false};
 function catHome(){return Math.max(8,window.innerWidth-96)}
@@ -4858,7 +4998,7 @@ if(S.ob===0){showWelcome()}
 else if(S.ob===1){startTutorial()}
 if(S.migr){toast(t('La boutique a changé : {n} anciennes cartes ont été remplacées par des feuilles.',{n:S.migr}));S.migr=0;touch()}
 scheduleHide(true);catSync();
-if(window.__TMDEBUG)window.__tm={t:t,MISS:MISS,S:function(){return S},CL:CL,SO:SO,render:render,PACKS:PACKS,TSTEPS:TSTEPS,MODED:MODED,MODES:MODES,PATS:PATS,BACKS:BACKS,TIPS:TIPS,LVL:LVL,RN:RN,TIERS:TIERS,TIERL:TIERL,GN:GN,N:N,CARDS:CARDS,BRANDS:BRANDS,openPack:openPack,showOpen:showOpen,catHide:catHide,peekFound:peekFound,CAT:CAT,openQuiz:openQuiz,V:V,setLang:setLang,processSocial:processSocial,QT:QT,genQuests:genQuests,addBond:addBond,tradeSend:tradeSend,tradeAccept:tradeAccept,addCards:addCards,touch:touch,pubFlush:pubFlush,addFriendByCode:addFriendByCode,acceptFriend:acceptFriend,myCode:myCode,bSim:bSim,bStats:bStats,bAutoTeam:bAutoTeam,battleTraining:battleTraining,battleMove:battleMove,bView:bView,battleChallenge:battleChallenge,battleAccept:battleAccept,battleSync:battleSync,rkEntries:rkEntries,bAiTeam:bAiTeam,bpOpen:bpOpen,bvOpen:bvOpen,PLANETS:PLANETS,setPlanet:setPlanet,CATS:CATS};
+if(window.__TMDEBUG)window.__tm={MUS:function(){return MUS},musBuild:function(i){return musBuild(MUS_T[i])},musStep:musStep,MUS_T:MUS_T,t:t,MISS:MISS,S:function(){return S},CL:CL,SO:SO,render:render,PACKS:PACKS,TSTEPS:TSTEPS,MODED:MODED,MODES:MODES,PATS:PATS,BACKS:BACKS,TIPS:TIPS,LVL:LVL,RN:RN,TIERS:TIERS,TIERL:TIERL,GN:GN,N:N,CARDS:CARDS,BRANDS:BRANDS,openPack:openPack,showOpen:showOpen,catHide:catHide,peekFound:peekFound,CAT:CAT,openQuiz:openQuiz,V:V,setLang:setLang,processSocial:processSocial,QT:QT,genQuests:genQuests,addBond:addBond,tradeSend:tradeSend,tradeAccept:tradeAccept,addCards:addCards,touch:touch,pubFlush:pubFlush,addFriendByCode:addFriendByCode,acceptFriend:acceptFriend,myCode:myCode,bSim:bSim,bStats:bStats,bAutoTeam:bAutoTeam,battleTraining:battleTraining,battleMove:battleMove,bView:bView,battleChallenge:battleChallenge,battleAccept:battleAccept,battleSync:battleSync,rkEntries:rkEntries,bAiTeam:bAiTeam,bpOpen:bpOpen,bvOpen:bvOpen,PLANETS:PLANETS,setPlanet:setPlanet,CATS:CATS};
 setInterval(function(){
   var before=S.stock;tickStock();
   if(ensureDay()){render()}else if(S.stock!==before&&V.view==='home'&&!OV&&!$('#bxov')){render()}
