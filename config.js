@@ -1,6 +1,5 @@
-/* À remplir avec les valeurs de ton projet Supabase (voir GUIDE.md).
-   Laisse les deux valeurs vides pour un site SANS comptes (mode invité uniquement). */
-window.TM_CONFIG = {
-  supabaseUrl: "",   // ex. "https://abcdxyz.supabase.co"
-  supabaseKey: ""    // la clé « anon public »
+/* Valeurs publiques du projet Supabase TeaMaster (la clé « publishable » est faite pour être publique). */
+window.TM_CONFIG={
+  supabaseUrl: "https://knxhwuexcxsbzyvnriqc.supabase.co",
+  supabaseKey: "sb_publishable_Sw10dLP5LHaZysAR64FjrQ_UwNuhV8C"
 };

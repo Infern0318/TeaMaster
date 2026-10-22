@@ -2770,7 +2770,8 @@ function webEmail(name){return name.toLowerCase()+'@teamaster-players.com'}
 function webNameOk(n){return /^[A-Za-z0-9_.-]{2,20}$/.test(n)}
 function webReq(path,opt,authed){
   opt=opt||{};var h={apikey:WEBCFG.supabaseKey,'Content-Type':'application/json'};
-  h.Authorization='Bearer '+((authed&&WEB.sess)?WEB.sess.at:WEBCFG.supabaseKey);
+  if(authed&&WEB.sess)h.Authorization='Bearer '+WEB.sess.at;
+  else if(String(WEBCFG.supabaseKey).indexOf('eyJ')===0)h.Authorization='Bearer '+WEBCFG.supabaseKey;/* les clés « sb_publishable_ » ne sont pas des JWT : apikey seul */
   if(opt.prefer)h.Prefer=opt.prefer;
   return fetch(String(WEBCFG.supabaseUrl).replace(/\/+$/,'')+path,{method:opt.method||'GET',headers:h,body:opt.body?JSON.stringify(opt.body):undefined}).then(function(r){
     return r.text().then(function(tx){var j=null;try{j=tx?JSON.parse(tx):null}catch(e){}if(!r.ok){var e=new Error((j&&(j.msg||j.error_description||j.message))||('HTTP '+r.status));e.status=r.status;e.code=(j&&(j.error_code||j.code))||'';throw e}return j})});
