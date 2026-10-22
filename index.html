@@ -2888,7 +2888,7 @@ function backHTML(id){
   return '<div class="cw"><div class="cback cb-'+id+'"><div><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 24c0-10 7-16 19-16 0 10-6 17-19 16z" fill="currentColor"/><path d="M6 24l11-11" stroke="var(--cbi,#0f2a20)" stroke-width="1.6" stroke-linecap="round"/></svg><span>DrinkMaster</span></div></div></div>';
 }
 var PKN={soda:'Soda',alcohol:'Cave',water:'Source',coffee:'Torréfaction',energy:'Boost'};
-var PKH={soda:'Touche la canette pour l\'ouvrir',alcohol:'Tire sur le bouchon pour ouvrir la bouteille',water:'Touche la gourde pour l\'ouvrir',coffee:'Touche le paquet pour l\'ouvrir',energy:'Touche la canette pour l\'ouvrir'};
+var PKH={soda:'Touche la canette pour l\'ouvrir',alcohol:'Touche la bouteille pour l\'ouvrir',water:'Touche la gourde pour l\'ouvrir',coffee:'Touche le paquet pour l\'ouvrir',energy:'Touche la canette pour l\'ouvrir'};
 function bagHTML(type,o){
   o=o||{};var P=PACKS[type],c1=P.c,c2=shade(P.c,.55);
   var tagTag=o.stat?'span':'button';
@@ -2896,7 +2896,7 @@ function bagHTML(type,o){
    '<div class="bag-peek"><i></i><i></i><i></i></div>'+
    '<div class="bag-body"><div class="bag-label"><small>'+(P.pl?t(PKN[P.pl]||'Pack'):t('Sachet'))+'</small><b>'+esc(t(P.n))+'</b><i>'+t('6 cartes')+'</i></div></div>'+
    '<div class="bag-flap"></div>'+
-   ((o.tag||o.stat)&&(!P.pl||P.pl==='alcohol')?'<'+tagTag+' class="bag-tag"'+(o.stat?'':' data-act="tear" aria-label="'+esc(t('Tirer l\'étiquette pour ouvrir'))+'"')+'><svg viewBox="0 0 26 56" aria-hidden="true"><path d="M13 0v19" stroke="#e8d9a0" stroke-width="1.5" fill="none"/><path d="M4 19h18l3 4v29a3 3 0 0 1-3 3H4a3 3 0 0 1-3-3V23z" fill="#f3e6c0" stroke="#bda35a"/><circle cx="13" cy="28" r="2.2" fill="'+c1+'"/><path d="M7 38h12M7 43h12M9 48h8" stroke="#bda35a" stroke-width="1.2" stroke-linecap="round"/></svg></'+tagTag+'>':'')+
+   ((o.tag||o.stat)&&!P.pl?'<'+tagTag+' class="bag-tag"'+(o.stat?'':' data-act="tear" aria-label="'+esc(t('Tirer l\'étiquette pour ouvrir'))+'"')+'><svg viewBox="0 0 26 56" aria-hidden="true"><path d="M13 0v19" stroke="#e8d9a0" stroke-width="1.5" fill="none"/><path d="M4 19h18l3 4v29a3 3 0 0 1-3 3H4a3 3 0 0 1-3-3V23z" fill="#f3e6c0" stroke="#bda35a"/><circle cx="13" cy="28" r="2.2" fill="'+c1+'"/><path d="M7 38h12M7 43h12M9 48h8" stroke="#bda35a" stroke-width="1.2" stroke-linecap="round"/></svg></'+tagTag+'>':'')+
    '<div class="steam"><i></i><i></i><i></i><i></i><i></i></div></div>';
 }
 function mmss(ms){ms=Math.max(0,Math.floor(ms/1000));return String(Math.floor(ms/60)).padStart(2,'0')+':'+String(ms%60).padStart(2,'0')}
@@ -2907,7 +2907,7 @@ function opt(v,l,sel){return '<option value="'+esc(v)+'"'+(String(sel)===String(
 function dispName(){return S.pseudo||t('Dégustateur')}
 function initial(n){return esc((String(n||'?').trim()[0]||'?').toUpperCase())}
 var MODES=[['classy','Classy'],['fan','Éventail'],['coffret','Coffret'],['infuse','Infusion'],['quick','Rapide'],['instant','Instantané']];
-function modeD(m){var id=S.planet||'tea';if(m==='classy'&&id!=='tea'&&id!=='alcohol')return MODED.classyP;return MODED[m]}
+function modeD(m){var id=S.planet||'tea';if(m==='classy'&&id!=='tea')return MODED.classyP;return MODED[m]}
 var MODED={coffret:'Une boîte rectangulaire s\'ouvre : choisis toi-même les sachets, puis retourne les cartes une à une.',classy:'Tire l\'étiquette, puis retourne les cartes une à une, des moins rares aux plus rares.',fan:'Les six cartes s\'étalent en éventail : retourne-les dans l\'ordre que tu veux.',infuse:'Plonge le sachet dans la tasse, patiente le temps de l\'infusion, puis découvre les cartes.',quick:'x',instant:'Le résumé s\'affiche tout de suite, sans animation.'};
 MODED.classyP='Touche le pack pour l\'ouvrir, puis retourne les cartes une à une, des moins rares aux plus rares.';
 MODED.quick='Les cartes se retournent toutes seules, l\'une après l\'autre.';
@@ -4358,6 +4358,7 @@ MODED.charge='Tape le plus vite possible pour charger l\'éclair, jusqu\'à la s
 Object.assign(EN,{'Secouer':'Shake','Servir':'Serve','Goutte à goutte':'Drip by drip','Percolateur':'Brew','Surcharge':'Overcharge','Classique':'Classic','Secoue la canette !':'Shake the can!','Tape vite pour charger l\'éclair !':'Tap fast to charge the bolt!','Laisse tomber les gouttes une à une':'Let the drops fall one by one','Sers-toi un verre':'Pour yourself a drink','Lance l\'extraction':'Start the brew','Secouer !':'Shake!','Charger !':'Charge!','Une goutte':'One drop','Lancer':'Start','Pack {name} · 6 cartes':'{name} pack · 6 cards',
 'Secoue la canette jusqu\'à ce qu\'elle déborde, puis retourne les cartes une à une.':'Shake the can until it overflows, then flip the cards one by one.','Sers-toi un verre : la bouteille se penche, le verre se remplit, puis les cartes apparaissent.':'Pour a drink: the bottle tilts, the glass fills, then the cards appear.','Laisse tomber les gouttes une à une dans la coupe, jusqu\'à ce qu\'elle déborde.':'Let the drops fall one by one into the bowl until it overflows.','Lance l\'extraction : le café coule dans la tasse, puis les cartes se dévoilent.':'Start the brew: coffee pours into the cup, then the cards are revealed.','Tape le plus vite possible pour charger l\'éclair, jusqu\'à la surcharge.':'Tap as fast as you can to charge the bolt until it overloads.'});
 Object.assign(EN,{'Touche le pack pour l\'ouvrir, puis retourne les cartes une à une, des moins rares aux plus rares.':'Tap the pack to open it, then flip the cards one by one, from least to most rare.','Touche la canette pour l\'ouvrir':'Tap the can to open it','Touche la gourde pour l\'ouvrir':'Tap the bottle to open it','Touche le paquet pour l\'ouvrir':'Tap the pack to open it'});
+Object.assign(EN,{'Touche la bouteille pour l\'ouvrir':'Tap the bottle to open it'});
 
 /* ================= MUSIQUE (synthétisée, aucun fichier audio) ================= */
 var MUS_NAMES={
