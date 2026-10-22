@@ -819,6 +819,8 @@ html[data-planet="energy"] .card{box-shadow:0 0 0 1px color-mix(in srgb,var(--cc
 .mus-list h4{margin:10px 0 4px;font-size:.8rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
 .mus-t{text-align:left;padding:8px 10px;border-radius:8px;border:0;background:none;color:inherit;font:inherit;cursor:pointer}
 .mus-t:hover{background:rgba(127,127,127,.12)}.mus-t.on{background:var(--accent);color:#fff}
+.bag[data-pl] .bag-peek{opacity:0;transition:transform .9s .25s cubic-bezier(.2,.8,.2,1),opacity .3s .35s}
+.bag.torn[data-pl] .bag-peek{opacity:1}
 
 </style>
 
@@ -3466,6 +3468,7 @@ function curRep(r){
   var id=curId();if(id==='tea'||typeof r!=='string')return r;
   if(/de thé|tea leaves|Tea leaves/.test(r))return r;
   var c=CUR[id],cap=function(x){return x.charAt(0).toUpperCase()+x.slice(1)};
+  r=r.replace(/sachets/g,'packs').replace(/Sachets/g,'Packs').replace(/sachet/g,'pack').replace(/Sachet/g,'Pack').replace(/\bbags\b/g,'packs').replace(/\bBags\b/g,'Packs').replace(/\bbag\b/g,'pack').replace(/\bBag\b/g,'Pack');
   return r.replace(/feuilles/g,c.f[1]).replace(/Feuilles/g,cap(c.f[1])).replace(/feuille/g,c.f[0]).replace(/\bleaves\b/g,c.e[1]).replace(/\bleaf\b/g,c.e[0]);
 }
 var _plc={};
@@ -4352,15 +4355,16 @@ function musBuild(tr){
    mel.push(row)}
   return {n:tr.n,pl:tr.pl,st:st,bpm:bpm,prog:prog,root:root,mel:mel,R:R,idx:0};
 }
+var MUS_GAIN=3.2;
 var MUS={ctx:null,m:null,d:null,on:false,ti:0,tk:null,step:0,next:0,timer:0,open:false,nz:null};
 function musCfg(){S.set.mus=S.set.mus||{vol:.45,auto:1,t:0};return S.set.mus}
 function musInit(){
   if(MUS.ctx)return true;
   try{var C=window.AudioContext||window.webkitAudioContext;if(!C)return false;MUS.ctx=new C();
-   MUS.m=MUS.ctx.createGain();MUS.m.gain.value=musCfg().vol;
+   MUS.m=MUS.ctx.createGain();MUS.m.gain.value=musCfg().vol*MUS_GAIN;MUS.out=MUS.ctx.createDynamicsCompressor();MUS.out.connect(MUS.ctx.destination);
    MUS.d=MUS.ctx.createDelay(1);MUS.d.delayTime.value=.32;var fb=MUS.ctx.createGain();fb.gain.value=.32;var w=MUS.ctx.createGain();w.gain.value=.28;
    var lp=MUS.ctx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=2400;
-   MUS.m.connect(MUS.ctx.destination);MUS.m.connect(MUS.d);MUS.d.connect(lp);lp.connect(fb);fb.connect(MUS.d);lp.connect(w);w.connect(MUS.ctx.destination);
+   MUS.m.connect(MUS.out);MUS.m.connect(MUS.d);MUS.d.connect(lp);lp.connect(fb);fb.connect(MUS.d);lp.connect(w);w.connect(MUS.out);
    var n=MUS.ctx.sampleRate,b=MUS.ctx.createBuffer(1,n,n),dd=b.getChannelData(0);for(var i=0;i<n;i++)dd[i]=Math.random()*2-1;MUS.nz=b;return true}catch(e){return false}
 }
 function hz(m){return 440*Math.pow(2,(m-69)/12)}
@@ -4378,11 +4382,11 @@ function musStep(tk,s,t0){
   var st=tk.st,bar=Math.floor(s/16)%8,sp=s%16,chord=tk.prog[Math.floor(bar/2)%tk.prog.length],sc=st.sc,sl=sc.length,
    deg=function(d){var oct=Math.floor(d/sl);return tk.root+sc[((d%sl)+sl)%sl]+12*oct},
    sd=60/tk.bpm/4;
-  if(sp===0&&bar%2===0){[0,2,4].forEach(function(k){musNote(st.pad,hz(deg(chord+k)),t0,sd*30,st.pad==='sawtooth'?.035:.06)})}
-  if(sp%8===0)musNote('sine',hz(deg(chord)-12),t0,sd*7,.2);
+  if(sp===0&&bar%2===0){[0,2,4].forEach(function(k){musNote(st.pad,hz(deg(chord+k)),t0,sd*30,st.pad==='sawtooth'?.06:.1)})}
+  if(sp%8===0)musNote('sine',hz(deg(chord)-12),t0,sd*7,.3);
   if(st.dr===4&&sp%2===0)musNote('sawtooth',hz(deg(chord)-12),t0,sd*1.6,.06);
   var n=tk.mel[bar][sp];
-  if(n!=null){var f=hz(deg(chord+n-2)+12*(st.dr===4?0:1));musNote(st.lead,f,t0+(sp%2?st.sw*sd*2:0),sd*(st.lead==='sine'?3.5:2.2),st.lead==='square'?.05:.1)}
+  if(n!=null){var f=hz(deg(chord+n-2)+12*(st.dr===4?0:1));musNote(st.lead,f,t0+(sp%2?st.sw*sd*2:0),sd*(st.lead==='sine'?3.5:2.2),st.lead==='square'?.08:.16)}
   var dr=st.dr;
   if(dr===1||dr===4){if(sp%4===0)musDrum('k',t0,dr===4?.5:.35);if(sp%8===4)musDrum('s',t0,.18);if(sp%2===1||dr===4&&sp%2===0)musDrum('h',t0,.05)}
   if(dr===2){if(sp===0||sp===10)musDrum('k',t0,.28);if(sp%8===4)musDrum('s',t0,.1);if(sp%2===0)musDrum('h',t0+(sp%4===2?st.sw*sd:0),.035)}
@@ -4393,13 +4397,20 @@ function musTick(){
   if(!MUS.on||!MUS.tk)return;var c=MUS.ctx;
   while(MUS.next<c.currentTime+.18){musStep(MUS.tk,MUS.step,MUS.next);MUS.next+=60/MUS.tk.bpm/4;MUS.step++;if(MUS.step>=128){MUS.step=0;musNext(true);return}}
 }
+function musUnlock(){
+  try{if(!MUS.el){var n=2205,b=new ArrayBuffer(44+n*2),v=new DataView(b),W=function(o,s){for(var i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i))};W(0,'RIFF');v.setUint32(4,36+n*2,true);W(8,'WAVEfmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,22050,true);v.setUint32(28,44100,true);v.setUint16(32,2,true);v.setUint16(34,16,true);W(36,'data');v.setUint32(40,n*2,true);
+    var u=new Uint8Array(b),s='';for(var i=0;i<u.length;i++)s+=String.fromCharCode(u[i]);var a=new Audio('data:audio/wav;base64,'+btoa(s));a.loop=true;a.volume=.01;MUS.el=a}
+   var pr=MUS.el.play();if(pr&&pr.catch)pr.catch(function(){})}catch(e){}
+}
 function musPlay(i){
-  if(!musInit())return;var c=MUS.ctx;if(c.state==='suspended')c.resume();
+  musUnlock();
+  if(!musInit()){MUS.err=1;musRefresh();return}var c=MUS.ctx;if(c.state!=='running'){var rp=c.resume();if(rp&&rp.catch)rp.catch(function(){})}
   MUS.ti=(i+MUS_T.length)%MUS_T.length;MUS.tk=musBuild(MUS_T[MUS.ti]);MUS.step=0;MUS.next=c.currentTime+.08;MUS.on=true;
   clearInterval(MUS.timer);MUS.timer=setInterval(musTick,40);musCfg().t=MUS.ti;musRefresh();
+  setTimeout(function(){if(MUS.on&&MUS.ctx.state!=='running'){MUS.err=2;musRefresh()}else if(MUS.err){MUS.err=0;musRefresh()}},700);
 }
 function musPause(){MUS.on=false;clearInterval(MUS.timer);if(MUS.ctx&&MUS.ctx.state==='running')MUS.ctx.suspend();musRefresh()}
-function musToggle(){if(MUS.on)musPause();else if(MUS.tk&&MUS.ctx){MUS.on=true;MUS.ctx.resume();MUS.next=MUS.ctx.currentTime+.08;MUS.timer=setInterval(musTick,40);musRefresh()}else musPlay(musAutoStart())}
+function musToggle(){if(MUS.on)musPause();else if(MUS.tk&&MUS.ctx){musUnlock();MUS.on=true;MUS.ctx.resume();MUS.next=MUS.ctx.currentTime+.08;MUS.timer=setInterval(musTick,40);musRefresh()}else musPlay(musAutoStart())}
 function musNext(fromEnd){
   var cfg=musCfg(),pl=MUS_T[MUS.ti].pl,i=MUS.ti+1;
   if(cfg.auto&&fromEnd){var pk=S.planet||'tea',L=MUS_T.map(function(x,j){return j}).filter(function(j){return MUS_T[j].pl===pk});i=L[(L.indexOf(MUS.ti)+1)%L.length]!=null&&L.indexOf(MUS.ti)>=0?L[(L.indexOf(MUS.ti)+1)%L.length]:L[0]}
@@ -4412,7 +4423,7 @@ var MUS_GN={tea:'Thé',soda:'Sodas',alcohol:'Alcools',water:'Eaux',coffee:'Café
 function musHTML(){
   var cfg=musCfg(),tr=MUS_T[MUS.ti],h='<div class="mus-box"><div class="mus-h"><b>'+t('Musique')+'</b><button class="ibtn" data-act="mus-x" aria-label="'+esc(t('Fermer'))+'">×</button></div>'+
    '<div class="mus-now"><span class="mus-eq'+(MUS.on?' on':'')+'"><i></i><i></i><i></i><i></i></span><div><b>'+(MUS.tk||MUS.on?esc(t(tr.n)):t('Aucune piste'))+'</b><small>'+t(MUS_GN[tr.pl])+'</small></div></div>'+
-   '<div class="mus-ctl"><button class="btn" data-act="mus-prev" aria-label="'+esc(t('Précédent'))+'">⏮</button><button class="btn btn-primary" data-act="mus-play">'+(MUS.on?t('Pause'):t('Lecture'))+'</button><button class="btn" data-act="mus-next" aria-label="'+esc(t('Suivant'))+'">⏭</button></div>'+
+   (MUS.err?'<p class="note" style="color:#c0392b;margin:0">'+t('Le son est bloqué par le navigateur. Appuie à nouveau sur Lecture, vérifie le volume et le mode silencieux.')+'</p>':'')+'<div class="mus-ctl"><button class="btn" data-act="mus-prev" aria-label="'+esc(t('Précédent'))+'">⏮</button><button class="btn btn-primary" data-act="mus-play">'+(MUS.on?t('Pause'):t('Lecture'))+'</button><button class="btn" data-act="mus-next" aria-label="'+esc(t('Suivant'))+'">⏭</button></div>'+
    '<label class="mus-vol"><span>'+t('Volume')+'</span><input type="range" id="musVol" min="0" max="100" value="'+Math.round(cfg.vol*100)+'"></label>'+
    '<label class="mus-auto"><input type="checkbox" id="musAuto"'+(cfg.auto?' checked':'')+'> '+t('Suivre la planète')+'</label><div class="mus-list">';
   var last='';MUS_T.forEach(function(x,i){if(x.pl!==last){last=x.pl;h+='<h4>'+t(MUS_GN[x.pl])+'</h4>'}h+='<button class="mus-t'+(i===MUS.ti&&MUS.tk?' on':'')+'" data-act="mus-t" data-i="'+i+'">'+esc(t(x.n))+'</button>'});
@@ -4432,10 +4443,10 @@ function musAct(a,el){
   }
   return false;
 }
-document.addEventListener('input',function(e){if(e.target&&e.target.id==='musVol'){var v=e.target.value/100;musCfg().vol=v;if(MUS.m)MUS.m.gain.value=v}});
+document.addEventListener('input',function(e){if(e.target&&e.target.id==='musVol'){var v=e.target.value/100;musCfg().vol=v;if(MUS.m)MUS.m.gain.value=v*MUS_GAIN}});
 document.addEventListener('change',function(e){if(e.target&&e.target.id==='musAuto'){musCfg().auto=e.target.checked?1:0;touch()}if(e.target&&e.target.id==='musVol')touch()});
 document.addEventListener('visibilitychange',function(){if(!MUS.ctx)return;if(document.hidden){if(MUS.on)MUS.ctx.suspend()}else if(MUS.on)MUS.ctx.resume()});
-Object.assign(EN,{'Musique':'Music','Aucune piste':'No track','Précédent':'Previous','Suivant':'Next','Pause':'Pause','Lecture':'Play','Volume':'Volume','Suivre la planète':'Follow the planet','Thé':'Tea','Sodas':'Sodas','Alcools':'Spirits','Eaux':'Waters','Cafés':'Coffees','Énergisantes':'Energy','Halloween':'Halloween'});
+Object.assign(EN,{'Le son est bloqué par le navigateur. Appuie à nouveau sur Lecture, vérifie le volume et le mode silencieux.':'Sound is blocked by the browser. Press Play again and check your volume and silent mode.','Musique':'Music','Aucune piste':'No track','Précédent':'Previous','Suivant':'Next','Pause':'Pause','Lecture':'Play','Volume':'Volume','Suivre la planète':'Follow the planet','Thé':'Tea','Sodas':'Sodas','Alcools':'Spirits','Eaux':'Waters','Cafés':'Coffees','Énergisantes':'Energy','Halloween':'Halloween'});
 var MUS_EN={'Brume du matin':'Morning mist','Feuilles d\'or':'Golden leaves','Théière en fleurs':'Blooming teapot','Jardin de Darjeeling':'Darjeeling garden','Vapeur douce':'Soft steam','Sencha au crépuscule':'Twilight sencha','Cérémonie du soir':'Evening ceremony','Pluie sur les terrasses':'Rain on the terraces','Bulles d\'été':'Summer bubbles','Pschitt !':'Psst!','Fizz Party':'Fizz Party','Rooftop Cola':'Rooftop Cola','Citron givré':'Frosted lemon','Paille et néons':'Straws and neons','Canette dorée':'Golden can','Goûter pétillant':'Fizzy snack','Vendanges':'Harvest','Cave à jazz':'Jazz cellar','Last Call':'Last Call','Barrique':'Barrel','Terrasse de minuit':'Midnight terrace','Velours rouge':'Red velvet','Trinquons':'Cheers','Dernier verre':'Last glass','Source claire':'Clear spring','Gouttes de cristal':'Crystal drops','Lac de montagne':'Mountain lake','Glacier lointain':'Distant glacier','Rosée':'Dew','Ruisseau d\'argent':'Silver stream','Marée basse':'Low tide','Brume d\'eau':'Water mist','Premier espresso':'First espresso','Moka du matin':'Morning mocha','Café de Vienne':'Vienna café','Grains torréfiés':'Roasted beans','Crème dorée':'Golden crema','Bossa Barista':'Bossa Barista','Ristretto Blues':'Ristretto Blues','Filtre lent':'Slow filter','Surcharge':'Overcharge','Éclair blanc':'White lightning','Nuit de volts':'Night of volts','Rush hour':'Rush hour','Turbo Boost':'Turbo Boost','Néon Drive':'Neon Drive','Pic d\'énergie':'Energy peak','Dernier niveau':'Final level','Nuit des sorcières':'Witches\' night','Chaudron hanté':'Haunted cauldron'};
 Object.assign(EN,MUS_EN);
 
