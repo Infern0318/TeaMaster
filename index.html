@@ -1568,6 +1568,8 @@ EN["Je suis le gardien de ce salon de thé, et je reste en bas à droite. Mon no
 "Code inconnu.":"Unknown code.",
 "Ce code est déjà utilisé : choisis-en un autre.":"This code is already in use: choose another one.",
 "Invité · se connecter":"Guest · sign in",
+"Connecte-toi pour jouer avec tes amis":"Sign in to play with your friends",
+"Le social a besoin d'un compte : connecte-toi avec ton pseudo ou ton code permanent pour ajouter des amis et échanger.":"Social needs an account: sign in with your username or permanent code to add friends and trade.",
 "Se connecter ou créer un compte":"Sign in or create an account",
 "Déconnecté. Ta progression reste sur ton compte.":"Signed out. Your progress stays on your account.",
 "Connecté en ligne comme {name}. Ta progression est enregistrée sur ton compte et te suit sur tous tes appareils.":"Signed in online as {name}. Your progress is saved to your account and follows you on all your devices."
@@ -1632,19 +1634,20 @@ function pubFlush(force){
   var d=pubDoc(),j=JSON.stringify(d);if(j===lastPub&&!force)return;
   pubBusy=true;
   CL.db.doc('players/'+CL.uid).set(d).then(function(){lastPub=j;if(SO.err==='error')SO.err=''}).catch(function(e){SO.err=(e&&e.code)||'error'}).then(function(){
-    pubBusy=false;if(socialOn()&&JSON.stringify(pubDoc())!==lastPub)schedulePub();hooks.social()
+    pubBusy=false;if(socialOn()&&JSON.stringify(pubDoc())!==lastPub)schedulePub();if(window.WEBSOC&&WEBSOC.poke)WEBSOC.poke();hooks.social()
   });
 }
 function startSocial(){
   if(SO.started||!socialOn())return;
   SO.started=true;pubFlush(true);
   try{
-    CL.db.collection('players').where('fr','array-contains',CL.uid).onSnapshot(function(snap){
+    SO.unsub=CL.db.collection('players').where('fr','array-contains',CL.uid).onSnapshot(function(snap){
       var f={};snap.docs.forEach(function(d){f[d.id]=d.data()});SO.fans=f;
       if(!snap.metadata.fromCache){SO.ok=true;processSocial()}
       notifySocial();hooks.social();
     },function(e){SO.err=(e&&e.code)||'error';hooks.social()});
   }catch(e){SO.err='error'}
+  if(!(window.claude&&window.claude.use))return;
   window.claude.use('room').then(function(room){
     if(!room)return;SO.room=room;
     function upd(peers){var on={};peers.forEach(function(p){if(!p.isMe&&p.by)on[p.by]=1});SO.online=on;SO.roomOk=true;hooks.social()}
@@ -2254,6 +2257,7 @@ function hasCards(ids){var c={};ids.forEach(function(id){c[id]=(c[id]||0)+1});re
 function vSocial(){
   var head='<section class="lead"><div><h1>'+t('Social')+'</h1><p>'+t('Ajoute des amis, vois qui est en ligne et échange des cartes.')+'</p></div></section>';
   if(CL.state==='pending')return head+'<div class="box"><p>'+t('Connexion en cours…')+'</p></div>';
+  if(!acct()&&WEB.on)return head+'<div class="box"><h3>'+t('Connecte-toi pour jouer avec tes amis')+'</h3><p>'+t('Le social a besoin d\'un compte : connecte-toi avec ton pseudo ou ton code permanent pour ajouter des amis et échanger.')+'</p><button class="btn btn-primary" data-act="web-open">'+t('Se connecter ou créer un compte')+'</button></div>';
   if(!acct())return head+'<div class="box"><h3>'+t('Un compte Claude est nécessaire')+'</h3><p>'+t('Le social fonctionne avec ton compte Claude : ouvre cette page depuis ton compte connecté pour ajouter des amis et échanger.')+'</p></div>';
   if(CL.state==='readonly'||CL.canWrite===false||SO.err==='invalid_argument')return head+'<div class="box"><h3>'+t('Accès en lecture seule')+'</h3><p>'+t('Pour utiliser le social, il faut avoir le niveau Contributeur sur cette page. Demande à son auteur de te le donner.')+'</p></div>';
   if(!S.set.soc)return head+'<div class="box"><h3>'+t('Profil social désactivé')+'</h3><p>'+t('Active ton profil social pour apparaître auprès de tes amis. Ton pseudo, ton niveau et ta liste de cartes deviennent visibles aux personnes qui ont accès à cette page.')+'</p><button class="btn btn-primary" data-act="socset" data-m="1">'+t('Activer le profil social')+'</button></div>';
@@ -2764,7 +2768,7 @@ var STANDALONE=!window.claude;
 var WEBCFG=window.TM_CONFIG||null;
 var WEB={on:!!(STANDALONE&&WEBCFG&&WEBCFG.supabaseUrl&&WEBCFG.supabaseKey&&String(WEBCFG.supabaseUrl).indexOf('http')===0),sess:null,busy:false};
 var WEBLS='teamaster.auth';
-if(STANDALONE){TSTEPS=TSTEPS.filter(function(s){return s.tab!=='soc'})}
+if(STANDALONE&&!WEB.on){TSTEPS=TSTEPS.filter(function(s){return s.tab!=='soc'})}
 function webLoad(){try{WEB.sess=JSON.parse(localStorage.getItem(WEBLS)||'null')}catch(e){WEB.sess=null}}
 function webSave(){try{if(WEB.sess)localStorage.setItem(WEBLS,JSON.stringify(WEB.sess));else localStorage.removeItem(WEBLS)}catch(e){}}
 function webEmail(name){return name.toLowerCase()+'@teamaster-players.com'}
@@ -2802,7 +2806,7 @@ function webErr(e){
   return t('Une erreur est survenue. Réessaie dans un instant.')+' ['+e.status+(e.code?' '+e.code:'')+(e.message?' – '+String(e.message).slice(0,160):'')+']';
 }
 function webAdopt(prefCloud){
-  CL.uid=WEB.sess.uid;CL.db=null;CL.user=null;CL.canWrite=true;CL.state='pending';
+  CL.uid=WEB.sess.uid;CL.db=webDb();CL.user=null;CL.canWrite=true;CL.state='pending';
   CL.ref={
     get:function(){return webAuthed('/rest/v1/saves?select=data&user_id=eq.'+encodeURIComponent(WEB.sess.uid)).then(function(a){var row=a&&a[0];return {exists:!!row,data:function(){return row&&row.data}}})},
     set:function(d){return webAuthed('/rest/v1/saves?on_conflict=user_id',{method:'POST',prefer:'resolution=merge-duplicates,return=minimal',body:{user_id:WEB.sess.uid,data:d}})}
@@ -2870,9 +2874,56 @@ function webPermGo(create){
     wlRender();
   });
 }
+/* ---- Social sur Supabase : même interface que la base partagée de Claude (doc / collection / onSnapshot) ---- */
+var WEBSOC={sub:null,hb:null};
+function webDocs(rows){return (rows||[]).map(function(r){var d=r.data||{};d._seen=r.seen;return {id:r.user_id,data:function(){return d}}})}
+function webRows(q){return webAuthed('/rest/v1/players?select=user_id,data,seen&'+q)}
+function webQuery(){
+  var q={f:'',lim:''},o={
+    where:function(k,op,v){q.f=(op==='array-contains')?('fr=cs.%7B'+encodeURIComponent(v)+'%7D'):(k+'=eq.'+encodeURIComponent(v));return o},
+    limit:function(n){q.lim='&limit='+(+n||1);return o},
+    get:function(){return webRows(q.f+q.lim).then(function(r){return {docs:webDocs(r)}})},
+    onSnapshot:function(ok,err){
+      var stopped=false,tm=null;
+      function run(){
+        if(stopped)return;
+        if(document.hidden){tm=setTimeout(run,4000);return}
+        webRows(q.f).then(function(r){
+          if(stopped)return;
+          var on={},now=Date.now();(r||[]).forEach(function(x){var ts=Date.parse(x.seen);if(ts&&now-ts<120000)on[x.user_id]=1});
+          SO.online=on;SO.roomOk=true;ok({docs:webDocs(r),metadata:{fromCache:false}});
+        },function(e){if(!stopped)err(e)}).then(function(){if(!stopped){clearTimeout(tm);tm=setTimeout(run,7000)}});
+      }
+      WEBSOC.poke=function(){if(!stopped){clearTimeout(tm);tm=setTimeout(run,1200)}};
+      WEBSOC.hb=setInterval(function(){
+        if(document.hidden||!WEB.sess||!CL.uid)return;
+        webAuthed('/rest/v1/players?user_id=eq.'+encodeURIComponent(CL.uid),{method:'PATCH',prefer:'return=minimal',body:{seen:new Date().toISOString()}}).catch(function(){});
+      },40000);
+      run();
+      return function(){stopped=true;clearTimeout(tm);clearInterval(WEBSOC.hb);WEBSOC.poke=null};
+    }
+  };
+  return o;
+}
+function webDb(){
+  return {
+    doc:function(path){
+      var uid=String(path).split('/')[1];
+      return {
+        set:function(d){return webAuthed('/rest/v1/players?on_conflict=user_id',{method:'POST',prefer:'resolution=merge-duplicates,return=minimal',body:{user_id:uid,cd:d.cd,fr:d.fr||[],data:d,seen:new Date().toISOString()}})},
+        delete:function(){return webAuthed('/rest/v1/players?user_id=eq.'+encodeURIComponent(uid),{method:'DELETE'})}
+      };
+    },
+    collection:function(){return webQuery()}
+  };
+}
+function webSocStop(){
+  try{if(SO.unsub)SO.unsub()}catch(e){}
+  clearInterval(WEBSOC.hb);SO.unsub=null;SO.started=false;SO.ok=false;SO.fans={};SO.online={};SO.roomOk=false;SO.ping=false;SO.err='';SO.notified={};lastPub='';
+}
 function webLogout(){
   if(dirty||saving){toast(t('Sauvegarde en cours, réessaie dans un instant.'));return false}
-  WEB.sess=null;webSave();CL.ref=null;CL.uid=null;CL.state='guest';
+  webSocStop();WEB.sess=null;webSave();CL.ref=null;CL.db=null;CL.uid=null;CL.state='guest';
   S=fresh();LANG=S.set.lang;persist();applyTheme();rebuildTabs();
   return true;
 }
@@ -2905,7 +2956,7 @@ function webAcctHTML(){
 
 /* ================= ÉVÉNEMENTS ================= */
 function rebuildTabs(){
-  $('#tabs').innerHTML=NAV.filter(function(n){return !(STANDALONE&&n[0]==='soc')}).map(function(n){return '<button class="tab" data-act="nav" data-v="'+n[0]+'"><svg viewBox="0 0 24 24" aria-hidden="true">'+n[2]+'</svg><span class="lbl">'+t(n[1])+'</span></button>'}).join('');
+  $('#tabs').innerHTML=NAV.filter(function(n){return !(STANDALONE&&!WEB.on&&n[0]==='soc')}).map(function(n){return '<button class="tab" data-act="nav" data-v="'+n[0]+'"><svg viewBox="0 0 24 24" aria-hidden="true">'+n[2]+'</svg><span class="lbl">'+t(n[1])+'</span></button>'}).join('');
 }
 function render(){
   var v=$('#view');if(!v)return;
@@ -3115,7 +3166,7 @@ if(S.ob===0){showWelcome()}
 else if(S.ob===1){startTutorial()}
 if(S.migr){toast(t('La boutique a changé : {n} anciennes cartes ont été remplacées par des feuilles.',{n:S.migr}));S.migr=0;touch()}
 scheduleHide(true);catSync();
-if(window.__TMDEBUG)window.__tm={t:t,MISS:MISS,S:function(){return S},CL:CL,SO:SO,render:render,PACKS:PACKS,TSTEPS:TSTEPS,MODED:MODED,MODES:MODES,PATS:PATS,BACKS:BACKS,TIPS:TIPS,LVL:LVL,RN:RN,TIERS:TIERS,TIERL:TIERL,GN:GN,N:N,CARDS:CARDS,BRANDS:BRANDS,openPack:openPack,showOpen:showOpen,catHide:catHide,peekFound:peekFound,CAT:CAT,openQuiz:openQuiz,V:V,setLang:setLang,processSocial:processSocial,QT:QT,genQuests:genQuests,addBond:addBond};
+if(window.__TMDEBUG)window.__tm={t:t,MISS:MISS,S:function(){return S},CL:CL,SO:SO,render:render,PACKS:PACKS,TSTEPS:TSTEPS,MODED:MODED,MODES:MODES,PATS:PATS,BACKS:BACKS,TIPS:TIPS,LVL:LVL,RN:RN,TIERS:TIERS,TIERL:TIERL,GN:GN,N:N,CARDS:CARDS,BRANDS:BRANDS,openPack:openPack,showOpen:showOpen,catHide:catHide,peekFound:peekFound,CAT:CAT,openQuiz:openQuiz,V:V,setLang:setLang,processSocial:processSocial,QT:QT,genQuests:genQuests,addBond:addBond,tradeSend:tradeSend,tradeAccept:tradeAccept,addCards:addCards,touch:touch,pubFlush:pubFlush,addFriendByCode:addFriendByCode,acceptFriend:acceptFriend,myCode:myCode};
 setInterval(function(){
   var before=S.stock;tickStock();
   if(ensureDay()){render()}else if(S.stock!==before&&V.view==='home'&&!OV&&!$('#bxov')){render()}

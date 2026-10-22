@@ -64,3 +64,10 @@ Pour mettre à jour le jeu plus tard : remplace `index.html` et re-dépose le do
 - Les mots de passe sont gérés et chiffrés par Supabase ; le jeu ne les stocke pas lui-même.
 - Le **Social** (amis, échanges) n'existe pas sur le site : il dépend du compte Claude et reste dans la version Claude.
 - Les marques sont citées à titre indicatif ; notes et classements sont inventés (c'est écrit dans le jeu). Si le site devient public, pense à ne pas laisser croire qu'il est affilié aux marques.
+
+## Social (amis, échanges, statut en ligne) — table à ajouter
+
+Dans Supabase : **SQL Editor → New query**, colle le contenu de `social.sql` (dans ce dépôt), puis **Run**.
+Ensuite, dans le jeu : onglet **Social** → « Activer le profil social ». Les amis s'ajoutent avec le code ami (8 caractères) ; les échanges se confirment des deux côtés.
+
+Notes : seuls les joueurs connectés peuvent voir les profils sociaux activés (pseudo, niveau, liste de cartes). Le statut « en ligne » se met à jour toutes les ~40 secondes, et les demandes apparaissent après quelques secondes (le jeu interroge le serveur toutes les 7 secondes quand l'onglet est ouvert).
