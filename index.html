@@ -1567,6 +1567,7 @@ EN["Je suis le gardien de ce salon de thé, et je reste en bas à droite. Mon no
 "Code inconnu. Vérifie-le, ou crée-le avec « Créer ce code ».":"Unknown code. Check it, or create it with “Create this code”.",
 "Code inconnu.":"Unknown code.",
 "Ce code est déjà utilisé : choisis-en un autre.":"This code is already in use: choose another one.",
+"Invité · se connecter":"Guest · sign in",
 "Se connecter ou créer un compte":"Sign in or create an account",
 "Déconnecté. Ta progression reste sur ton compte.":"Signed out. Your progress stays on your account.",
 "Connecté en ligne comme {name}. Ta progression est enregistrée sur ton compte et te suit sur tous tes appareils.":"Signed in online as {name}. Your progress is saved to your account and follows you on all your devices."
@@ -2915,7 +2916,12 @@ function render(){
 }
 function updateHead(){
   var l=$('#hLeaves');if(l)l.textContent=fmt(S.leaves);
-  var a=$('#hAcct');if(a)a.innerHTML='<i class="'+(CL.state==='ok'?'dot-ok':'dot-guest')+'"></i><span>'+(CL.state==='ok'?t('Compte lié'):t('Invité'))+'</span>';
+  var a=$('#hAcct');
+  if(a&&WEB.on){
+    var inn=!!(WEB.sess&&WEB.sess.uid);
+    a.setAttribute('data-act',inn?'web-out':'web-open');a.setAttribute('role','button');a.setAttribute('tabindex','0');a.style.cursor='pointer';
+    a.innerHTML='<i class="'+(inn?'dot-ok':'dot-guest')+'"></i><span>'+(inn?t('Se déconnecter'):t('Invité · se connecter'))+'</span>';
+  }else if(a)a.innerHTML='<i class="'+(CL.state==='ok'?'dot-ok':'dot-guest')+'"></i><span>'+(CL.state==='ok'?t('Compte lié'):t('Invité'))+'</span>';
   var lg=$('#hLang');if(lg)lg.textContent=LANG.toUpperCase();
   var cb=$('#hCustom');if(cb)cb.setAttribute('aria-label',t('Personnaliser'));
   var lb=$('#hLang');if(lb)lb.setAttribute('aria-label',t('Changer de langue'));
