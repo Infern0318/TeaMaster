@@ -1817,6 +1817,7 @@ EN["Je suis le gardien de ce salon de thé, et je reste en bas à droite. Mon no
 EN["Retrouve ta progression avec ton pseudo et ton mot de passe."]="Pick up your progress with your nickname and password.";EN["Pseudo et mot de passe, ta progression est sauvegardée en ligne."]="Nickname and password, your progress is saved online.";
 
 EN["Ton personnage"]="Your character";EN["Il te représente dans les combats. Tes amis le voient aussi."]="It represents you in battles. Your friends can see it too.";EN["Cadeau : +4000 feuilles !"]="Gift: +4000 leaves!";EN["Très efficace"]="Super effective";EN["Peu efficace"]="Not very effective";EN["Raté !"]="Missed!";EN["Maître du thé"]="Tea master";EN["Sorcière"]="Witch";EN["Samouraï"]="Samurai";EN["Chevalier"]="Knight";EN["Alchimiste"]="Alchemist";EN["Ninja"]="Ninja";EN["Pirate"]="Pirate";EN["Reine du thé"]="Tea queen";
+EN["Teapee ronronne, reviens demain !"]="Teapee purrs. Come back tomorrow!";EN["Teapee te donne 400 feuilles !"]="Teapee gives you 400 leaves!";
 
 /* ================= QUIZ ================= */
 var QZS=null,QR=[0,5,9,15,22],QB=[0,20,40,70,120];
@@ -2707,7 +2708,7 @@ function vProfile(){
   saveBoxHTML()+
   '<div class="box"><h3>'+t('Statistiques')+'</h3><dl class="stats"><dt>'+t('Sachets ouverts')+'</dt><dd>'+fmt(S.stats.packs||0)+'</dd><dt>'+t('Cartes différentes')+'</dt><dd>'+fmt(ids.length)+' / '+fmt(N)+'</dd><dt>'+t('Cartes au total')+'</dt><dd>'+fmt(copies)+'</dd>'+
    RN.map(function(n,i){return '<dt>'+esc(rarName(i))+'</dt><dd>'+rar[i]+'</dd>'}).join('')+'<dt>'+t('Meilleure carte')+'</dt><dd>'+(best?esc(best.n)+' ('+best.s+')':'—')+'</dd><dt>'+t('Série de jours')+'</dt><dd>'+S.streak.n+'</dd><dt>'+t('Quiz terminés')+'</dt><dd>'+fmt(S.stats.quiz||0)+'</dd><dt>'+t('Échanges')+'</dt><dd>'+fmt(S.stats.trades||0)+'</dd><dt>'+t('Teapee retrouvé')+'</dt><dd>'+fmt(S.stats.found||0)+'</dd></dl></div>'+
-  '<div class="box"><h3>'+t('Teapee')+'</h3><div style="width:110px;margin:0 auto 10px">'+catSVG({emo:S.named?'happy':'neutral'})+'</div><p class="mono" style="text-align:center;font-size:1.3rem;letter-spacing:.2em;margin:0 0 6px">'+esc(nameShown())+'</p><p class="note" style="text-align:center;margin:0">'+(S.named?t('Votre lien est au maximum, il t\'adore.'):t('Ton lien grandit quand tu réponds juste ou que tu le retrouves.'))+'</p></div>'+
+  '<div class="box"><h3>'+t('Teapee')+'</h3><div data-act="tpgift" style="width:110px;margin:0 auto 10px;cursor:default;-webkit-tap-highlight-color:transparent">'+catSVG({emo:S.named?'happy':'neutral'})+'</div><p class="mono" style="text-align:center;font-size:1.3rem;letter-spacing:.2em;margin:0 0 6px">'+esc(nameShown())+'</p><p class="note" style="text-align:center;margin:0">'+(S.named?t('Votre lien est au maximum, il t\'adore.'):t('Ton lien grandit quand tu réponds juste ou que tu le retrouves.'))+'</p></div>'+
   '<div class="box"><h3>'+t('À propos')+'</h3><p class="note">'+t('Les notes, les classements, les rarétés et la liste des produits de chaque maison sont inventés pour le jeu. Ils ne reflètent ni des avis, ni le catalogue réel des marques citées.')+'</p>'+
    (V.reset?'<p>'+t('Cette action efface toute ta progression.')+'</p><div class="ov-actions" style="justify-content:flex-start"><button class="btn" data-act="reset-go" style="color:var(--danger)">'+t('Confirmer l\'effacement')+'</button><button class="btn" data-act="reset-no">'+t('Annuler')+'</button></div>':'<button class="btn" data-act="reset">'+t('Effacer ma progression')+'</button>')+'</div></div>';
 }
@@ -3770,6 +3771,7 @@ document.addEventListener('click',function(ev){
   var a=el.getAttribute('data-act'),d=function(k){return el.getAttribute('data-'+k)};
   switch(a){
    case 'nav':V.view=d('v');V.reset=false;window.scrollTo(0,0);render();if(V.view==='soc'){SO.ping=false;updateHead()}break;
+   case 'tpgift':{var k=todayKey();if(S.tpg===k){toast(t('Teapee ronronne, reviens demain !'))}else{S.tpg=k;S.leaves+=400;touch();toast(t('Teapee te donne 400 feuilles !'));render()}break}
    case 'hero':S.hero=+d('h')||0;touch();render();break;
    case 'btnew':bpOpen({mode:'ai',lv:+d('lv')});break;
    case 'btch':bpOpen({mode:'ch',peer:d('u')});break;
